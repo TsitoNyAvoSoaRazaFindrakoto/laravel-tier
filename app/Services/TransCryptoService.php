@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exception\SoldeCryptoException;
 use App\Models\TransCrypto;
 use DateTime;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 final class TransCryptoService
@@ -65,5 +66,9 @@ final class TransCryptoService
         return TransCrypto::where('idUtilisateur',$idUtilisateur)
             ->selectRaw('sum(entree-sortie) as solde')
             ->first()['solde'];
+    }
+
+    public function findVente($idUtilisateur):Collection{
+        return TransCrypto::where("sortie",">",0)->andWhere("idUtilisateur",$idUtilisateur)->get();
     }
 }
