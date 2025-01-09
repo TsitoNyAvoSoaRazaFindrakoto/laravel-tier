@@ -42,3 +42,8 @@ Route::prefix('/achat')->name('achat.')->group(function () {
     Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
     Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
 });
+
+Route::prefix('/vente')->name('vente.')->group(function () {
+    Route::get('',[\App\Http\Controllers\CryptoController::class,'formVente'])->name('form');
+    Route::post('',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
+});

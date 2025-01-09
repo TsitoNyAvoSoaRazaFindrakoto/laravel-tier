@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exception\SoldeCryptoException;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Http\Request;
@@ -27,6 +28,10 @@ final class TransCryptoService
     }
 
     public function insertSortie(Request $request){
+        $quantite=$request->input('quantite');
+        if($quantite>$this->findSoldeCrypto($quantite)){
+            throw new SoldeCryptoException();
+        }
         $today=new DateTime();
         $transCrypto = new TransCrypto();
         $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
@@ -40,5 +45,24 @@ final class TransCryptoService
     public function insertAchat(Request $request){
         $this->fondService->insertRetrait($request);
         $this->insertEntree($request);
+    }
+
+    public function insertVente(Request $request){
+        try{
+            DB::beginTransaction();
+            $this->fondService->insertDepot($request);
+            $this->insertSortie($request);
+            DB::commit();
+        }
+        catch (SoldeCryptoException $e){
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function findSoldeCrypto($idUtilisateur){
+        return TransCrypto::where('idUtilisateur',$idUtilisateur)
+            ->selectRaw('sum(entree-sortie) as solde')
+            ->first()['solde'];
     }
 }
