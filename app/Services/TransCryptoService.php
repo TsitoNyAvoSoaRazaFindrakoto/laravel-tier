@@ -32,7 +32,7 @@ final class TransCryptoService
 
     public function insertSortie(Request $request){
         $quantite=$request->input('quantite');
-        $solde=$this->findSoldeCrypto($quantite);
+        $solde=$this->findSoldeCrypto($request->session()->get('idUtilisateur'));
         if($quantite>$solde){
             throw new SoldeCryptoException($quantite,$solde);
         }

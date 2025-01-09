@@ -43,15 +43,16 @@ class CryptoController extends Controller
             "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
+        $data["cryptos"] = Crypto::all();
         try{
             $this->transCryptoService->insertVente($request);
         }
         catch(\Exception $e){
             $data["message"]=$e->getMessage();
-            return view('cryptos.formVente',$data);
+            return view('vente.formVente',$data);
         }
         $data["message"]="Vente reussie";
-        return view('cryptos.formVente',$data);
+        return view('vente.formVente',$data);
     }
 
     public function findListVente(Request $request){
@@ -67,6 +68,7 @@ class CryptoController extends Controller
 
     public function formVente(){
         $data["cryptos"] = Crypto::all();
-        return view('cryptos.formVente',$data);
+        $data["message"] = "Insertion de vente";
+        return view('vente.formVente',$data);
     }
 }
