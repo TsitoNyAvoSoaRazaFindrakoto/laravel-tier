@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exception\SoldeException;
 use App\Models\Crypto;
 use App\Services\CryptoService;
 use App\Services\TransCryptoService;
@@ -19,11 +20,19 @@ class CryptoController extends Controller
             "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
-        $this->transCryptoService->insertAchat($request);
+        try{
+            $this->transCryptoService->insertAchat($request);
+        }
+        catch(SoldeException $e){
+            $data["message"]=$e->getMessage();
+            return view('crypto.formVente',$data);
+        }
+        $data["message"]="Achat effectue avec succes";
+        return view('crypto.formVente',$data);
     }
 
     public function formAchat(){
         $data["cryptos"] = Crypto::all();
-        return view('cryptos.formAchat',$data);
+        return view('crypto.formAchat',$data);
     }
 }

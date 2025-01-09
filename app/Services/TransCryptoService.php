@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exception\SoldeException;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Http\Request;
@@ -38,7 +39,15 @@ final class TransCryptoService
     }
 
     public function insertAchat(Request $request){
-        $this->fondService->insertRetrait($request);
-        $this->insertEntree($request);
+        try{
+            DB::beginTransaction();
+            $this->fondService->insertRetrait($request);
+            $this->insertEntree($request);
+            DB::commit();
+        }
+        catch(SoldeException $e){
+            DB::rollBack();
+            throw $e;
+        }
     }
 }
