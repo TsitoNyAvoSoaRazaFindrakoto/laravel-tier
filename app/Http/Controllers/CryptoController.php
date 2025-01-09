@@ -34,10 +34,10 @@ class CryptoController extends Controller
         }
         catch(\Exception $e){
             $data["message"]=$e->getMessage();
-            return new View('cryptos.formVente',$data);
+            return view('cryptos.formVente',$data);
         }
         $data["message"]="Vente reussie";
-        return new View('cryptos.formVente',$data);
+        return view('cryptos.formVente',$data);
     }
 
     public function formAchat(){
