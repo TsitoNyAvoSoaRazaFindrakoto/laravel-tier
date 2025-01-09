@@ -27,7 +27,7 @@ return new class extends Migration
    \"dateTransaction\" TIMESTAMP NOT NULL,
    \"idCrypto\" INTEGER NOT NULL,
    PRIMARY KEY(\"idTransCrypto\"),
-   FOREIGN KEY(\"idCrypto\"), REFERENCES crypto(\"idCrypto\")
+   FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
 	)");
 
 		DB::statement("CREATE TABLE fondUtilisateur(

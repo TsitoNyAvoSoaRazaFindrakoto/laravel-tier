@@ -28,6 +28,17 @@ Route::prefix('/admin')->name('admin.')->group(function(){
     });
 });*/
 
-Route::get('/',function (){
-    return "Hello";
+Route::prefix('/depot')->name('depot.')->group(function () {
+    Route::get('',[\App\Http\Controllers\FondController::class,'formDepot'])->name('form');
+    Route::post('',[\App\Http\Controllers\FondController::class,'insertDepot'])->name('insert');
+});
+
+Route::prefix('/retrait')->name('retrait.')->group(function () {
+    Route::get('',[\App\Http\Controllers\FondController::class,'formRetrait'])->name('form');
+    Route::post('',[\App\Http\Controllers\FondController::class,'insertRetrait'])->name('insert');
+});
+
+Route::prefix('/achat')->name('achat.')->group(function () {
+    Route::get('',[\App\Http\Controllers\FondController::class,'formRetrait'])->name('form');
+    Route::post('',[\App\Http\Controllers\FondController::class,'insertRetrait'])->name('insert');
 });
