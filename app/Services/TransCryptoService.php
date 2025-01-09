@@ -6,18 +6,39 @@ use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Http\Request;
 
-class TransCryptoService
+final class TransCryptoService
 {
 
-    protected $fondService;
+    protected FondService $fondService;
 
     public function __construct(FondService $fondService){
         $this->fondService = $fondService;
     }
 
-    public function
+    public function insertEntree(Request $request){
+        $today=new DateTime();
+        $transCrypto = new TransCrypto();
+        $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
+        $transCrypto->dateTransaction=$today->format('Y-m-d');
+        $transCrypto->entree=$request->input('quantite');
+        $transCrypto->sortie=0;
+        $transCrypto->idCrypto=$request->input('idCrypto');
+        $transCrypto->save();
+    }
+
+    public function insertSortie(Request $request){
+        $today=new DateTime();
+        $transCrypto = new TransCrypto();
+        $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
+        $transCrypto->dateTransaction=$today->format('Y-m-d');
+        $transCrypto->entree=0;
+        $transCrypto->sortie=$request->input('quantite');
+        $transCrypto->idCrypto=$request->input('idCrypto');
+        $transCrypto->save();
+    }
 
     public function insertAchat(Request $request){
         $this->fondService->insertRetrait($request);
+        $this->insertEntree($request);
     }
 }

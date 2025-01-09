@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Models\FondUtilisateur;
 use Illuminate\Http\Request;
 
-class FondService
+final class FondService
 {
     public function insertRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');

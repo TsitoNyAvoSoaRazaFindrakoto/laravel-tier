@@ -39,6 +39,6 @@ Route::prefix('/retrait')->name('retrait.')->group(function () {
 });
 
 Route::prefix('/achat')->name('achat.')->group(function () {
-    Route::get('',[\App\Http\Controllers\FondController::class,'formRetrait'])->name('form');
-    Route::post('',[\App\Http\Controllers\FondController::class,'insertRetrait'])->name('insert');
+    Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
+    Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
 });
