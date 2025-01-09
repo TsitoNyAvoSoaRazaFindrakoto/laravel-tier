@@ -29,8 +29,9 @@ final class TransCryptoService
 
     public function insertSortie(Request $request){
         $quantite=$request->input('quantite');
-        if($quantite>$this->findSoldeCrypto($quantite)){
-            throw new SoldeCryptoException();
+        $solde=$this->findSoldeCrypto($quantite);
+        if($quantite>$solde){
+            throw new SoldeCryptoException($quantite,$solde);
         }
         $today=new DateTime();
         $transCrypto = new TransCrypto();
