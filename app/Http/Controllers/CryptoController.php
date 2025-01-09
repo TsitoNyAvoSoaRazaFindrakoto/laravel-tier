@@ -31,6 +31,11 @@ class CryptoController extends Controller
         return view('crypto.formVente',$data);
     }
 
+    public function findListeAchat(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
+        return view('crypto.listeAchat',$data);
+    }
+
     public function formAchat(){
         $data["cryptos"] = Crypto::all();
         return view('crypto.formAchat',$data);

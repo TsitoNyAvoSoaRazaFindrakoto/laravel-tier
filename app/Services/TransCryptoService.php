@@ -50,4 +50,8 @@ final class TransCryptoService
             throw $e;
         }
     }
+
+    public function findListeAchat($idUtilisateur){
+        return TransCrypto::where('idUtilisateur',$idUtilisateur)->andWhere('entree','>',0)->get();
+    }
 }
