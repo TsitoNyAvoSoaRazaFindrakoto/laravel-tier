@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FondUtilisateur extends Model
 {
-    protected $table = 'fond_utilisateur';
-    protected $guarded = ["idFondUtilisateur"];
-    protected $primaryKey = "idFondUtilisateur";
+    protected $table = 'fondutilisateur';
+    protected $guarded = ["idTransFond"];
+    protected $primaryKey = "idTransFond";
+    public $timestamps = false;
 
     public function crypto():BelongsTo{
         return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");

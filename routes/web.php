@@ -43,3 +43,7 @@ Route::prefix('/achat')->name('achat.')->group(function () {
     Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
     Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
 });
+
+Route::get('',function(\Illuminate\Http\Request $request){
+    $request->session()->put('idUtilisateur',1);
+});

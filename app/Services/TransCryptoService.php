@@ -6,6 +6,7 @@ use App\Exception\SoldeException;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class TransCryptoService
 {

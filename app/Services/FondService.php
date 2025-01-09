@@ -9,7 +9,7 @@ final class FondService
 {
     public function insertRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
-        $montant=$request->input('montant');
+        $montant=$request->input('montant')*$request->input('quantite');
         $solde=$this->findSolde($idUtilisateur);
         if($solde<$montant){
             throw new SoldeException($montant,$solde);
