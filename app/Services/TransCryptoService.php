@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Exception\SoldeCryptoException;
+use App\Exception\SoldeException;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 final class TransCryptoService
 {
@@ -45,8 +47,20 @@ final class TransCryptoService
     }
 
     public function insertAchat(Request $request){
-        $this->fondService->insertRetrait($request);
-        $this->insertEntree($request);
+        try{
+            DB::beginTransaction();
+            $this->fondService->insertRetrait($request);
+            $this->insertEntree($request);
+            DB::commit();
+        }
+        catch(SoldeException $e){
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function findListeAchat($idUtilisateur){
+        return TransCrypto::where('idUtilisateur',$idUtilisateur)->andWhere('entree','>',0)->get();
     }
 
     public function insertVente(Request $request){

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exception\SoldeException;
 use App\Models\Crypto;
-use App\Services\CryptoService;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -11,8 +11,8 @@ use Illuminate\View\View;
 class CryptoController extends Controller
 {
     protected TransCryptoService $transCryptoService;
-    public function __construct(CryptoService $cryptoService){
-        $this->cryptoService = $cryptoService;
+    public function __construct(TransCryptoService $transCryptoService){
+        $this->transCryptoService = $transCryptoService;
     }
     public function insertAchat(Request $request){
         $request->validate([
@@ -20,7 +20,21 @@ class CryptoController extends Controller
             "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
-        $this->transCryptoService->insertAchat($request);
+        $data["cryptos"] = Crypto::all();
+        try{
+            $this->transCryptoService->insertAchat($request);
+        }
+        catch(SoldeException $e){
+            $data["message"]=$e->getMessage();
+            return view('achat.formAchat',$data);
+        }
+        $data["message"]="Achat effectue avec succes";
+        return view('achat.formAchat',$data);
+    }
+
+    public function findListeAchat(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
+        return view('achat.listeAchat',$data);
     }
 
     public function insertVente(Request $request){
@@ -47,7 +61,8 @@ class CryptoController extends Controller
 
     public function formAchat(){
         $data["cryptos"] = Crypto::all();
-        return view('cryptos.formAchat',$data);
+        $data["message"] = "Insertion d'achat";
+        return view('achat.formAchat',$data);
     }
 
     public function formVente(){

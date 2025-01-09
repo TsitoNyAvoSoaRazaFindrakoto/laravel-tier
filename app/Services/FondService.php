@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use App\Exception\SoldeException;
 use App\Models\FondUtilisateur;
 use Illuminate\Http\Request;
 
@@ -8,9 +9,10 @@ final class FondService
 {
     public function insertRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
-        $montant=$request->input('montant');
-        if($this->findSolde($idUtilisateur)<$montant){
-            throw new \Error("Solde n'est pas valide");
+        $montant=$request->input('montant')*$request->input('quantite');
+        $solde=$this->findSolde($idUtilisateur);
+        if($solde<$montant){
+            throw new SoldeException($montant,$solde);
         }
         $fondUtilisateur = new FondUtilisateur();
         $fondUtilisateur->sortie=$montant;

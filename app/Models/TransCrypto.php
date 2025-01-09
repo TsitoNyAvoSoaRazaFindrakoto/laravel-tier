@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransCrypto extends Model
 {
-    protected $table = 'transcrypto';
+    protected $table = 'transCrypto';
     protected $guarded = ["idTransCrypto"];
     protected $primaryKey = "idTransCrypto";
+
+    public $timestamps = false;
 }
