@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Crypto;
 use App\Services\CryptoService;
+use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
 
 class CryptoController extends Controller
 {
-    protected CryptoService $cryptoService;
+    protected TransCryptoService $transCryptoService;
     public function __construct(CryptoService $cryptoService){
         $this->cryptoService = $cryptoService;
     }
@@ -18,7 +19,7 @@ class CryptoController extends Controller
             "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
-        $this->cryptoService->insertAchat($request);
+        $this->transCryptoService->insertAchat($request);
     }
 
     public function formAchat(){
