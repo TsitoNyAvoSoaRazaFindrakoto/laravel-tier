@@ -82,7 +82,7 @@ final class TransCryptoService
             ->first()['solde'];
     }
 
-    public function findVente($idUtilisateur):Collection{
-        return TransCrypto::where("sortie",">",0)->andWhere("idUtilisateur",$idUtilisateur)->get();
+    public function findListVente($idUtilisateur):Collection{
+        return TransCrypto::where("sortie",">",0)->Where("idUtilisateur",$idUtilisateur)->get();
     }
 }

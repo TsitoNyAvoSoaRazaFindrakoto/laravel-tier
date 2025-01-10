@@ -32,11 +32,7 @@ class CryptoController extends Controller
         return view('achat.formAchat',$data);
     }
 
-    public function findListeAchat(Request $request){
-        $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
-        return view('achat.listeAchat',$data);
-    }
-
+    
     public function insertVente(Request $request){
         $request->validate([
             "quantite"=>"required|numeric|min:1",
@@ -55,9 +51,14 @@ class CryptoController extends Controller
         return view('vente.formVente',$data);
     }
 
+    public function findListeAchat(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
+        return view('achat.listeAchat',$data);
+    }
+    
     public function findListVente(Request $request){
-        $data["ventes"]=$this->transCryptoService->findVente($request->session()->get('idUtilisateur'));
-        return view('vente.listVente',$data);
+        $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
+        return view('vente.listeVente',$data);
     }
 
     public function formAchat(){
