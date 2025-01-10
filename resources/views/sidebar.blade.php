@@ -34,8 +34,24 @@
             </a>
             <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="/vente/form_vente">Insertion vente</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vente/liste">Liste des ventes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vente/filter?idTypeProduit=Tous&idCategorie=Tous">Liste vente avec filtre</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/depot') }}">Insertion Depot</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/retrait') }}">Insertion Retrait</a></li>
+
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#form-elementss" aria-expanded="false" aria-controls="form-elements">
+                <i class="icon-columns menu-icon"></i>
+                <span class="menu-title">Portefeuille</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elementss">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="/portefeuille/liste">Liste des portefeuilles</a></li>
                 </ul>
             </div>
         </li>

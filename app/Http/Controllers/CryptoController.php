@@ -61,6 +61,11 @@ class CryptoController extends Controller
         return view('vente.listeVente',$data);
     }
 
+    public function fintPorfeuilleUtilisateur(Request $request){
+        $data["portefeuilles"]=$this->transCryptoService->findPorfeuilleUtilisateur($request->session()->get('idUtilisateur'));
+        return view('portefeuille.listePortefeuille',$data);
+    }
+
     public function formAchat(){
         $data["cryptos"] = Crypto::all();
         $data["message"] = "Insertion d'achat";
