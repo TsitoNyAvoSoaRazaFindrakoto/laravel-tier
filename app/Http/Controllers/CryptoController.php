@@ -6,7 +6,6 @@ use App\Exception\SoldeException;
 use App\Models\Crypto;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class CryptoController extends Controller
 {
@@ -32,7 +31,7 @@ class CryptoController extends Controller
         return view('achat.formAchat',$data);
     }
 
-    
+
     public function insertVente(Request $request){
         $request->validate([
             "quantite"=>"required|numeric|min:1",
@@ -55,7 +54,7 @@ class CryptoController extends Controller
         $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
         return view('achat.listeAchat',$data);
     }
-    
+
     public function findListVente(Request $request){
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
         return view('vente.listeVente',$data);

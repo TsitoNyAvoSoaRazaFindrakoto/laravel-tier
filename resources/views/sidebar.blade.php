@@ -51,7 +51,7 @@
             </a>
             <div class="collapse" id="form-elementss">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="/portefeuille/liste">Liste des portefeuilles</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="/portefeuille/liste_portefeuille">Liste des portefeuilles</a></li>
                 </ul>
             </div>
         </li>

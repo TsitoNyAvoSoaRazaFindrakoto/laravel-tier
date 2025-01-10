@@ -21,7 +21,7 @@ class FondController extends Controller
         $request->validate([
             "montant"=>"required|numeric|min:1",
         ]);
-        $this->fondService->insertDepot($request);
+        $this->fondService->insertDepotWithoutCrypto($request);
     }
 
     public function formRetrait(){
@@ -32,6 +32,6 @@ class FondController extends Controller
         $request->validate([
             "montant"=>"required|numeric|min:1",
         ]);
-        $this->fondService->insertRetrait($request);
+        $this->fondService->insertRetraitWithoutCrypto($request);
     }
 }
