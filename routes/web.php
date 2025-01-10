@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 
 /*Route::prefix('/')->name('client.')->group(function(){
     Route::get('/',[ClientController::class,'index'])->name('index');
@@ -46,4 +47,8 @@ Route::prefix('/achat')->name('achat.')->group(function () {
 
 Route::get('',function(\Illuminate\Http\Request $request){
     $request->session()->put('idUtilisateur',1);
+});
+
+Route::get('dashboard/dashboard', function () {
+    return view('dashboard.dashboard'); // Assure-toi que le fichier existe dans resources/views/dashboard/dashboard.blade.php
 });
