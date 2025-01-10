@@ -16,6 +16,10 @@ class UtilisateurController extends Controller
         return view('utilisateur.pin',$data);
     }
 
+    public function inscription(){
+        return view('utilisateur.inscription');
+    }
+
     public function setSession(Request $request){
         $request->session()->put('idUtilisateur',$request->input('idUtilisateur'));
         return redirect()->route('achat.liste');
