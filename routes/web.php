@@ -47,3 +47,5 @@ Route::prefix('/achat')->name('achat.')->group(function () {
 Route::get('',function(\Illuminate\Http\Request $request){
     $request->session()->put('idUtilisateur',1);
 });
+
+
