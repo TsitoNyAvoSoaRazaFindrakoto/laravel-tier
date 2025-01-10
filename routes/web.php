@@ -46,4 +46,6 @@ Route::prefix('/achat')->name('achat.')->group(function () {
 
 Route::prefix('')->name('utilisateur.')->group(function () {
     Route::get('',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
+    Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
+    Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');
 });
