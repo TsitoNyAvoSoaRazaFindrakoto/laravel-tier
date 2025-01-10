@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Crypto;
+use App\Models\CryptoPrix;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 class CryptoUpdaterCommand extends Command
 {
@@ -13,7 +13,6 @@ class CryptoUpdaterCommand extends Command
 
 	public function handle()
 	{
-
 		$this->info('Crypto value updater started. Press Ctrl+C to stop.');
 
 		while (true) {
@@ -25,54 +24,65 @@ class CryptoUpdaterCommand extends Command
 	private function updateCryptoValues()
 	{
 		$cryptos = Crypto::all()->pluck('idCrypto')->toArray();
-		
-		// Retrieve current cached values
-		$cryptoHistory = Cache::get('crypto_val', [$this->initializeCryptoCache($cryptos)]);
-		$newValues = $this->generateRandomValue($cryptos, $cryptoHistory[0]);
+		$latestValues = $this->getLatestCryptoValues($cryptos);
 
-		// Add new values to the beginning of the array
-		array_unshift($cryptoHistory, $newValues);
+		$newValues = $this->generateRandomValue($cryptos, $latestValues);
 
-		// Keep only the latest 10 entries
-		$cryptoHistory = array_slice($cryptoHistory, 0, 10);
-
-		// Update the cache
-		Cache::put('crypto_val', $cryptoHistory, 15); // Store for 15 minutes
-
+		foreach ($newValues as $cryptoId => $price) {
+			CryptoPrix::create([
+				'prixUnitaire' => $price,
+				'dateHeure' => now(),
+				'idCrypto' => $cryptoId,
+			]);
+		}
 		$this->info('Updated crypto values: ' . json_encode($newValues));
+	}
+
+	private function getLatestCryptoValues(array $cryptoIds): array
+	{
+		$latestValues = CryptoPrix::whereIn('idCrypto', $cryptoIds)
+			->orderBy('dateHeure', 'desc')
+			->get()
+			->groupBy('idCrypto')
+			->map(function ($group) {
+				// If no records are found for the crypto, generate a random value
+				if ($group->isEmpty()) {
+					return $this->generateRandomCryptoValue();
+				}
+				return $group->first()->prixUnitaire;
+			})
+			->toArray();
+
+		return $latestValues;
+	}
+
+	private function generateRandomCryptoValue(): float
+	{
+		// Example of plausible range for cryptocurrency prices
+		$minValue = 1000;   // Minimum value for the cryptocurrency
+		$maxValue = 50000;  // Maximum value for the cryptocurrency
+
+		// Generate a random value within the range
+		return round(rand($minValue * 100, $maxValue * 100) / 100, 2);  // round to 2 decimals
 	}
 
 	private function generateRandomValue(array $cryptoIds, array $oldValues)
 	{
 		$newValues = [];
-		$isHighVolatility = rand(0, 100) < 10; // 10% de chances d'un mouvement brusque
+		$isHighVolatility = rand(0, 100) < 10; // 10% chance of a big change
 
-		foreach ($cryptoIds as $crypto) {
-			$oldValue = $oldValues[$crypto] ?? rand(1000, 50000); // Utilise une valeur existante ou génère une valeur initiale
-			$minChange = $isHighVolatility ? -0.5 : -0.1; // Définir la variation minimum
-			$maxChange = $isHighVolatility ? 0.5 : 0.1;  // Définir la variation maximum
+		foreach ($cryptoIds as $cryptoId) {
+			$oldValue = $oldValues[$cryptoId] ?? rand(1000, 50000); // Use previous value or generate an initial one
+			$minChange = $isHighVolatility ? -0.5 : -0.1; // Min % change
+			$maxChange = $isHighVolatility ? 0.5 : 0.1;  // Max % change
 
-			// Générer une variation aléatoire en pourcentage
+			// Generate random percentage change
 			$percentageChange = rand($minChange * 1000, $maxChange * 1000) / 1000;
 
-			// Calculer la nouvelle valeur
-			$newValue = $oldValue * (1 + $percentageChange / 100);
-			$newValues[$crypto] = round($newValue, 2); // Arrondir à 2 décimales
+			// Calculate the new value
+			$newValue = max($oldValue * (1 + $percentageChange / 100), 0.01);
+			$newValues[$cryptoId] = round($newValue, 2); // Round to 2 decimals
 		}
-
 		return $newValues;
-	}
-
-	private function initializeCryptoCache(array $cryptoIds)
-	{
-		$initialValues = [];
-
-		foreach ($cryptoIds as $crypto) {
-			// Generate random initial values for each crypto
-			$initialValues[$crypto] = rand(1000, 50000); // Example range for initial values
-		}
-		// Save these values in the cache as the first entry
-		$cryptoHistory = [$initialValues]; // Start the history with only the initial values
-		return $cryptoHistory;
 	}
 }
