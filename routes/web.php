@@ -44,8 +44,10 @@ Route::prefix('/achat')->name('achat.')->group(function () {
     Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
 });
 
-Route::get('',function(\Illuminate\Http\Request $request){
-    $request->session()->put('idUtilisateur',1);
+Route::prefix('')->name('utilisateur.')->group(function () {
+    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
+    Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
+    Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');
 });
 
 Route::prefix('/vente')->name('vente.')->group(function () {
