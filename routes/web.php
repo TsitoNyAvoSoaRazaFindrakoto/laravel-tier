@@ -41,17 +41,20 @@ Route::prefix('/retrait')->name('retrait.')->group(function () {
 Route::prefix('/achat')->name('achat.')->group(function () {
     Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
     Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
-    Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
+    Route::get('/liste_achat',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
 });
 
-Route::get('',function(\Illuminate\Http\Request $request){
-    $request->session()->put('idUtilisateur',1);
+Route::prefix('')->name('utilisateur.')->group(function () {
+    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
+    Route::get('/inscription',[\App\Http\Controllers\UtilisateurController::class,'inscription'])->name('inscription');
+    Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
+    Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');
 });
 
 Route::prefix('/vente')->name('vente.')->group(function () {
     Route::get('',[\App\Http\Controllers\CryptoController::class,'formVente'])->name('form');
     Route::post('',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
-    Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListVente'])->name('liste');
+    Route::get('/liste_vente',[\App\Http\Controllers\CryptoController::class,'findListVente'])->name('liste');
 });
 
 Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
