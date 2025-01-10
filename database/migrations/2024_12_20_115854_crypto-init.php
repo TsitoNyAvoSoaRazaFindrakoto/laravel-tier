@@ -25,6 +25,7 @@ return new class extends Migration
    \"entree\" NUMERIC(15,2)  ,
    \"sortie\" NUMERIC(15,2)  ,
    \"dateTransaction\" TIMESTAMP NOT NULL,
+   \"prixUnitaire\" DECIMAL(15,2) NOT NULL,
    \"idCrypto\" INTEGER NOT NULL,
    PRIMARY KEY(\"idTransCrypto\"),
    FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")

@@ -47,3 +47,9 @@ Route::prefix('/achat')->name('achat.')->group(function () {
 Route::get('',function(\Illuminate\Http\Request $request){
     $request->session()->put('idUtilisateur',1);
 });
+
+Route::prefix('/vente')->name('vente.')->group(function () {
+    Route::get('',[\App\Http\Controllers\CryptoController::class,'formVente'])->name('form');
+    Route::post('',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
+    Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListVente'])->name('liste');
+});
