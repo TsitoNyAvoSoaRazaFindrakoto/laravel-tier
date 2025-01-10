@@ -12,5 +12,7 @@ class UtilisateurController extends Controller
             "email"=>"required|text",
             "password"=>"required|text",
         ]);
+
+        
     }
 }
