@@ -32,7 +32,7 @@ final class TransCryptoService
 
     public function insertSortie(Request $request){
         $quantite=$request->input('quantite');
-        $solde=$this->findSoldeCrypto($request->session()->get('idUtilisateur'));
+        $solde=$this->findSoldeCrypto($request->session()->get('idUtilisateur'),$request->input('idCrypto'));
         if($quantite>$solde){
             throw new SoldeCryptoException($quantite,$solde);
         }
@@ -76,10 +76,19 @@ final class TransCryptoService
         }
     }
 
-    public function findSoldeCrypto($idUtilisateur){
+    public function findSoldeCrypto($idUtilisateur,$idCrypto){
         return TransCrypto::where('idUtilisateur',$idUtilisateur)
+            ->where('idCrypto',$idCrypto)
             ->selectRaw('sum(entree-sortie) as solde')
             ->first()['solde'];
+    }
+
+    public function findPorfeuilleUtilisateur($idUtilisateur){
+        return TransCrypto::where('idUtilisateur',$idUtilisateur)
+            ->with('crypto')
+            ->selectRaw('sum(entree-sortie) as solde,"idCrypto"')
+            ->groupBy('idCrypto')
+            ->get();
     }
 
     public function findListVente($idUtilisateur):Collection{

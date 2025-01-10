@@ -53,3 +53,7 @@ Route::prefix('/vente')->name('vente.')->group(function () {
     Route::post('',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
     Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'findListVente'])->name('liste');
 });
+
+Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
+    Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'fintPorfeuilleUtilisateur'])->name('liste');
+});

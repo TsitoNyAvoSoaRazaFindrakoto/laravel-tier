@@ -22,7 +22,7 @@
             <div class="collapse" id="ui-basics">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="/achat/form_achat">Insertion achat</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="/achat">Liste des achats</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="/achat/liste">Liste des achats</a></li>
                 </ul>
             </div>
         </li>
@@ -35,8 +35,20 @@
             <div class="collapse" id="form-elements">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="/vente/form_vente">Insertion vente</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/vente">Liste des ventes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vente/liste">Liste des ventes</a></li>
                     <li class="nav-item"><a class="nav-link" href="/vente/filter?idTypeProduit=Tous&idCategorie=Tous">Liste vente avec filtre</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#form-elementss" aria-expanded="false" aria-controls="form-elements">
+                <i class="icon-columns menu-icon"></i>
+                <span class="menu-title">Portefeuille</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elementss">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="/portefeuille/liste">Liste des portefeuilles</a></li>
                 </ul>
             </div>
         </li>
