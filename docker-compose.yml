@@ -1,36 +1,38 @@
-services:
-    laravel_app:
-        container_name: laravel_tier
-        build:
-            context: .
-            dockerfile: Dockerfile
-        ports:
-            - "8000:8000"
-        env_file:
-            - .env
-        volumes:
-            - .:/var/www/html
-        depends_on:
-            - postgres_tier
-        restart: unless-stopped
+version: '3.8'
 
-    postgres_tier:
-        container_name: postgres_tier
-        image: postgres:15-alpine
-        ports:
-            - "5433:5432"
-        environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: fifaliana
-            POSTGRES_DB: crypto
-        volumes:
-            - postgres-data:/var/lib/postgresql/data
-        healthcheck:
-            test: [ "CMD", "pg_isready", "-d", "crypto", "-U", "postgres" ]
-            timeout: 5s
-            retries: 5
-            start_period: 60s
-        restart: unless-stopped
+services:
+  laravel_app:
+    container_name: laravel_tier
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - postgres_tier
+    restart: unless-stopped
+
+  postgres_tier:
+    container_name: postgres_tier
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"  # Externe : Interne (PostgreSQL fonctionne sur le port interne 5432)
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: fifaliana
+      POSTGRES_DB: crypto
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "crypto", "-U", "postgres" ]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
 
 volumes:
-    postgres-data: {}
+  postgres-data: {}
