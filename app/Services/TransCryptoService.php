@@ -53,6 +53,6 @@ final class TransCryptoService
     }
 
     public function findListeAchat($idUtilisateur){
-        return TransCrypto::where('idUtilisateur',$idUtilisateur)->andWhere('entree','>',0)->get();
+        return TransCrypto::where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
     }
 }
