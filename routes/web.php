@@ -60,3 +60,5 @@ Route::prefix('/vente')->name('vente.')->group(function () {
 Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
     Route::get('/liste',[\App\Http\Controllers\CryptoController::class,'fintPorfeuilleUtilisateur'])->name('liste');
 });
+
+
