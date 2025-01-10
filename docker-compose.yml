@@ -1,6 +1,6 @@
 services:
     laravel_app:
-        container_name: laravel_identity_flow
+        container_name: laravel_tier
         build:
             context: .
             dockerfile: Dockerfile
@@ -11,31 +11,26 @@ services:
         volumes:
             - .:/var/www/html
         depends_on:
-            - postgres_identity_flow
-        # healthcheck:
-        #     test: ["CMD", "curl", "-f", "http://localhost:8000"]
-        #     interval: 30s
-        #     timeout: 10s
-        #     retries: 3
+            - postgres_tier
         restart: unless-stopped
 
-    postgres_identity_flow:
-        container_name: postgres_identity_flow
+    postgres_tier:
+        container_name: postgres_tier
         image: postgres:15-alpine
         ports:
             - "5433:5432"
         environment:
             POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: postgres
-            POSTGRES_DB: identity_flow
+            POSTGRES_PASSWORD: fifaliana
+            POSTGRES_DB: crypto
         volumes:
-            - postgres_data:/var/lib/postgresql/data
+            - postgres-data:/var/lib/postgresql/data
         healthcheck:
-            test: [ "CMD", "pg_isready", "-d", "postgres", "-U", "postgres" ]
+            test: [ "CMD", "pg_isready", "-d", "crypto", "-U", "postgres" ]
             timeout: 5s
             retries: 5
             start_period: 60s
         restart: unless-stopped
 
 volumes:
-    postgres_data: {}
+    postgres-data: {}
