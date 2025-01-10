@@ -29,7 +29,7 @@ return new class extends Migration
    FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
 	)");
 
-		DB::statement("CREATE TABLE \"fondUtilisateur\"(
+		DB::statement("CREATE TABLE fondutilisateur(
 			\"idTransFond\" SERIAL,
 			\"entree\" NUMERIC(20,2) NOT NULL,
 			\"sortie\" NUMERIC(20,2) NOT NULL,
