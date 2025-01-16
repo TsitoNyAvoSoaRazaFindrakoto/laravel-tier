@@ -51,8 +51,8 @@ final class FondService
         if($solde<$montant){
             throw new SoldeException($montant,$solde);
         }
-        $fondUtilisateur->sortie=0;
-        $fondUtilisateur->entree=$montant;
+        $fondUtilisateur->sortie=$montant;
+        $fondUtilisateur->entree=0;
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
     }

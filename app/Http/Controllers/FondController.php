@@ -33,5 +33,6 @@ class FondController extends Controller
             "montant"=>"required|numeric|min:1",
         ]);
         $this->fondService->insertRetraitWithoutCrypto($request);
+        return redirect()->route('portefeuille.liste');
     }
 }

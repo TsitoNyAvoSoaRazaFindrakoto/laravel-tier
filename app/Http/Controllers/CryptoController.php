@@ -7,7 +7,7 @@ use App\Models\Crypto;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
 
-class CryptoController extends Controller
+final class CryptoController extends Controller
 {
     protected TransCryptoService $transCryptoService;
     public function __construct(TransCryptoService $transCryptoService){
@@ -55,8 +55,18 @@ class CryptoController extends Controller
         return view('achat.listeAchat',$data);
     }
 
+    public function findListeAchatAll(){
+        $data["achats"]=$this->transCryptoService->findListeAchatAll();
+        return view('achat.listeAchat',$data);
+    }
+
     public function findListVente(Request $request){
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
+        return view('vente.listeVente',$data);
+    }
+
+    public function findListeVenteAll(){
+        $data["ventes"]=$this->transCryptoService->findListVenteAll();
         return view('vente.listeVente',$data);
     }
 

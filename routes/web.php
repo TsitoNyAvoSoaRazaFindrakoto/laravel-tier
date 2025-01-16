@@ -22,6 +22,7 @@ Route::prefix('')->name('utilisateur.')->group(function () {
     Route::get('/inscription',[\App\Http\Controllers\UtilisateurController::class,'inscription'])->name('inscription');
     Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
     Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');
+    Route::get('/login',[\App\Http\Controllers\UtilisateurController::class,'loginFafana'])->name('session');
 });
 
 Route::prefix('/vente')->name('vente.')->group(function () {
@@ -32,6 +33,11 @@ Route::prefix('/vente')->name('vente.')->group(function () {
 
 Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
     Route::get('/liste_portefeuille',[\App\Http\Controllers\CryptoController::class,'fintPorfeuilleUtilisateur'])->name('liste');
+});
+
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/vente',[\App\Http\Controllers\CryptoController::class,'findListeVenteAll'])->name('vente');
+    Route::get('/achat',[\App\Http\Controllers\CryptoController::class,'findListeAchatAll'])->name('achat');
 });
 
 Route::get('dashboard/dashboard', function () {

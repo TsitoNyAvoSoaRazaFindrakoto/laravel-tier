@@ -24,4 +24,9 @@ class UtilisateurController extends Controller
         $request->session()->put('idUtilisateur',$request->input('idUtilisateur'));
         return redirect()->route('achat.liste');
     }
+
+    public function loginFafana(Request $request){
+        $request->session()->put('idUtilisateur',1);
+        return redirect()->route('achat.liste');
+    }
 }

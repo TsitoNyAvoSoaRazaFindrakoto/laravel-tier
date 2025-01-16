@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
+use App\Models\CryptoPrix;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
@@ -25,6 +26,7 @@ final class TransCryptoService
         $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
         $transCrypto->dateTransaction=$today->format('Y-m-d');
         $transCrypto->entree=$request->input('quantite');
+        $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $transCrypto->sortie=0;
         $transCrypto->idCrypto=$request->input('idCrypto');
         $transCrypto->save();
@@ -41,6 +43,7 @@ final class TransCryptoService
         $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
         $transCrypto->dateTransaction=$today->format('Y-m-d');
         $transCrypto->entree=0;
+        $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $transCrypto->sortie=$request->input('quantite');
         $transCrypto->idCrypto=$request->input('idCrypto');
         $transCrypto->save();
@@ -61,6 +64,10 @@ final class TransCryptoService
 
     public function findListeAchat($idUtilisateur){
         return TransCrypto::where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
+    }
+
+    public function findListeAchatAll(){
+        return TransCrypto::where('entree','>',0)->get();
     }
 
     public function insertVente(Request $request){
@@ -93,5 +100,10 @@ final class TransCryptoService
 
     public function findListVente($idUtilisateur):Collection{
         return TransCrypto::where("sortie",">",0)->Where("idUtilisateur",$idUtilisateur)->get();
+    }
+
+    public function findListVenteAll():Collection
+    {
+        return TransCrypto::where("sortie",">",0)->get();
     }
 }
