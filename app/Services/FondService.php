@@ -19,6 +19,7 @@ final class FondService
         $fondUtilisateur = new FondUtilisateur();
         $fondUtilisateur->sortie=$montant;
         $fondUtilisateur->entree=0;
+        $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$request->session()->get('idUtilisateur');
         $fondUtilisateur->save();
     }
@@ -30,6 +31,7 @@ final class FondService
         $montant=$prix*$request->input('quantite');
         $fondUtilisateur->sortie=0;
         $fondUtilisateur->entree=$montant;
+        $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
     }
@@ -39,6 +41,7 @@ final class FondService
         $montant=$request->input('montant');
         $fondUtilisateur->sortie=0;
         $fondUtilisateur->entree=$montant;
+        $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$request->session()->get('idUtilisateur');
         $fondUtilisateur->save();
     }
@@ -51,10 +54,18 @@ final class FondService
         if($solde<$montant){
             throw new SoldeException($montant,$solde);
         }
+        $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->sortie=$montant;
         $fondUtilisateur->entree=0;
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
+    }
+
+    public function findSoldeFilter($idUtilisateur,\DateTimeInterface $dateMax){
+        return FondUtilisateur::selectRaw('sum(entree-sortie) as solde')
+            ->whereDate('dateTransaction','<=',$dateMax)
+            ->where('idUtilisateur',$idUtilisateur)
+            ->first()->solde;
     }
 
     public function findSolde($idUtilisateur){

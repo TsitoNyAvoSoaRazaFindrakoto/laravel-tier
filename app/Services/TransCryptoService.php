@@ -83,6 +83,19 @@ final class TransCryptoService
         }
     }
 
+    public function findStatistiqueTransaction(\DateTimeInterface $dateMax){
+        $transCryptos=TransCrypto::selectRaw('sum(entree*"prixUnitaire") as achat,sum(sortie*"prixUnitaire") as vente, "idUtilisateur"')
+            ->groupBy('idUtilisateur')
+            ->where('dateTransaction','<=',$dateMax->format('Y-m-d H:i:s'))
+            ->orderBy('idUtilisateur','asc')
+            ->get();
+
+        foreach ($transCryptos as $transCrypto){
+            $transCrypto->solde=$this->fondService->findSoldeFilter($transCrypto->idUtilisateur,$dateMax);
+        }
+        return $transCryptos;
+    }
+
     public function findSoldeCrypto($idUtilisateur,$idCrypto){
         return TransCrypto::where('idUtilisateur',$idUtilisateur)
             ->where('idCrypto',$idCrypto)

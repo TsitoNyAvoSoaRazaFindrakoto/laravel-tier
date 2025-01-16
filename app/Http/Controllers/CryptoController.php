@@ -70,6 +70,18 @@ final class CryptoController extends Controller
         return view('vente.listeVente',$data);
     }
 
+    public function statistique(Request $request){
+        $request->validate([
+            "date"=>"date"
+        ]);
+        $date=$request->input('date');
+        if($request->input('date') == null){
+            $date = new \DateTime();
+        }
+        $data["statistiques"]=$this->transCryptoService->findStatistiqueTransaction($date);
+        return view('dashboard.portefeuille',$data);
+    }
+
     public function fintPorfeuilleUtilisateur(Request $request){
         $data["portefeuilles"]=$this->transCryptoService->findPorfeuilleUtilisateur($request->session()->get('idUtilisateur'));
         return view('portefeuille.listePortefeuille',$data);

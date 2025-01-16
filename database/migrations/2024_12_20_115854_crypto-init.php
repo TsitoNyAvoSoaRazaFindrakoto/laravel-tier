@@ -34,6 +34,7 @@ return new class extends Migration
 			\"entree\" NUMERIC(20,2) NOT NULL,
 			\"sortie\" NUMERIC(20,2) NOT NULL,
 			\"idUtilisateur\" INTEGER NOT NULL,
+			\"dateTransaction\" TIMESTAMP NOT NULL,
 			PRIMARY KEY(\"idTransFond\")
 		)");
 
