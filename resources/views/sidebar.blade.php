@@ -62,6 +62,8 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/dashboard") }}">Evolution graphique</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/achat") }}">Liste des achats</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/vente") }}">Liste des ventes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/crypto") }}">Analyse des cryptos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/commission") }}">Analyse des commissions</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/porte-feuille") }}">Liste des porte feuille</a></li>
                 </ul>
             </div>
