@@ -7,22 +7,22 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('dashboard');
+        return $this->getView('dashboard.index',$request);
     }
 
-    public function parametre(){
-        return view('dashboard.parameter');
+    public function parametre(Request $request){
+        return $this->getView('dashboard.parameter',$request);
     }
 
-    public function analyseCommission(){
+    public function analyseCommission(Request $request){
         $data["cryptos"]=Crypto::all();
-        return view('dashboard.analyse.commission',$data);
+        return $this->getView('dashboard.analyse.commission',$request,$data);
     }
 
-    public function analyseCrypto(){
+    public function analyseCrypto(Request $request){
         $data["cryptos"]=Crypto::all();
-        return view('dashboard.analyse.crypto',$data);
+        return $this->getView('dashboard.analyse.crypto',$request,$data);
     }
 }

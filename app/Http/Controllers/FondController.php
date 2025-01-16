@@ -14,18 +14,19 @@ class FondController extends Controller
         $this->fondService = $fondService;
     }
 
-    public function formDepot(){
-        return view('fond.formDepot');
+    public function formDepot(Request $request){
+        return $this->getView('fond.formDepot',$request);
     }
     public function insertDepot(Request $request){
         $request->validate([
             "montant"=>"required|numeric|min:1",
         ]);
         $this->fondService->insertDepotWithoutCrypto($request);
+        return redirect()->back();
     }
 
-    public function formRetrait(){
-        return view('fond.formRetrait');
+    public function formRetrait(Request $request){
+        return $this->getView('fond.formRetrait',$request);
     }
 
     public function insertRetrait(Request $request){

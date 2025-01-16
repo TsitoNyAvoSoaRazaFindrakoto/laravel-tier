@@ -36,6 +36,7 @@ Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
 });
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
     Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');
     Route::get('/analyse/crypto',[\App\Http\Controllers\DashboardController::class,'analyseCrypto'])->name('analyse.crypto');
     Route::get('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommission'])->name('analyse.comission');

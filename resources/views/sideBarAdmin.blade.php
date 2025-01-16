@@ -62,9 +62,20 @@
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/dashboard") }}">Evolution graphique</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/achat") }}">Liste des achats</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/vente") }}">Liste des ventes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/crypto") }}">Analyse des cryptos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/commission") }}">Analyse des commissions</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/porte-feuille") }}">Liste des porte feuille</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#analyse" aria-expanded="false" aria-controls="form-elements">
+                <i class="icon-columns menu-icon"></i>
+                <span class="menu-title">Analyse</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="analyse">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/crypto") }}">Cryptos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/commission") }}">Commissions</a></li>
                 </ul>
             </div>
         </li>

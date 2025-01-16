@@ -13,6 +13,7 @@ class UtilisateurController extends Controller
 
     public function loginPin(Request $request){
         $data['token']=$request->input('token');
+        $request->session()->put('token',$data['token']);
         return view('utilisateur.pin',$data);
     }
 
@@ -21,12 +22,17 @@ class UtilisateurController extends Controller
     }
 
     public function setSession(Request $request){
+        if($request->session()->get('token')!=$request->input('token')){
+            return redirect()->route('utilisateur.login');
+        }
         $request->session()->put('idUtilisateur',$request->input('idUtilisateur'));
+        $request->session()->put('role',$request->input('role'));
         return redirect()->route('achat.liste');
     }
 
     public function loginFafana(Request $request){
         $request->session()->put('idUtilisateur',1);
+        $request->session()->put('role',"Membre simple");
         return redirect()->route('achat.liste');
     }
 }
