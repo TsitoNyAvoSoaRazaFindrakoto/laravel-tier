@@ -17,7 +17,11 @@
             </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
-            <!-- Navbar à droite -->
+            <li class="nav-item nav-settings d-none d-lg-flex">
+                <a class="nav-link" href="{{ url('/') }}">
+                    Deconnection
+                </a>
+            </li>
         </ul>
         <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
             <span class="icon-menu"></span>

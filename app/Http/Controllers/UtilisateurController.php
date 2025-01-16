@@ -27,12 +27,19 @@ class UtilisateurController extends Controller
         }
         $request->session()->put('idUtilisateur',$request->input('idUtilisateur'));
         $request->session()->put('role',$request->input('role'));
+        $request->session()->put('connected',true);
         return redirect()->route('achat.liste');
+    }
+
+    public function logout(Request $request){
+        $request->session()->invalidate();
+        return redirect("/");
     }
 
     public function loginFafana(Request $request){
         $request->session()->put('idUtilisateur',1);
         $request->session()->put('role',"Membre simple");
+        $request->session()->put('connected',true);
         return redirect()->route('achat.liste');
     }
 }
