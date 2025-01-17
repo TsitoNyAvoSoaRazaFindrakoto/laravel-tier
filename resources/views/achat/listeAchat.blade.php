@@ -21,7 +21,7 @@
                     @foreach($achats as $achat)
                     <tr>
                         <td>{{$achat->idTransCrypto}}</td>
-                        <td>{{$achat->prixUnitaire*$achat->entree}}</td>
+                        <td>{{number_format($achat->prixUnitaire*$achat->entree,2)}}</td>
                         <td>{{$achat->entree}}</td>
                         <td>{{$achat->dateTransaction}}</td>
                     </tr>

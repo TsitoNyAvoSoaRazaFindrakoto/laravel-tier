@@ -20,8 +20,8 @@
                         <tbody>
                         @foreach($stats as $stat)
                             <tr>
-                                <td>{{$stat->ecartTypeEchantillon}}</td>
-                                <td>{{$stat->ecartTypePopulation}}</td>
+                                <td>{{ number_format($stat->ecartTypeEchantillon,2) }}</td>
+                                <td>{{ number_format($stat->ecartTypePopulation,2)}}</td>
                                 <td>{{$stat->crypto->crypto}}</td>
                             </tr>
                         @endforeach
@@ -33,7 +33,7 @@
                             <table class="table table-hoverable">
                                 <thead>
                                 <tr>
-                                    <th>{{ $typeAnalyse }}</th>
+                                    <th>{{ number_format($typeAnalyse,2) }}</th>
                                     <th>Cryptomonnaie</th>
                                 </tr>
                                 </thead>

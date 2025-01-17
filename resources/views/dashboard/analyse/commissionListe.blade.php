@@ -18,7 +18,7 @@
                         <tbody>
                         @foreach($stats as $stat)
                             <tr>
-                                <td>{{$stat->stat}}</td>
+                                <td>{{ number_format($stat->stat,2) }}</td>
                                 <td>{{$stat->crypto->crypto}}</td>
                             </tr>
                         @endforeach
