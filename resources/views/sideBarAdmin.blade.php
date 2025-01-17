@@ -60,6 +60,7 @@
             <div class="collapse" id="dashboard">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/dashboard") }}">Evolution graphique</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/parametre") }}">Parametre des commissions</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/achat") }}">Liste des achats</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/vente") }}">Liste des ventes</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/porte-feuille") }}">Liste des porte feuille</a></li>

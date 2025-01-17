@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Config\ParameterConfig;
 use App\Models\Crypto;
 use App\Services\CryptoService;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class DashboardController extends Controller
     }
 
     public function parametre(Request $request){
-        return $this->getView('dashboard.parameter',$request);
+        return $this->getView('dashboard.parameter',$request,ParameterConfig::findCommissionData());
     }
 
     public function analyseCommission(Request $request){
@@ -43,5 +44,14 @@ class DashboardController extends Controller
         $data["stats"]=$this->cryptoService->findStat($request);
         $data["typeAnalyse"]=$request->input("typeAnalyse");
         return $this->getView('dashboard.analyse.cryptoListe',$request,$data);
+    }
+
+    public function parametreUpdate(Request $request){
+        $request->validate([
+            "achatCommission"=>"required|numeric",
+            "venteCommission"=>"required|numeric",
+        ]);
+        ParameterConfig::updateComissionData($request->input("achatCommission"),$request->input("venteCommission"));
+        return redirect()->route('dashboard.parametre');
     }
 }

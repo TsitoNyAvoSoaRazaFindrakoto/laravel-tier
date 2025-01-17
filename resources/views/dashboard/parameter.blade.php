@@ -17,17 +17,16 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="number" name="achatComission" class="form-control" id="floatingInput" placeholder="Achat Comission">
+                                        <input type="number" value="{{ $commission_achat }}" name="achatCommission" class="form-control" id="floatingInput" placeholder="Achat Comission">
                                         <label for="floatingInput">Achat Comission</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="number" name="venteComission" class="form-control" id="floatingInput" placeholder="Vente Comission">
+                                        <input type="number" value="{{ $commission_vente }}" name="venteCommission" class="form-control" id="floatingInput" placeholder="Vente Comission">
                                         <label for="floatingInput">Vente Comission</label>
                                     </div>
                                 </div>
-                                <input type="hidden" value="200" name="montant" class="form-control" id="floatingInput" placeholder="Quantite">
                             </div>
                         </div>
                         <div class="row">
