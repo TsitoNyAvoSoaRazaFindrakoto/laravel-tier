@@ -33,14 +33,14 @@
                             <table class="table table-hoverable">
                                 <thead>
                                 <tr>
-                                    <th>{{ number_format($typeAnalyse,2) }}</th>
+                                    <th>{{ $typeAnalyse }}</th>
                                     <th>Cryptomonnaie</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($stats as $stat)
                                     <tr>
-                                        <td>{{$stat->stat}}</td>
+                                        <td>{{ number_format($stat->stat,2) }}</td>
                                         <td>{{$stat->crypto->crypto}}</td>
                                     </tr>
                                 @endforeach
