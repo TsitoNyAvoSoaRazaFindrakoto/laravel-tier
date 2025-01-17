@@ -11,22 +11,22 @@
             <div class="card">
                 <div class="card-body" style="border: solid 1px;border-radius: 15px;">
                     <h4 class="card-title">Analyse des comission</h4>
-                    <form action="/dashboard/comission" method="post">
+                    <form action="/dashboard/analyse/commission" method="post">
                         @csrf
                         <div id="achat">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
                                         <select name="typeAnalyse" class="form-select" aria-label="Default select example">
-                                            <option value="somme" selected>Somme</option>
-                                            <option value="moyenne">Moyenne</option>
+                                            <option value="Somme" selected>Somme</option>
+                                            <option value="Moyenne">Moyenne</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <select name="idCrypto" class="form-select" aria-label="Default select example">
-                                            <option selected>Crypto</option>
+                                        <select name="crypto" class="form-select" aria-label="Default select example">
+                                            <option value="0" selected>Tous</option>
                                             @foreach($cryptos as $crypto)
                                                 <option value="{{ $crypto->idCrypto  }}">{{ $crypto->crypto  }}</option>
                                             @endforeach

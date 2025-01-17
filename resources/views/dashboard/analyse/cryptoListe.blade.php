@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-body">
                     @if($typeAnalyse=="ecart-type")
-                    <h4 class="card-title">Statitstique ecart-type</h4>
+                    <h4 class="card-title">Statistique ecart-type</h4>
                     <table class="table table-hoverable">
                         <thead>
                         <tr>

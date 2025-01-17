@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Crypto;
+use App\Services\CommissionService;
 use App\Services\CryptoService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
+    public CommissionService $commissionService;
 
-    public function __construct(CryptoService $cryptoService){
+    public function __construct(CryptoService $cryptoService,CommissionService $commissionService){
         $this->cryptoService = $cryptoService;
+        $this->commissionService = $commissionService;
     }
 
     public function index(Request $request)
@@ -43,5 +46,26 @@ class DashboardController extends Controller
         $data["stats"]=$this->cryptoService->findStat($request);
         $data["typeAnalyse"]=$request->input("typeAnalyse");
         return $this->getView('dashboard.analyse.cryptoListe',$request,$data);
+    }
+
+    public function analyseCommissionListe(Request $request){
+        $request->validate([
+            "crypto"=>"required|integer",
+            "typeAnalyse"=>"required",
+            "dateHeureMin"=>"required|date",
+            "dateHeureMax"=>"required|date",
+        ]);
+        $data["stats"]=$this->commissionService->findStat($request);
+        $data["typeAnalyse"]=$request->input("typeAnalyse");
+        return $this->getView('dashboard.analyse.cryptoListe',$request,$data);
+    }
+
+    public function parametreUpdate(Request $request){
+        $request->validate([
+            "achatCommission"=>"required|numeric",
+            "venteCommission"=>"required|numeric",
+        ]);
+        ParameterConfig::updateComissionData($request->input("achatCommission"),$request->input("venteCommission"));
+        return redirect()->route('dashboard.parametre');
     }
 }
