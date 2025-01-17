@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Config\ParameterConfig;
 use App\Models\Crypto;
 use App\Services\CommissionService;
 use App\Services\CryptoService;
@@ -23,7 +24,7 @@ class DashboardController extends Controller
     }
 
     public function parametre(Request $request){
-        return $this->getView('dashboard.parameter',$request);
+        return $this->getView('dashboard.parameter',$request,ParameterConfig::findCommissionData());
     }
 
     public function analyseCommission(Request $request){

@@ -42,6 +42,7 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');
+        Route::post('/parametre',[\App\Http\Controllers\DashboardController::class,'parametreUpdate'])->name('parametre.update');
         Route::get('/analyse/crypto',[\App\Http\Controllers\DashboardController::class,'analyseCrypto'])->name('analyse.crypto');
         Route::post('/analyse/crypto',[\App\Http\Controllers\DashboardController::class,'analyseCryptoListe'])->name('analyse.crypto');
         Route::get('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommission'])->name('analyse.comission');
