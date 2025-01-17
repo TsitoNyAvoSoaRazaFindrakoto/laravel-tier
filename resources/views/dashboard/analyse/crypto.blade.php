@@ -11,17 +11,17 @@
             <div class="card">
                 <div class="card-body" style="border: solid 1px;border-radius: 15px;">
                     <h4 class="card-title">Analyse des cryptos</h4>
-                    <form action="/dashboard/crypto" method="post">
+                    <form action="/dashboard/analyse/crypto" method="post">
                         @csrf
                         <div id="achat">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
                                         <select name="typeAnalyse" class="form-select" aria-label="Default select example">
-                                            <option value="quartile" selected>1er Quartile</option>
-                                            <option value="max">Maximum</option>
-                                            <option value="min">Minimum</option>
-                                            <option value="moyenne">Moyenne</option>
+                                            <option value="1er Quartile" selected>1er Quartile</option>
+                                            <option value="Maximum">Maximum</option>
+                                            <option value="Minimum">Minimum</option>
+                                            <option value="Moyenne">Moyenne</option>
                                             <option value="ecart-type">Ecart-type</option>
                                         </select>
                                     </div>

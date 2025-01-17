@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CryptoPrix extends Model
 {
@@ -12,4 +13,8 @@ class CryptoPrix extends Model
 
 		// Disable timestamps
     public $timestamps = false;
+
+    public function crypto():BelongsTo{
+        return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");
+    }
 }

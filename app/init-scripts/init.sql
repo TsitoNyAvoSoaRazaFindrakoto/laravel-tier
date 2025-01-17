@@ -1,5 +1,5 @@
 -- Insérer des cryptos
-INSERT INTO crypto (crypto) VALUES 
+INSERT INTO crypto (crypto) VALUES
 ('Bitcoin'),
 ('Ethereum'),
 ('Ripple'),
@@ -7,15 +7,22 @@ INSERT INTO crypto (crypto) VALUES
 ('Cardano');
 
 -- Insérer des prix pour les cryptos
-INSERT INTO cryptoPrix (prixUnitaire, dateHeure, idCrypto) VALUES 
+INSERT INTO "cryptoPrix" ("prixUnitaire", "dateHeure", "idCrypto") VALUES
 (30000.00, '2025-01-01 10:00:00', 1),
 (2000.00, '2025-01-01 10:00:00', 2),
 (0.50, '2025-01-01 10:00:00', 3),
 (100.00, '2025-01-01 10:00:00', 4),
 (1.20, '2025-01-01 10:00:00', 5);
 
+INSERT INTO "cryptoPrix" ("prixUnitaire", "dateHeure", "idCrypto") VALUES
+                                                                       (1500.00, '2025-02-01 10:00:00', 1),
+                                                                       (2300.00, '2025-02-01 10:00:00', 2),
+                                                                       (10, '2025-02-01 10:00:00', 3),
+                                                                       (50.00, '2025-02-01 10:00:00', 4),
+                                                                       (10.20, '2025-02-01 10:00:00', 5);
+
 -- Insérer des transactions de fonds utilisateur
-INSERT INTO fondUtilisateur (entree, sortie, idUtilisateur) VALUES 
+INSERT INTO fondUtilisateur (entree, sortie, "idUtilisateur") VALUES
 (1000.00, 0.00, 1),
 (2000.00, 0.00, 2),
 (1500.00, 0.00, 3),
@@ -28,7 +35,7 @@ INSERT INTO fondUtilisateur (entree, sortie, idUtilisateur) VALUES
 (5000.00, 2500.00, 10);
 
 -- Insérer des transactions crypto
-INSERT INTO transCrypto (idUtilisateur, entree, sortie, prixUnitaire, dateTransaction, idCrypto) VALUES 
+INSERT INTO "transCrypto" ("idUtilisateur", entree, sortie, "prixUnitaire", "dateTransaction", "idCrypto") VALUES
 (1, 0.05, 0.00, 30000.00, '2025-01-02 11:00:00', 1),
 (2, 0.10, 0.00, 2000.00, '2025-01-02 12:00:00', 2),
 (3, 0.00, 0.02, 30000.00, '2025-01-03 13:00:00', 1),
@@ -59,3 +66,11 @@ INSERT INTO transCrypto (idUtilisateur, entree, sortie, prixUnitaire, dateTransa
 (8, 1.00, 0.00, 0.50, '2025-01-15 18:00:00', 3),
 (9, 0.00, 0.01, 100.00, '2025-01-16 19:00:00', 4),
 (10, 5.00, 0.00, 1.20, '2025-01-16 20:00:00', 5);
+
+SELECT percentile_cont(0.25) WITHIN GROUP (ORDER BY "prixUnitaire") AS "premierQuartile", "idCrypto"
+FROM "cryptoPrix" group by "idCrypto";
+
+SELECT cast(stddev("prixUnitaire") as double precision) AS "ecartTypeEchantillon",
+       cast(stddev_pop("prixUnitaire") as double precision) AS "ecartTypePopulation",
+       "idCrypto"
+FROM "cryptoPrix" group by "idCrypto";
