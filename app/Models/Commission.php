@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CryptoPrix extends Model
+class Commission extends Model
 {
-    protected $table = 'cryptoPrix';
-    protected $guarded = ["idCryptoPrix"];
-    protected $primaryKey = "idCryptoPrix";
 
-		// Disable timestamps
+    protected $table = 'commission';
+    protected $guarded = ["idCommission"];
+    protected $primaryKey = "idCommission";
     public $timestamps = false;
 
     public function crypto():BelongsTo{

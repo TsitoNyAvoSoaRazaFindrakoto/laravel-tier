@@ -20,7 +20,7 @@
     @include('navbar')
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-        @include('sidebar')
+        @include($sideBar)
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">

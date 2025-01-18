@@ -6,9 +6,8 @@ use App\Exception\SoldeException;
 use App\Models\Crypto;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
-class CryptoController extends Controller
+final class CryptoController extends Controller
 {
     protected TransCryptoService $transCryptoService;
     public function __construct(TransCryptoService $transCryptoService){
@@ -26,13 +25,13 @@ class CryptoController extends Controller
         }
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
-            return view('achat.formAchat',$data);
+            return $this->getView('achat.formAchat',$request,$data);
         }
         $data["message"]="Achat effectue avec succes";
-        return view('achat.formAchat',$data);
+        return $this->getView('achat.formAchat',$request,$data);
     }
 
-    
+
     public function insertVente(Request $request){
         $request->validate([
             "quantite"=>"required|numeric|min:1",
@@ -45,36 +44,58 @@ class CryptoController extends Controller
         }
         catch(\Exception $e){
             $data["message"]=$e->getMessage();
-            return view('vente.formVente',$data);
+            return $this->getView('vente.formVente',$request,$data);
         }
         $data["message"]="Vente reussie";
-        return view('vente.formVente',$data);
+        return $this->getView('vente.formVente',$request,$data);
     }
 
     public function findListeAchat(Request $request){
         $data["achats"]=$this->transCryptoService->findListeAchat($request->session()->get('idUtilisateur'));
-        return view('achat.listeAchat',$data);
+        return $this->getView('achat.listeAchat',$request,$data);
     }
-    
+
+    public function findListeAchatAll(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchatAll();
+        return $this->getView('achat.listeAchat',$request,$data);
+    }
+
     public function findListVente(Request $request){
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
-        return view('vente.listeVente',$data);
+        return $this->getView('vente.listeVente',$request,$data);
+    }
+
+    public function findListeVenteAll(Request $request){
+        $data["ventes"]=$this->transCryptoService->findListVenteAll();
+        return $this->getView('vente.listeVente',$request,$data);
+    }
+
+    public function statistique(Request $request){
+        $request->validate([
+            "date"=>"date"
+        ]);
+        $date=$request->input('date');
+        if($request->input('date') == null){
+            $date = new \DateTime();
+        }
+        $data["statistiques"]=$this->transCryptoService->findStatistiqueTransaction($date);
+        return $this->getView('dashboard.portefeuille',$request,$data);
     }
 
     public function fintPorfeuilleUtilisateur(Request $request){
         $data["portefeuilles"]=$this->transCryptoService->findPorfeuilleUtilisateur($request->session()->get('idUtilisateur'));
-        return view('portefeuille.listePortefeuille',$data);
+        return $this->getView('portefeuille.listePortefeuille',$request,$data);
     }
 
-    public function formAchat(){
+    public function formAchat(Request $request){
         $data["cryptos"] = Crypto::all();
         $data["message"] = "Insertion d'achat";
-        return view('achat.formAchat',$data);
+        return $this->getView('achat.formAchat',$request,$data);
     }
 
-    public function formVente(){
+    public function formVente(Request $request){
         $data["cryptos"] = Crypto::all();
         $data["message"] = "Insertion de vente";
-        return view('vente.formVente',$data);
+        return $this->getView('vente.formVente',$request,$data);
     }
 }

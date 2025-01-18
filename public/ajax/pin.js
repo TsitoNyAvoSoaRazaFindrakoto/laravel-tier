@@ -10,7 +10,7 @@ pinApp.controller('pinController', function($scope, $http,$location) {
             }
         }).then(function(response){
             $scope.data=response.data;
-            window.location.href = `http://127.0.0.1:8000/session?idUtilisateur=${$scope.data.data.idUtilisateur}&pseudo=${$scope.data.data.pseudo}`;
+            window.location.href = `http://127.0.0.1:8000/session?idUtilisateur=${$scope.data.data.idUtilisateur}&pseudo=${$scope.data.data.pseudo}&role=${$scope.data.data.role.roleName}&token=${token}`;
         });
     }
 });
