@@ -7,12 +7,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FondUtilisateur extends Model
 {
-    protected $table = 'fondutilisateur';
+    protected $table = 'fondUtilisateur';
     protected $guarded = ["idTransFond"];
     protected $primaryKey = "idTransFond";
     public $timestamps = false;
 
-    public function crypto():BelongsTo{
-        return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");
+    public function getOperationName():string{
+        if($this->sortie==0){
+            return "Retrait";
+        }
+        return "Depot";
+    }
+
+    public function getMontant():float{
+        if($this->sortie==0){
+            return $this->entree;
+        }
+        return $this->sortie;
+    }
+
+    public function utilisateur():BelongsTo{
+        return $this->belongsTo(Utilisateur::class,"idUtilisateur","idUtilisateur");
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
 use App\Models\CryptoPrix;
+use App\Models\FondUtilisateur;
 use App\Models\TransCrypto;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
@@ -64,6 +65,26 @@ final class TransCryptoService
 
     public function findListeAchat($idUtilisateur){
         return TransCrypto::where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
+    }
+
+    public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur,$idCrypto): \Illuminate\Support\Collection
+    {
+        if($dateMin==null){
+            $dateMin=new \DateTime("0001-01-01");
+            $dateMin=$dateMin->format('Y-m-d');
+        }
+        if($dateMax==null){
+            $dateMax=new \DateTime("9999-12-31");
+            $dateMax=$dateMax->format('Y-m-d');
+        }
+        $query=TransCrypto::with('utilisateur','crypto')->where('dateTransaction','>=',$dateMin)->where('dateTransaction','<=',$dateMax);
+        if($idCrypto!=0){
+            $query=$query->where('idCrypto',$idCrypto);
+        }
+        if($idUtilisateur!=0){
+            $query=$query->where('idUtilisateur',$idUtilisateur);
+        }
+        return $query->get();
     }
 
     public function findListeAchatAll(){
