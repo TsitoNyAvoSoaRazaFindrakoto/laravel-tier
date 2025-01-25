@@ -19,19 +19,14 @@ class FondController extends Controller
         return $this->getView('fond.formDepot',$request);
     }
 
-    public function findListeDepot(Request $request){
-        $data["depots"]=FondUtilisateurRequest::where('entree','>',0)->get();
-        return $this->getView('fond.listeDepot',$request,$data);
-    }
-
-    public function findListeRetrait(Request $request){
-        $data["depots"]=FondUtilisateurRequest::where('sortie','>',0)->get();
-        return $this->getView('fond.listeDepot',$request,$data);
+    public function findTransactionRequest(Request $request){
+        $data["transactionsFond"]=FondUtilisateurRequest::all();
+        return $this->getView('utilisateur.transactionRequest',$request,$data);
     }
 
     public function acceptTransaction(string $idTransaction,Request $request){
         $this->fondService->acceptTransaction($idTransaction);
-        return $this->getView('fond.listeDepot',$request);
+        return redirect()->back();
     }
 
     public function insertDepot(Request $request){

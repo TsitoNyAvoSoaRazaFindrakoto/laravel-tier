@@ -69,7 +69,7 @@
                                 <td>{{ $transaction->getOperationName() }}</td>
                                 <td>{{ number_format($transaction->getMontant(), 2)  }}</td>
                                 <td>{{ $transaction->dateTransaction }}</td>
-                                <td><a href="/liste/transaction/{{$transaction->utilisateur->idUtilisateur}}">{{ $transaction->utilisateur->pseudo }}</a></td>
+                                <td><a href="/transaction/details/{{$transaction->utilisateur->idUtilisateur}}-utilisateur">{{ $transaction->utilisateur->pseudo }}</a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -79,7 +79,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Historique des achats/ventes</h4>
@@ -100,7 +100,7 @@
                                 <td>{{ number_format($transaction->getMontant(), 2)  }}</td>
                                 <td>{{ $transaction->dateTransaction }}</td>
                                 <td>{{ $transaction->crypto->crypto }}</td>
-                                <td><a href="/liste/transaction/{{$transaction->utilisateur->idUtilisateur}}">{{ $transaction->utilisateur->pseudo }}</a></td>
+                                <td><a href="/transaction/details/{{$transaction->utilisateur->idUtilisateur}}-utilisateur">{{ $transaction->utilisateur->pseudo }}</a></td>
                             </tr>
                         @endforeach
                         </tbody>

@@ -18,15 +18,16 @@ class FondUtilisateurRequest extends Model
         $fondUtilisateur->entree=$this->entree;
         $fondUtilisateur->dateTransaction=$this->dateTransaction;
         $fondUtilisateur->dateValidation=new \DateTime();
+        $fondUtilisateur->dateValidation=$fondUtilisateur->dateValidation->format('Y-m-d H:i:s');
         $fondUtilisateur->idUtilisateur=$this->idUtilisateur;
         return $fondUtilisateur;
     }
 
     public function getOperationName():string{
         if($this->sortie==0){
-            return "Retrait";
+            return "Depot";
         }
-        return "Depot";
+        return "Retrait";
     }
 
     public function getMontant():float{
