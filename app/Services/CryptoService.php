@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CryptoPrix;
+use App\Models\FondUtilisateur;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 

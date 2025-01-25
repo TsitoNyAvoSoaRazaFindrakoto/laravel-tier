@@ -1,3 +1,14 @@
+INSERT INTO utilisateur("idUtilisateur",pseudo) values(1,'Lizka'),
+                                                      (2,'Rebeca'),
+                                                      (3,'Louis'),
+                                                      (4,'Ihora'),
+                                                      (5,'Ryan'),
+                                                      (6,'John'),
+                                                      (7,'Doe'),
+                                                      (8,'Flight'),
+                                                      (9,'Koala'),
+                                                      (10,'Rianala');
+
 -- Insérer des cryptos
 INSERT INTO crypto (crypto) VALUES
 ('Bitcoin'),
@@ -35,17 +46,17 @@ INSERT INTO "cryptoPrix" ("prixUnitaire", "dateHeure", "idCrypto") VALUES
                                                                        (10.20, '2025-02-01 10:00:00', 5);
 
 -- Insérer des transactions de fonds utilisateur
-INSERT INTO fondUtilisateur (entree, sortie, "idUtilisateur") VALUES
-(1000.00, 0.00, 1),
-(2000.00, 0.00, 2),
-(1500.00, 0.00, 3),
-(500.00, 0.00, 4),
-(100.00, 0.00, 5),
-(3000.00, 500.00, 6),
-(1000.00, 200.00, 7),
-(500.00, 50.00, 8),
-(10000.00, 1000.00, 9),
-(5000.00, 2500.00, 10);
+INSERT INTO "fondUtilisateur" (entree, sortie, "idUtilisateur","dateTransaction") VALUES
+(1000.00, 0.00, 1, '2025-01-02 11:00:00'),
+(2000.00, 0.00, 2, '2025-01-02 11:00:00'),
+(1500.00, 0.00, 3, '2025-01-02 11:00:00'),
+(500.00, 0.00, 4, '2025-01-02 11:00:00'),
+(100.00, 0.00, 5, '2025-01-02 11:00:00'),
+(3000.00, 500.00, 6, '2025-01-02 11:00:00'),
+(1000.00, 200.00, 7, '2025-01-02 11:00:00'),
+(500.00, 50.00, 8, '2025-01-02 11:00:00'),
+(10000.00, 1000.00, 9, '2025-01-02 11:00:00'),
+(5000.00, 2500.00, 10, '2025-01-02 11:00:00');
 
 -- Insérer des transactions crypto
 INSERT INTO "transCrypto" ("idUtilisateur", entree, sortie, "prixUnitaire", "dateTransaction", "idCrypto") VALUES
