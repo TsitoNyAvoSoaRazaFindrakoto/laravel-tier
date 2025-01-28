@@ -36,6 +36,8 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ url('/depot') }}">Insertion Depot</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/retrait') }}">Insertion Retrait</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/transaction/request') }}">Voir les requetes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/transaction/historique') }}">Voir les historiques</a></li>
                 </ul>
             </div>
         </li>
@@ -77,18 +79,6 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/crypto") }}">Cryptos</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/commission") }}">Commissions</a></li>
-                </ul>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#request" aria-expanded="false" aria-controls="form-elements">
-                <i class="icon-columns menu-icon"></i>
-                <span class="menu-title">Requetes</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="request">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="{{ url("dashboard/analyse/crypto") }}">Voir requetes</a></li>
                 </ul>
             </div>
         </li>
