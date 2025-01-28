@@ -8,7 +8,7 @@ use App\Services\CommissionService;
 use App\Services\CryptoService;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
     public CommissionService $commissionService;

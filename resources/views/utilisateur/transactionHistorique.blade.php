@@ -1,6 +1,5 @@
 @extends('template')
 @section('title','Historique - Crypto')
-
 @section('content')
     <div class="row mb-3">
         <div class="col-md-6">
@@ -52,7 +51,7 @@
     <div class="row mb-3">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" ng-app="transactionApp" ng-controller="transactionController">
                     <h4 class="card-title">Historique des opération</h4>
                     <table class="table table-hover">
                         <thead>
@@ -64,14 +63,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($transactionsFond as $transaction)
-                            <tr>
-                                <td>{{ $transaction->getOperationName() }}</td>
-                                <td>{{ number_format($transaction->getMontant(), 2)  }}</td>
-                                <td>{{ $transaction->dateTransaction }}</td>
-                                <td><a href="/liste/transaction/{{$transaction->utilisateur->idUtilisateur}}">{{ $transaction->utilisateur->pseudo }}</a></td>
+
+                            <tr ng-for="transaction in transactionsFond">
+                                <td>Vente</td>
+                                <td>0</td>
+                                <td ng-bind="transaction.dateTransaction"></td>
+                                <td><a ng-bind="transaction.utilisateur.pseudo" href="/transaction/details/1-utilisateur"></a></td>
                             </tr>
-                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -109,4 +107,13 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script>
+        const dataFonds=<?php echo($transactionsFond) ?>;
+        console.log(dataFonds);
+    </script>
+    <script src="{{ asset('angular/angular.min.js') }}"></script>
+    <script src="{{ asset('angular/angular-route.js') }}"></script>
+    <script src="{{ asset('app-angular/login.js') }}"></script>
 @endsection

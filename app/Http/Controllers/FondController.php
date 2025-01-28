@@ -7,7 +7,7 @@ use App\Models\FondUtilisateurRequest;
 use App\Services\FondService;
 use Illuminate\Http\Request;
 
-class FondController extends Controller
+final class FondController extends Controller
 {
     protected FondService $fondService;
     public function __construct(FondService $fondService)
