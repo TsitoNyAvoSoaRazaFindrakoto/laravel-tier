@@ -39,7 +39,6 @@ final class DashboardController extends Controller
 
     public function analyseCryptoListe(Request $request){
         $request->validate([
-            "crypto"=>"required|integer",
             "typeAnalyse"=>"required",
             "dateHeureMin"=>"required|date",
             "dateHeureMax"=>"required|date",
