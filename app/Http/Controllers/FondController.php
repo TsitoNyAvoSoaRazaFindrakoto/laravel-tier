@@ -20,12 +20,21 @@ final class FondController extends Controller
     }
 
     public function findTransactionRequest(Request $request){
-        $data["transactionsFond"]=FondUtilisateurRequest::all();
+        $fonds=FondUtilisateurRequest::with('utilisateur')->get();
+        foreach ($fonds as $fond){
+            $fond->setCalculatedValue();
+        }
+        $data["transactionsFond"]=$fonds;
         return $this->getView('utilisateur.transactionRequest',$request,$data);
     }
 
     public function acceptTransaction(string $idTransaction,Request $request){
         $this->fondService->acceptTransaction($idTransaction);
+        return redirect()->back();
+    }
+
+    public function declineTransaction(string $idTransaction,Request $request){
+        $this->fondService->declineTransaction($idTransaction);
         return redirect()->back();
     }
 

@@ -84,7 +84,11 @@ final class TransCryptoService
         if($idUtilisateur!=0){
             $query=$query->where('idUtilisateur',$idUtilisateur);
         }
-        return $query->get();
+        $responses = $query->get();
+        foreach ($responses as $response) {
+            $response->setCalculatedValue();
+        }
+        return $responses;
     }
 
     public function findListeAchatAll(){

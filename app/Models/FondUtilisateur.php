@@ -26,6 +26,21 @@ class FondUtilisateur extends Model
         return $this->sortie;
     }
 
+    public function setCalculatedValue(){
+        if($this->sortie==0){
+            $this->operation = "Retrait";
+        }
+        else{
+            $this->operation="Depot";
+        }
+        if($this->sortie==0){
+            $this->montant=$this->entree;
+        }
+        else{
+            $this->montant=$this->sortie;
+        }
+    }
+
     public function utilisateur():BelongsTo{
         return $this->belongsTo(Utilisateur::class,"idUtilisateur","idUtilisateur");
     }
