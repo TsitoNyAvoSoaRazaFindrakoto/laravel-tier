@@ -27,6 +27,7 @@ final class UtilisateurController extends Controller
     }
 
     public function loginPin(Request $request){
+        $data["url"]=$request->input('url');
         $data['token']=$request->input('token');
         $request->session()->put('token',$data['token']);
         return view('utilisateur.pin',$data);

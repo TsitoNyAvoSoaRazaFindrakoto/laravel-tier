@@ -15,6 +15,7 @@
                         <th>Montant</th>
                         <th>Quantite</th>
                         <th>Date de transaction</th>
+                        <th>Cryptomonnaie</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -24,6 +25,7 @@
                         <td>{{number_format($achat->prixUnitaire*$achat->entree,2)}}</td>
                         <td>{{$achat->entree}}</td>
                         <td>{{$achat->dateTransaction}}</td>
+                        <td>{{$achat->crypto->crypto}}</td>
                     </tr>
                     @endforeach
                     </tbody>

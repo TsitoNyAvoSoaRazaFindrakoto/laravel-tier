@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Liste des ventes</h4>
@@ -15,6 +15,7 @@
                         <th>Montant</th>
                         <th>Quantite</th>
                         <th>Date de transaction</th>
+                        <th>Cryptomonnaie</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -24,6 +25,7 @@
                         <td>{{number_format($vente->prixUnitaire*$vente->sortie, 2)}}</td>
                         <td>{{$vente->sortie}}</td>
                         <td>{{$vente->dateTransaction}}</td>
+                        <td>{{$vente->crypto->crypto}}</td>
                     </tr>
                     @endforeach
                     </tbody>

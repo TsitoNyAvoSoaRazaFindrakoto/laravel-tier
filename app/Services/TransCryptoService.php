@@ -11,6 +11,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 final class TransCryptoService
 {
@@ -22,6 +23,11 @@ final class TransCryptoService
     }
 
     public function insertEntree(Request $request){
+        $transCrypto = $this->createEntree($request);
+        $transCrypto->save();
+    }
+
+    public function createEntree(Request $request){
         $today=new DateTime();
         $transCrypto = new TransCrypto();
         $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
@@ -30,7 +36,7 @@ final class TransCryptoService
         $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $transCrypto->sortie=0;
         $transCrypto->idCrypto=$request->input('idCrypto');
-        $transCrypto->save();
+        return $transCrypto;
     }
 
     public function insertSortie(Request $request){
@@ -50,21 +56,40 @@ final class TransCryptoService
         $transCrypto->save();
     }
 
-    public function insertAchat(Request $request){
+    public function insertAchatValidated(Request $request)
+    {
         try{
             DB::beginTransaction();
-            $this->fondService->insertRetrait($request);
-            $this->insertEntree($request);
+            $request->session()->get('retrait')->save();
+            $request->session()->get('entree')->save();
             DB::commit();
         }
-        catch(SoldeException $e){
+        catch (SoldeCryptoException $e){
             DB::rollBack();
             throw $e;
         }
     }
 
+    public function insertAchat(Request $request){
+        try{
+            $request->session()->put("retrait",$this->fondService->createRetrait($request));
+            $request->session()->put("entree",$this->createEntree($request));
+        }
+        catch(SoldeException $e){
+            throw $e;
+        }
+        $response = Http::get('localhost:8082/utilisateur/utilisateur/pin/request/'.$request->session()->get("idUtilisateur"));
+
+        // Vérifier la réponse
+        if ($response->successful()) {
+            return $response->json(); // Convertit la réponse JSON en tableau PHP
+        } else {
+            return $response->status(); // Renvoie le code HTTP d'erreur
+        }
+    }
+
     public function findListeAchat($idUtilisateur){
-        return TransCrypto::where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
+        return TransCrypto::with('crypto')->where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
     }
 
     public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur,$idCrypto): \Illuminate\Support\Collection
@@ -137,7 +162,7 @@ final class TransCryptoService
     }
 
     public function findListVente($idUtilisateur):Collection{
-        return TransCrypto::where("sortie",">",0)->Where("idUtilisateur",$idUtilisateur)->get();
+        return TransCrypto::with('crypto')->where("sortie",">",0)->Where("idUtilisateur",$idUtilisateur)->get();
     }
 
     public function findListVenteAll():Collection

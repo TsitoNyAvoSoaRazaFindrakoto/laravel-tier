@@ -39,10 +39,10 @@ class FondUtilisateurRequest extends Model
 
     public function setCalculatedValue(){
         if($this->sortie==0){
-            $this->operation = "Retrait";
+            $this->operation = "Depot";
         }
         else{
-            $this->operation="Depot";
+            $this->operation="Retrait";
         }
         if($this->sortie==0){
             $this->montant=$this->entree;

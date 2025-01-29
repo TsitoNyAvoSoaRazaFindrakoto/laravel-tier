@@ -29,8 +29,8 @@
                             <td>[[ transaction.montant ]]</td>
                             <td>[[ transaction.dateTransaction ]]</td>
                             <td>[[ transaction.utilisateur.pseudo ]]</td>
-                            <td><a href="/transaction/accept/[[transaction.idUtilisateur]]">Accepter</a></td>
-                            <td><a href="/transaction/decline/[[transaction.idUtilisateur]]">Refuser</a></td>
+                            <td><a href="/transaction/accept/[[transaction.idTransFondRequest]]">Accepter</a></td>
+                            <td><a href="/transaction/decline/[[transaction.idTransFondRequest]]">Refuser</a></td>
                         </tr>
                         </tbody>
                     </table>

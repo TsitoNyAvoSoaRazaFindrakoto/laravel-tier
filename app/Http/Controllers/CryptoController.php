@@ -21,16 +21,19 @@ final class CryptoController extends Controller
         ]);
         $data["cryptos"] = Crypto::all();
         try{
-            $this->transCryptoService->insertAchat($request);
+            $response=$this->transCryptoService->insertAchat($request);
+            return redirect("/pin?token=".$response["data"]."&url=/achat/validated");
         }
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
             return $this->getView('achat.formAchat',$request,$data);
         }
-        $data["message"]="Achat effectue avec succes";
-        return $this->getView('achat.formAchat',$request,$data);
     }
 
+    public function insertAchatValidated(Request $request){
+        $this->transCryptoService->insertAchatValidated($request);
+        return redirect("/achat");
+    }
 
     public function insertVente(Request $request){
         $request->validate([

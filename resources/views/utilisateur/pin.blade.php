@@ -92,6 +92,10 @@
     </div>
 </div>
 </body>
+<script>
+    const urlGiven="<?php echo($url) ?>";
+    console.log(urlGiven);
+</script>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
 <script src="{{ asset('app-angular/pin.js') }}"></script>

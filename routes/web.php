@@ -16,6 +16,7 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     Route::prefix('/achat')->name('achat.')->group(function () {
         Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
         Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
+        Route::get('/validated',[\App\Http\Controllers\CryptoController::class,'insertAchatValidated'])->name('insert');
         Route::get('/liste_achat',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
     });
     Route::prefix('/vente')->name('vente.')->group(function () {

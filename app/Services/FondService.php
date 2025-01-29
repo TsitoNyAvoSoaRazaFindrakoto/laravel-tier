@@ -11,6 +11,11 @@ use Illuminate\Support\Collection;
 final class FondService
 {
     public function insertRetrait(Request $request){
+        $fondUtilisateur=$this->createRetrait($request);
+        $fondUtilisateur->save();
+    }
+
+    public function createRetrait(Request $request):FondUtilisateur{
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $prix=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $montant=$prix*$request->input('quantite');
@@ -23,7 +28,7 @@ final class FondService
         $fondUtilisateur->entree=0;
         $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$request->session()->get('idUtilisateur');
-        $fondUtilisateur->save();
+        return $fondUtilisateur;
     }
 
     public function insertDepot(Request $request){
