@@ -62,7 +62,7 @@ final class CryptoService
 
     public function findMin($idCryptos,$dateHeureMin,$dateHeureMax):Collection{
         return CryptoPrix::selectRaw('min("prixUnitaire") AS "stat", "idCrypto"')
-            ->where(function (Builder $query) use ($idCrypto){
+            ->where(function (Builder $query) use ($idCryptos){
                 for ($i=0;$i<count($idCryptos) ;$i++){
                     if($i==0){
                         $query->where('idCrypto',$idCryptos[$i]);
