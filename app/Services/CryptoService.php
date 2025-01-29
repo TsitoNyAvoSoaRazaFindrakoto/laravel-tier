@@ -6,6 +6,7 @@ use App\Models\Crypto;
 use App\Models\CryptoPrix;
 use App\Models\FondUtilisateur;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 final class CryptoService
@@ -26,6 +27,16 @@ final class CryptoService
             ->where('dateHeure','<=',$dateHeureMax)
             ->groupBy('idCrypto')
             ->get();
+    }
+
+    public function findEvolutionChart($idCrypto){
+        $cryptoEvolution=CryptoPrix::with('crypto')->selectRaw('"dateHeure" as label, "prixUnitaire" as data')
+            ->where('idCrypto',$idCrypto)
+            ->orderBy('dateHeure','desc')
+            ->limit(10)
+            ->get();
+        $cryptoEvolution = $cryptoEvolution->sortBy('label');
+        return $cryptoEvolution;
     }
 
     public function findFirstQuartileAll($dateHeureMin,$dateHeureMax):Collection{

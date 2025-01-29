@@ -20,7 +20,11 @@
     @include('navbar')
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-        @include($sideBar)
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                @include($sideBar)
+            </ul>
+        </nav>
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">

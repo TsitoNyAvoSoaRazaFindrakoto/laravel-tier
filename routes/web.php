@@ -48,6 +48,7 @@ Route::prefix('')->name('utilisateur.')->group(function () {
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
+        Route::get('/crypto/{idCrypto}',[\App\Http\Controllers\DashboardController::class,'cryptoPrix'])->name('crypto');
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');
