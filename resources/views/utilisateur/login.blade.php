@@ -98,6 +98,6 @@
 </body>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
-<script src="{{ asset('app-angular/login.js') }}"></script>
+<script src="{{ asset('ajax/login.js') }}"></script>
 <script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script>
 </html>

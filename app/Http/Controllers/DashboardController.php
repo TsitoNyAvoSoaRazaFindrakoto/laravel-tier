@@ -8,7 +8,7 @@ use App\Services\CommissionService;
 use App\Services\CryptoService;
 use Illuminate\Http\Request;
 
-final class DashboardController extends Controller
+class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
     public CommissionService $commissionService;
@@ -39,6 +39,7 @@ final class DashboardController extends Controller
 
     public function analyseCryptoListe(Request $request){
         $request->validate([
+            "crypto"=>"required|integer",
             "typeAnalyse"=>"required",
             "dateHeureMin"=>"required|date",
             "dateHeureMax"=>"required|date",

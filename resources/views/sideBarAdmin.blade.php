@@ -36,8 +36,6 @@
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"><a class="nav-link" href="{{ url('/depot') }}">Insertion Depot</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/retrait') }}">Insertion Retrait</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/transaction/request') }}">Voir les requetes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/transaction/historique') }}">Voir les historiques</a></li>
                 </ul>
             </div>
         </li>
