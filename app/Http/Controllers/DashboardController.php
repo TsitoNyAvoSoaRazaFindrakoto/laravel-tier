@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Config\ParameterConfig;
+use App\Dto\Chart;
 use App\Models\Crypto;
 use App\Services\CommissionService;
 use App\Services\CryptoService;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
     public CommissionService $commissionService;
@@ -18,9 +19,24 @@ class DashboardController extends Controller
         $this->commissionService = $commissionService;
     }
 
+    public function cryptoPrix(int $idCrypto){
+        return Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
+    }
+
     public function index(Request $request)
     {
-        return $this->getView('dashboard.index',$request);
+        $request->validate([
+            "idCrypto"=>'integer'
+        ]);
+        $data["cryptos"]=Crypto::all();
+        $idCrypto=$request->input('idCrypto');
+        if($idCrypto==null){
+            $idCrypto=$data["cryptos"][0]->idCrypto;
+        }
+        $data["evolutionCryptos"]=Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
+        $data["idCrypto"]=$idCrypto;
+        $data["crypto"]=Crypto::findOrFail($idCrypto);
+        return $this->getView('dashboard.index',$request,$data);
     }
 
     public function parametre(Request $request){
@@ -39,7 +55,6 @@ class DashboardController extends Controller
 
     public function analyseCryptoListe(Request $request){
         $request->validate([
-            "crypto"=>"required|integer",
             "typeAnalyse"=>"required",
             "dateHeureMin"=>"required|date",
             "dateHeureMax"=>"required|date",

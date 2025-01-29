@@ -20,7 +20,11 @@
     @include('navbar')
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-        @include($sideBar)
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                @include($sideBar)
+            </ul>
+        </nav>
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">
@@ -63,6 +67,8 @@
 <!-- endinject -->
 <!-- Custom js for this page-->
 <script src="{{ asset('skydash/js/dashboard.js') }}"></script>
+
+@yield('script')
 <!-- End custom js for this page-->
 </body>
 

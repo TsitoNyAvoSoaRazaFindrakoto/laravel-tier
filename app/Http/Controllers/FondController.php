@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\FondUtilisateur;
+use App\Models\FondUtilisateurRequest;
 use App\Services\FondService;
 use Illuminate\Http\Request;
 
-class FondController extends Controller
+final class FondController extends Controller
 {
     protected FondService $fondService;
     public function __construct(FondService $fondService)
@@ -17,6 +18,26 @@ class FondController extends Controller
     public function formDepot(Request $request){
         return $this->getView('fond.formDepot',$request);
     }
+
+    public function findTransactionRequest(Request $request){
+        $fonds=FondUtilisateurRequest::with('utilisateur')->get();
+        foreach ($fonds as $fond){
+            $fond->setCalculatedValue();
+        }
+        $data["transactionsFond"]=$fonds;
+        return $this->getView('utilisateur.transactionRequest',$request,$data);
+    }
+
+    public function acceptTransaction(string $idTransaction,Request $request){
+        $this->fondService->acceptTransaction($idTransaction);
+        return redirect()->back();
+    }
+
+    public function declineTransaction(string $idTransaction,Request $request){
+        $this->fondService->declineTransaction($idTransaction);
+        return redirect()->back();
+    }
+
     public function insertDepot(Request $request){
         $request->validate([
             "montant"=>"required|numeric|min:1",

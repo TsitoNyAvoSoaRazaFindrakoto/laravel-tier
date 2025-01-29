@@ -5,18 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FondUtilisateur extends Model
+class FondUtilisateurRequest extends Model
 {
-    protected $table = 'fondUtilisateur';
-    protected $guarded = ["idTransFond"];
-    protected $primaryKey = "idTransFond";
+    protected $table = 'fondUtilisateurRequest';
+    protected $guarded = ["idTransFondRequest"];
+    protected $primaryKey = "idTransFondRequest";
     public $timestamps = false;
+
+    public function accept():FondUtilisateur{
+        $fondUtilisateur = new FondUtilisateur();
+        $fondUtilisateur->sortie=$this->sortie;
+        $fondUtilisateur->entree=$this->entree;
+        $fondUtilisateur->dateTransaction=$this->dateTransaction;
+        $fondUtilisateur->dateValidation=new \DateTime();
+        $fondUtilisateur->dateValidation=$fondUtilisateur->dateValidation->format('Y-m-d H:i:s');
+        $fondUtilisateur->idUtilisateur=$this->idUtilisateur;
+        return $fondUtilisateur;
+    }
 
     public function getOperationName():string{
         if($this->sortie==0){
-            return "Retrait";
+            return "Depot";
         }
-        return "Depot";
+        return "Retrait";
     }
 
     public function getMontant():float{
