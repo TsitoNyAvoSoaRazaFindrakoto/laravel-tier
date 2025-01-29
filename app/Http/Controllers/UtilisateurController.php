@@ -9,7 +9,7 @@ use App\Services\TransCryptoService;
 use App\Services\UtilisateurService;
 use Illuminate\Http\Request;
 
-class UtilisateurController extends Controller
+final class UtilisateurController extends Controller
 {
 
     private UtilisateurService $utilisateurService;
@@ -48,7 +48,7 @@ class UtilisateurController extends Controller
         $data["dateMax"]=$request->input("dateMax");
         $data["cryptos"]=Crypto::all();
         $data["idCrypto"]=$request->input("idCrypto");
-        $data["formSubmit"]="/liste/transaction/historique";
+        $data["formSubmit"]="/transaction/historique";
         return $this->getView("utilisateur.transactionHistorique",$request,$data);
     }
 
@@ -64,7 +64,7 @@ class UtilisateurController extends Controller
         $data["dateMax"]=$request->input("dateMax");
         $data["cryptos"]=Crypto::all();
         $data["idCrypto"]=$request->input("idCrypto");
-        $data["formSubmit"]="/liste/transaction/".$idUtilisateur;
+        $data["formSubmit"]="/transaction/".$idUtilisateur;
         return $this->getView("utilisateur.transactionHistorique",$request,$data);
     }
 

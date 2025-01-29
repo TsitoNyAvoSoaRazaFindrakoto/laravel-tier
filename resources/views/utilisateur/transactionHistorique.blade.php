@@ -1,6 +1,5 @@
 @extends('template')
 @section('title','Historique - Crypto')
-
 @section('content')
     <div class="row mb-3">
         <div class="col-md-6">
@@ -49,11 +48,18 @@
             </div>
         </div>
     </div>
+    <div ng-app="transactionApp" ng-controller="transactionController">
     <div class="row mb-3">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Historique des opération</h4>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" ng-model="utilisateur" class="form-control" id="floatingInput" placeholder="Utilisateur">
+                            <label for="floatingInput">Utilisateur</label>
+                        </div>
+                    </div>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -64,14 +70,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($transactionsFond as $transaction)
-                            <tr>
-                                <td>{{ $transaction->getOperationName() }}</td>
-                                <td>{{ number_format($transaction->getMontant(), 2)  }}</td>
-                                <td>{{ $transaction->dateTransaction }}</td>
-                                <td><a href="/transaction/details/{{$transaction->utilisateur->idUtilisateur}}-utilisateur">{{ $transaction->utilisateur->pseudo }}</a></td>
+                            <tr ng-repeat="transaction in transactionsFond | filter:utilisateur">
+                                <td ng-bind="transaction.operation"></td>
+                                <td ng-bind="transaction.montant"></td>
+                                <td ng-bind="transaction.dateTransaction"></td>
+                                <td><a ng-bind="transaction.utilisateur.pseudo" href="/transaction/details/[[transaction.idUtilisateur]]-utilisateur"></a></td>
                             </tr>
-                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -83,6 +87,12 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Historique des achats/ventes</h4>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" ng-model="utilisateurAchat" class="form-control" id="floatingInput" placeholder="Utilisateur">
+                            <label for="floatingInput">Utilisateur</label>
+                        </div>
+                    </div>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -94,19 +104,27 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($transactionsCrypto as $transaction)
-                            <tr>
-                                <td>{{ $transaction->getOperationName() }}</td>
-                                <td>{{ number_format($transaction->getMontant(), 2)  }}</td>
-                                <td>{{ $transaction->dateTransaction }}</td>
-                                <td>{{ $transaction->crypto->crypto }}</td>
-                                <td><a href="/transaction/details/{{$transaction->utilisateur->idUtilisateur}}-utilisateur">{{ $transaction->utilisateur->pseudo }}</a></td>
-                            </tr>
-                        @endforeach
+                        <tr ng-repeat="transaction in transactionsCrypto | filter:utilisateurAchat">
+                            <td>[[ transaction.operation ]]</td>
+                            <td>[[ transaction.quantite ]]</td>
+                            <td>[[ transaction.dateTransaction ]]</td>
+                            <td>[[ transaction.crypto.crypto ]]</td>
+                            <td><a href="/transaction/details/[[transaction.utilisateur.idUtilisateur]]-utilisateur">[[transaction.utilisateur.pseudo]]</a></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
+    </div>
+@endsection
+@section('script')
+    <script>
+        const dataFonds=<?php echo($transactionsFond) ?>;
+        const dataCrypto=<?php echo($transactionsCrypto) ?>;
+    </script>
+    <script src="{{ asset('angular/angular.min.js') }}"></script>
+    <script src="{{ asset('angular/angular-route.js') }}"></script>
+    <script src="{{ asset('app-angular/historique_transaction.js') }}"></script>
 @endsection

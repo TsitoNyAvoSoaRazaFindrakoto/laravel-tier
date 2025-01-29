@@ -33,6 +33,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/transaction/historique',[\App\Http\Controllers\UtilisateurController::class,'findTransactionHistorique'])->name('liste.transaction.historique');
     Route::get('/transaction/details/{idUtilisateur}-utilisateur',[\App\Http\Controllers\UtilisateurController::class,'findTransactionsUser'])->name('liste.transaction.historique');
     Route::get('/transaction/accept/{idTransaction}',[\App\Http\Controllers\FondController::class,'acceptTransaction'])->name('insert');
+    Route::get('/transaction/decline/{idTransaction}',[\App\Http\Controllers\FondController::class,'declineTransaction'])->name('insert');
 });
 
 Route::prefix('')->name('utilisateur.')->group(function () {

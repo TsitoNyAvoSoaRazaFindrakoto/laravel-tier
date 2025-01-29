@@ -40,4 +40,19 @@ class TransCrypto extends Model
         }
         return $this->entree;
     }
+
+    public function setCalculatedValue(){
+        if($this->entree==0){
+            $this->operation="Vente";
+        }
+        else{
+            $this->operation="Achat";
+        }
+        if($this->entree==0){
+            $this->quantite = $this->sortie;
+        }
+        else{
+            $this->quantite = $this->entree;
+        }
+    }
 }

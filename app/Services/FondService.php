@@ -51,7 +51,11 @@ final class FondService
         if($idUtilisateur!=0){
             $query->where('idUtilisateur',$idUtilisateur);
         }
-        return $query->get();
+        $responses=$query->get();
+        foreach ($responses as $response){
+            $response->setCalculatedValue();
+        }
+        return $responses;
     }
 
     public function acceptTransaction(int $idDepot){
@@ -59,6 +63,12 @@ final class FondService
         $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
         $fond = $fondUtilisateurRequest->accept();
         $fond->save();
+        $fondUtilisateurRequest->delete();
+    }
+
+    public function declineTransaction(int $idDepot){
+        /** @var FondUtilisateurRequest $fondUtilisateurRequest */
+        $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
         $fondUtilisateurRequest->delete();
     }
 

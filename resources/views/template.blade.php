@@ -63,6 +63,8 @@
 <!-- endinject -->
 <!-- Custom js for this page-->
 <script src="{{ asset('skydash/js/dashboard.js') }}"></script>
+
+@yield('script')
 <!-- End custom js for this page-->
 </body>
 
