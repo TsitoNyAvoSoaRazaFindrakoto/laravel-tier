@@ -28,7 +28,8 @@ Route::middleware(ClientMiddleware::class)->group(function () {
 });
 
 Route::prefix('')->name('utilisateur.')->group(function () {
-    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
+    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'index'])->name('index');
+    Route::get('/connection',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
     Route::get('/inscription',[\App\Http\Controllers\UtilisateurController::class,'inscription'])->name('inscription');
     Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
     Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');

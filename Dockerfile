@@ -1,12 +1,13 @@
 FROM php:8.2-cli
 
 # Installer les dépendances nécessaires
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
+RUN apk add --no-cache \
+    postgresql-dev \
     libzip-dev \
     unzip \
     git \
     && docker-php-ext-install pdo_pgsql zip
+
 
 # Définir le répertoire de travail
 WORKDIR /var/www/html
@@ -40,4 +41,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 8000
 
 # Démarrer Laravel avec le script pour attendre PostgreSQL
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve:with-crypto --host=0.0.0.0 --port=8000"]
+CMD ["sh", "-c", "/usr/local/bin/startup.sh"]
+# CMD ["sh", "-c", "php artisan migrate --force && php artisan serve:with-crypto --host=0.0.0.0 --port=8000"]

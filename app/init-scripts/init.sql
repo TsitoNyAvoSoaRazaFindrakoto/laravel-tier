@@ -78,12 +78,5 @@ INSERT INTO "transCrypto" ("idUtilisateur", entree, sortie, "prixUnitaire", "dat
 (7, 0.00, 0.02, 2000.00, '2025-01-15 17:00:00', 2),
 (8, 1.00, 0.00, 0.50, '2025-01-15 18:00:00', 3),
 (9, 0.00, 0.01, 100.00, '2025-01-16 19:00:00', 4),
-(10, 5.00, 0.00, 1.20, '2025-01-16 20:00:00', 5);
+(10, 5.00, 0.00, 1.20, '2025-01-16 20:00:00', 5);  
 
-SELECT percentile_cont(0.25) WITHIN GROUP (ORDER BY "prixUnitaire") AS "premierQuartile", "idCrypto"
-FROM "cryptoPrix" group by "idCrypto";
-
-SELECT cast(stddev("prixUnitaire") as double precision) AS "ecartTypeEchantillon",
-       cast(stddev_pop("prixUnitaire") as double precision) AS "ecartTypePopulation",
-       "idCrypto"
-FROM "cryptoPrix" group by "idCrypto";
