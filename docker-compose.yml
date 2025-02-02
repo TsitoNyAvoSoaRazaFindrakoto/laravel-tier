@@ -7,20 +7,29 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8383:8383"
+      - "8000:8000"  # Accès externe si nécessaire
     env_file:
       - .env
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html:delegated
+      - /var/www/html/vendor  # Évite d'écraser les dépendances Laravel
+      - /var/www/html/node_modules
+      - /var/www/html/storage  # Garde les fichiers de stockage persistants
     depends_on:
-      - postgres_tier
+      postgres_tier:
+        condition: service_healthy  # Attendre PostgreSQL
+      redis_tier:
+        condition: service_healthy  # Attendre Redis
     restart: unless-stopped
+    command: [ "sh", "-c", "/usr/local/bin/startup.sh" ]
+    networks:
+      - crypto_network
 
   postgres_tier:
     container_name: postgres_tier
     image: postgres:15-alpine
     ports:
-      - "5433:5432"  # Externe : Interne (PostgreSQL fonctionne sur le port interne 5432)
+      - "5433:5432"  # Exposé pour accès externe (facultatif)
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: fifaliana
@@ -29,10 +38,33 @@ services:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD", "pg_isready", "-d", "crypto", "-U", "postgres" ]
+      interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 60s
     restart: unless-stopped
+    networks:
+      - crypto_network
+
+  redis_tier:
+    container_name: redis_tier
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass fifaliana  # Définit un mot de passe pour Redis
+    environment:
+      REDIS_PASSWORD: fifaliana
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - crypto_network
+
+networks:
+  crypto_network:
+    driver: bridge
 
 volumes:
   postgres-data: {}
