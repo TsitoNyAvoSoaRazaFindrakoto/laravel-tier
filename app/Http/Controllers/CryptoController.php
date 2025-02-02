@@ -64,12 +64,22 @@ final class CryptoController extends Controller
     }
 
     public function findListVente(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchatAll();
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
         return $this->getView('vente.listeVente',$request,$data);
     }
 
-    public function findListeVenteAll(Request $request){
-        $data["ventes"]=$this->transCryptoService->findListVenteAll();
+    public function findAllTransaction(Request $request){
+        $request->validate([
+            "page"=>"numeric",
+        ]);
+        $data["page"]=$request->input('page');
+        if($data["page"]==null){
+            $data["page"]=1;
+        }
+        $data["transactions"]=$this->transCryptoService->findAllTransaction();
+        $data["nbPages"]=$data["transactions"]->lastPage();
+        $data["path"]=$data["transactions"]->path();
         return $this->getView('vente.listeVente',$request,$data);
     }
 

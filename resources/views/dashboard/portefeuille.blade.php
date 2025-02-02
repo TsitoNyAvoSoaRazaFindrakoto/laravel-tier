@@ -10,7 +10,7 @@
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Utilisateur</th>
                             <th>Total achat</th>
                             <th>Total vente</th>
                             <th>Valeur portefeuille</th>
@@ -19,7 +19,7 @@
                         <tbody>
                         @foreach($statistiques as $statistique)
                             <tr>
-                                <td>{{ $statistique->idUtilisateur }}</td>
+                                <td>{{ $statistique->utilisateur->pseudo }}</td>
                                 <td>{{ $statistique->achat }}</td>
                                 <td>{{ $statistique->vente }}</td>
                                 <td>{{ number_format($statistique->solde, 2) }}</td>

@@ -11,13 +11,15 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="date" value="{{$dateMin}}" name="dateMin" class="form-control" id="floatingInput" placeholder="Quantite">
+                                        <input type="date" value="{{$dateMin}}" name="dateMin" class="form-control"
+                                               id="floatingInput" placeholder="Quantite">
                                         <label for="floatingInput">Date minimum</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="date" name="dateMax" value="{{$dateMax}}" class="form-control" id="floatingInput" placeholder="Quantite">
+                                        <input type="date" name="dateMax" value="{{$dateMax}}" class="form-control"
+                                               id="floatingInput" placeholder="Quantite">
                                         <label for="floatingInput">Date maximum</label>
                                     </div>
                                 </div>
@@ -27,9 +29,10 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <select name="idCrypto" class="form-select" aria-label="Default select example">
-                                        <option selected>Crypto</option>
+                                        <option selected value="0">Tous</option>
                                         @foreach($cryptos as $crypto)
-                                            <option value="{{ $crypto->idCrypto }}" @if($crypto->idCrypto==$idCrypto) selected @endif>{{ $crypto->crypto  }}</option>
+                                            <option value="{{ $crypto->idCrypto }}"
+                                                    @if($crypto->idCrypto==$idCrypto) selected @endif>{{ $crypto->crypto  }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -49,80 +52,51 @@
         </div>
     </div>
     <div ng-app="transactionApp" ng-controller="transactionController">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Historique des opération</h4>
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" ng-model="utilisateur" class="form-control" id="floatingInput" placeholder="Utilisateur">
-                            <label for="floatingInput">Utilisateur</label>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Historique des achats/ventes</h4>
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" ng-model="utilisateurAchat" class="form-control" id="floatingInput"
+                                       placeholder="Utilisateur">
+                                <label for="floatingInput">Utilisateur</label>
+                            </div>
                         </div>
-                    </div>
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Opération</th>
-                            <th>Montant</th>
-                            <th>Date</th>
-                            <th>Utilisateur</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="transaction in transactionsFond | filter:utilisateur">
-                                <td ng-bind="transaction.operation"></td>
-                                <td ng-bind="transaction.montant"></td>
-                                <td ng-bind="transaction.dateTransaction"></td>
-                                <td><a ng-bind="transaction.utilisateur.pseudo" href="/transaction/details/[[transaction.idUtilisateur]]-utilisateur"></a></td>
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Opération</th>
+                                <th>Montant</th>
+                                <th>Quantité</th>
+                                <th>Date de transaction</th>
+                                <th>Cryptomonnaie</th>
+                                <th>Utilisateur</th>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Historique des achats/ventes</h4>
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input type="text" ng-model="utilisateurAchat" class="form-control" id="floatingInput" placeholder="Utilisateur">
-                            <label for="floatingInput">Utilisateur</label>
-                        </div>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="transaction in transactionsCrypto | filter:utilisateurAchat">
+                                <td class="[[transaction.styleClass]] font-weight-bold">[[ transaction.operation ]] <i class="[[ transaction.icon ]]"></i></td>
+                                <td>[[ transaction.prixUnitaire*transaction.quantite ]]</td>
+                                <td>[[ transaction.quantite ]]</td>
+                                <td>[[ transaction.dateTransaction ]]</td>
+                                <td>[[ transaction.crypto.crypto ]]</td>
+                                <td>
+                                    <a href="/transaction/details/[[transaction.utilisateur.idUtilisateur]]-utilisateur">[[transaction.utilisateur.pseudo]]</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Opération</th>
-                            <th>Quantité</th>
-                            <th>Date</th>
-                            <th>Cryptomonnaie</th>
-                            <th>Utilisateur</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="transaction in transactionsCrypto | filter:utilisateurAchat">
-                            <td>[[ transaction.operation ]]</td>
-                            <td>[[ transaction.quantite ]]</td>
-                            <td>[[ transaction.dateTransaction ]]</td>
-                            <td>[[ transaction.crypto.crypto ]]</td>
-                            <td><a href="/transaction/details/[[transaction.utilisateur.idUtilisateur]]-utilisateur">[[transaction.utilisateur.pseudo]]</a></td>
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection
 @section('script')
     <script>
-        const dataFonds=<?php echo($transactionsFond) ?>;
-        const dataCrypto=<?php echo($transactionsCrypto) ?>;
+        const dataCrypto =<?php echo($transactionsCrypto) ?>;
     </script>
     <script src="{{ asset('angular/angular.min.js') }}"></script>
     <script src="{{ asset('angular/angular-route.js') }}"></script>

@@ -4,8 +4,6 @@ let transactionApp = angular.module("transactionApp",["ngRoute"]).config(functio
 });
 
 transactionApp.controller('transactionController', function($scope, $http) {
-    $scope.transactionsFond=dataFonds;
     $scope.transactionsCrypto=dataCrypto;
     $scope.utilisateur="";
-    console.log($scope.transactionsFond)
 });

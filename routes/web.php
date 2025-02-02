@@ -59,7 +59,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommission'])->name('analyse.comission');
         Route::post('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommissionListe'])->name('analyse.comission.liste');
         Route::get('/porte-feuille',[\App\Http\Controllers\CryptoController::class,'statistique'])->name('portefeuille');
-        Route::get('/vente',[\App\Http\Controllers\CryptoController::class,'findListeVenteAll'])->name('vente');
-        Route::get('/achat',[\App\Http\Controllers\CryptoController::class,'findListeAchatAll'])->name('achat');
+        Route::get('/transaction',[\App\Http\Controllers\CryptoController::class,'findAllTransaction'])->name('vente');
     });
 });

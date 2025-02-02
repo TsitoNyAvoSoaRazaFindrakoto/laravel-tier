@@ -44,9 +44,13 @@ class TransCrypto extends Model
     public function setCalculatedValue(){
         if($this->entree==0){
             $this->operation="Vente";
+            $this->styleClass="text-danger";
+            $this->icon="mdi mdi-arrow-bottom-right";
         }
         else{
             $this->operation="Achat";
+            $this->styleClass="text-success";
+            $this->icon="mdi mdi-arrow-top-right";
         }
         if($this->entree==0){
             $this->quantite = $this->sortie;

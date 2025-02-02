@@ -41,10 +41,12 @@ final class UtilisateurController extends Controller
         $request->validate([
             "dateMin"=>'date',
             "dateMax"=>'date',
-            "idCrypto"=>'integer'
         ]);
-        $data["transactionsFond"]=$this->fondService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$request->input("idUtilisateur"));
-        $data["transactionsCrypto"]=$this->cryptoService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$request->input("idUtilisateur"),$request->input("idCrypto"));
+        $idCrypto=$request->input("idCrypto");
+        if($idCrypto==null){
+            $idCrypto=0;
+        }
+        $data["transactionsCrypto"]=$this->cryptoService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$request->input("idUtilisateur"),$idCrypto);
         $data["dateMin"]=$request->input("dateMin");
         $data["dateMax"]=$request->input("dateMax");
         $data["cryptos"]=Crypto::all();
@@ -56,16 +58,18 @@ final class UtilisateurController extends Controller
     public function findTransactionsUser(string $idUtilisateur,Request $request){
         $request->validate([
             "dateMin"=>'date',
-            "dateMax"=>'date',
-            "idCrypto"=>'integer'
+            "dateMax"=>'date'
         ]);
-        $data["transactionsFond"]=$this->fondService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$idUtilisateur);
-        $data["transactionsCrypto"]=$this->cryptoService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$idUtilisateur,$request->input("idCrypto"));
+        $idCrypto=$request->input("idCrypto");
+        if($idCrypto==null){
+            $idCrypto=0;
+        }
+        $data["transactionsCrypto"]=$this->cryptoService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$idUtilisateur,$idCrypto);
         $data["dateMin"]=$request->input("dateMin");
         $data["dateMax"]=$request->input("dateMax");
         $data["cryptos"]=Crypto::all();
         $data["idCrypto"]=$request->input("idCrypto");
-        $data["formSubmit"]="/transaction/".$idUtilisateur;
+        $data["formSubmit"]="/transaction/details/".$idUtilisateur."-utilisateur";
         return $this->getView("utilisateur.transactionHistorique",$request,$data);
     }
 
