@@ -15,6 +15,7 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     Route::prefix('/achat')->name('achat.')->group(function () {
         Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
         Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
+        Route::get('/validated',[\App\Http\Controllers\CryptoController::class,'insertAchatValidated'])->name('insert');
         Route::get('/liste_achat',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
     });
     Route::prefix('/vente')->name('vente.')->group(function () {
@@ -49,7 +50,6 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommission'])->name('analyse.comission');
         Route::post('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommissionListe'])->name('analyse.comission.liste');
         Route::get('/porte-feuille',[\App\Http\Controllers\CryptoController::class,'statistique'])->name('portefeuille');
-        Route::get('/vente',[\App\Http\Controllers\CryptoController::class,'findListeVenteAll'])->name('vente');
-        Route::get('/achat',[\App\Http\Controllers\CryptoController::class,'findListeAchatAll'])->name('achat');
+        Route::get('/transaction',[\App\Http\Controllers\CryptoController::class,'findAllTransaction'])->name('vente');
     });
 });
