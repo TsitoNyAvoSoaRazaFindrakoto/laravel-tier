@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ClientMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -28,16 +27,9 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     });
 });
 
-Route::middleware(AdminMiddleware::class)->group(function () {
-    Route::get("/transaction/request",[\App\Http\Controllers\FondController::class,'findTransactionRequest'])->name('transaction.request');
-    Route::get('/transaction/historique',[\App\Http\Controllers\UtilisateurController::class,'findTransactionHistorique'])->name('liste.transaction.historique');
-    Route::get('/transaction/details/{idUtilisateur}-utilisateur',[\App\Http\Controllers\UtilisateurController::class,'findTransactionsUser'])->name('liste.transaction.historique');
-    Route::get('/transaction/accept/{idTransaction}',[\App\Http\Controllers\FondController::class,'acceptTransaction'])->name('insert');
-    Route::get('/transaction/decline/{idTransaction}',[\App\Http\Controllers\FondController::class,'declineTransaction'])->name('insert');
-});
-
 Route::prefix('')->name('utilisateur.')->group(function () {
-    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
+    Route::get('',[\App\Http\Controllers\UtilisateurController::class,'index'])->name('index');
+    Route::get('/connection',[\App\Http\Controllers\UtilisateurController::class,'login'])->name('login');
     Route::get('/inscription',[\App\Http\Controllers\UtilisateurController::class,'inscription'])->name('inscription');
     Route::get('/pin',[\App\Http\Controllers\UtilisateurController::class,'loginPin'])->name('pin');
     Route::get('/session',[\App\Http\Controllers\UtilisateurController::class,'setSession'])->name('session');
@@ -48,7 +40,6 @@ Route::prefix('')->name('utilisateur.')->group(function () {
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
-        Route::get('/crypto/{idCrypto}',[\App\Http\Controllers\DashboardController::class,'cryptoPrix'])->name('crypto');
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');

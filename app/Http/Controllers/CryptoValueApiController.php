@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-final class CryptoValueApiController extends Controller
+class CryptoValueApiController extends Controller
 {
 	public function getCryptoValues()
 	{

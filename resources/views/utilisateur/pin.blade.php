@@ -1,99 +1,91 @@
-<!doctype html>
-<html lang="fr">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}">
-    <title>Login</title>
-    <style>
-        /* Animation de fade-in pour le formulaire */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypta - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #4a4eb1, #667eea);
+      font-family: 'Arial', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-        }
+    .login-card {
+      background-color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 400px;
+      padding: 30px;
+      text-align: center;
+    }
 
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
-            animation: fadeIn 1s ease;
-        }
+    .login-card h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #4a4eb1;
+      margin-bottom: 10px;
+    }
 
-        .card-body {
-            padding: 2rem;
-        }
+    .login-card p {
+      color: #666;
+      margin-bottom: 20px;
+    }
 
-        h3 {
-            color: #ffcb00;
-            font-weight: bold;
-        }
+    .form-control {
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
 
-        .form-label {
-            font-weight: bold;
-        }
+    .btn-login {
+      background-color: #4a4eb1;
+      color: #fff;
+      border-radius: 20px;
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
 
-        input {
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-        }
+    .btn-login:hover {
+      background-color: #3b3e9e;
+    }
 
-        input:focus {
-            background-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
-        }
+    .signup-link {
+      color: #4a4eb1;
+      text-decoration: underline;
+      font-size: 0.9rem;
+    }
 
-        button {
-            background: linear-gradient(to right, #f0b90d, #f0b90d);
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            transition: transform 0.3s;
-        }
-
-        button:hover {
-            background: linear-gradient(to left, #f0b90d, #f0b90d);
-            transform: scale(1.05);
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .container {
-            animation: fadeIn 2s ease;
-        }
-    </style>
+    .signup-link:hover {
+      color: #3b3e9e;
+    }
+  </style>
 </head>
-<body class="bg-dark text-light">
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card bg-gradient shadow-lg" style="max-width: 400px; width: 100%; animation: fadeIn 1s ease;">
-        <div class="card-body" ng-app="pinApp" ng-controller="pinController">
-            <h3 class="text-center mb-4">Connexion</h3>
-            <form ng-submit="submitForm('{{ $token  }}')">
-                <div class="mb-3">
-                    <label for="PIN" class="form-label">PIN</label>
-                    <input ng-model="utilisateur.pin" type="text" class="form-control" id="email" placeholder="PIN" required>
-                </div>
-                <button type="submit" class="btn btn-light w-100 mt-3">Se connecter</button>
-            </form>
+<body>
+  <div class="login-card" ng-app="pinApp" ng-controller="pinController">
+    <h1>Crypta</h1>
+    <h2>PIN</h2>
+    <p>Continuer sur Crypta</p>
+    <form ng-submit="submitForm('{{ $token  }}')">
+        <div class="mb-3">
+            <label for="PIN" class="form-label">PIN</label>
+            <input ng-model="utilisateur.pin" type="text" class="form-control" id="email" placeholder="PIN" required>
         </div>
-    </div>
-</div>
+        <button type="submit" class="btn btn-login">Pin</button>
+    </form>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
-<script src="{{ asset('app-angular/pin.js') }}"></script>
+<script src="{{ asset('ajax/pin.js') }}"></script>
 <script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script>
+
 </html>
