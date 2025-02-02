@@ -21,7 +21,7 @@ services:
       redis_tier:
         condition: service_healthy  # Attendre Redis
     restart: unless-stopped
-    command: [ "sh", "-c", "/usr/local/bin/startup.sh" ]
+    # command: ["/usr/local/bin/startup.sh"]
     networks:
       - crypto_network
 
