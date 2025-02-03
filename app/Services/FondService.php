@@ -4,7 +4,9 @@ namespace App\Services;
 use App\Exception\SoldeException;
 use App\Models\CryptoPrix;
 use App\Models\FondUtilisateur;
+use App\Models\FondUtilisateurRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 final class FondService
 {
@@ -41,8 +43,42 @@ final class FondService
         $fondUtilisateur->save();
     }
 
+    public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur):Collection{
+        if($dateMin==null){
+            $dateMin=new \DateTime("0001-01-01");
+            $dateMin=$dateMin->format('Y-m-d');
+        }
+        if($dateMax==null){
+            $dateMax=new \DateTime("9999-12-31");
+            $dateMax=$dateMax->format('Y-m-d');
+        }
+        $query=FondUtilisateur::with('utilisateur')->where('dateTransaction','>=',$dateMin)->where('dateTransaction','<=',$dateMax);
+        if($idUtilisateur!=0){
+            $query->where('idUtilisateur',$idUtilisateur);
+        }
+        $responses=$query->get();
+        foreach ($responses as $response){
+            $response->setCalculatedValue();
+        }
+        return $responses;
+    }
+
+    public function acceptTransaction(int $idDepot){
+        /** @var FondUtilisateurRequest $fondUtilisateurRequest */
+        $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
+        $fond = $fondUtilisateurRequest->accept();
+        $fond->save();
+        $fondUtilisateurRequest->delete();
+    }
+
+    public function declineTransaction(int $idDepot){
+        /** @var FondUtilisateurRequest $fondUtilisateurRequest */
+        $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
+        $fondUtilisateurRequest->delete();
+    }
+
     public function insertDepotWithoutCrypto(Request $request){
-        $fondUtilisateur = new FondUtilisateur();
+        $fondUtilisateur = new FondUtilisateurRequest();
         $montant=$request->input('montant');
         $fondUtilisateur->sortie=0;
         $fondUtilisateur->entree=$montant;
@@ -52,7 +88,7 @@ final class FondService
     }
 
     public function insertRetraitWithoutCrypto(Request $request){
-        $fondUtilisateur = new FondUtilisateur();
+        $fondUtilisateur = new FondUtilisateurRequest();
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $solde=$this->findSolde($idUtilisateur);
         $montant=$request->input('montant');
