@@ -2,15 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Crypto;
+use App\Models\Utilisateur;
+use App\Services\FondService;
+use App\Services\TransCryptoService;
+use App\Services\UtilisateurService;
 use Illuminate\Http\Request;
 
-class UtilisateurController extends Controller
+final class UtilisateurController extends Controller
 {
 
-    public function index(){
-        return view('utilisateur.index');
+    private UtilisateurService $utilisateurService;
+    private FondService $fondService;
+    private TransCryptoService $cryptoService;
+
+    public function __construct(UtilisateurService $utilisateurService,FondService $fondService,TransCryptoService $cryptoService){
+        $this->utilisateurService = $utilisateurService;
+        $this->fondService = $fondService;
+        $this->cryptoService = $cryptoService;
     }
-    
+
     public function login(){
         return view('utilisateur.login');
     }
@@ -63,11 +74,18 @@ class UtilisateurController extends Controller
     }
 
     public function setSession(Request $request){
+        $idUtilisateur=$request->input('idUtilisateur');
+        $pseudo=$request->input('pseudo');
         if($request->session()->get('token')!=$request->input('token')){
             return redirect()->route('utilisateur.login');
         }
-        $request->session()->put('idUtilisateur',$request->input('idUtilisateur'));
-        $request->session()->put('role',$request->input('role'));
+        $utilisateur=$this->utilisateurService->findById($idUtilisateur);
+        if($idUtilisateur==null){
+            $utilisateur=new Utilisateur();
+            $utilisateur->pseudo=$pseudo;
+            $utilisateur->save();
+        }
+        $request->session()->put('utilisateur',$utilisateur);
         $request->session()->put('connected',true);
         return redirect()->route('achat.liste');
     }

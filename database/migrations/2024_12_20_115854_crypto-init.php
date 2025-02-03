@@ -18,25 +18,27 @@ return new class extends Migration
 		)");
 
 		DB::statement("CREATE TABLE \"transCrypto\"(
-			\"idTransCrypto\" SERIAL,
-			\"idUtilisateur\" INTEGER NOT NULL,
-			\"entree\" NUMERIC(15,2)  ,
-			\"sortie\" NUMERIC(15,2)  ,
-			\"dateTransaction\" TIMESTAMP NOT NULL,
-			\"prixUnitaire\" DECIMAL(15,2) NOT NULL,
-			\"idCrypto\" INTEGER NOT NULL,
-			PRIMARY KEY(\"idTransCrypto\"),
-			FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
-		)");
+                       \"idTransCrypto\" SERIAL,
+                       \"idUtilisateur\" INTEGER NOT NULL,
+                       \"entree\" NUMERIC(15,2)  ,
+                       \"sortie\" NUMERIC(15,2)  ,
+                       \"dateTransaction\" TIMESTAMP NOT NULL,
+                       \"prixUnitaire\" DECIMAL(15,2) NOT NULL,
+                       \"idCrypto\" INTEGER NOT NULL,
+                       PRIMARY KEY(\"idTransCrypto\"),
+                       FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
+	                    )
+	");
 
-		DB::statement("CREATE TABLE fondutilisateur(
+		DB::statement("CREATE TABLE \"fondUtilisateur\"(
 			\"idTransFond\" SERIAL,
 			\"entree\" NUMERIC(20,2) NOT NULL,
 			\"sortie\" NUMERIC(20,2) NOT NULL,
 			\"idUtilisateur\" INTEGER NOT NULL,
 			\"dateTransaction\" TIMESTAMP NOT NULL,
 			PRIMARY KEY(\"idTransFond\")
-		)");
+            )
+        ");
 
 		DB::statement("CREATE TABLE \"cryptoPrix\"(
 			\"idCryptoPrix\" SERIAL,
