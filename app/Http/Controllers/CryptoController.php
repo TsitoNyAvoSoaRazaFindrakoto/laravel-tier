@@ -21,16 +21,19 @@ final class CryptoController extends Controller
         ]);
         $data["cryptos"] = Crypto::all();
         try{
-            $this->transCryptoService->insertAchat($request);
+            $response=$this->transCryptoService->insertAchat($request);
+            return redirect("/pin?token=".$response["data"]."&url=/achat/validated");
         }
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
             return $this->getView('achat.formAchat',$request,$data);
         }
-        $data["message"]="Achat effectue avec succes";
-        return $this->getView('achat.formAchat',$request,$data);
     }
 
+    public function insertAchatValidated(Request $request){
+        $this->transCryptoService->insertAchatValidated($request);
+        return redirect("/achat");
+    }
 
     public function insertVente(Request $request){
         $request->validate([
@@ -61,12 +64,22 @@ final class CryptoController extends Controller
     }
 
     public function findListVente(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchatAll();
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
         return $this->getView('vente.listeVente',$request,$data);
     }
 
-    public function findListeVenteAll(Request $request){
-        $data["ventes"]=$this->transCryptoService->findListVenteAll();
+    public function findAllTransaction(Request $request){
+        $request->validate([
+            "page"=>"numeric",
+        ]);
+        $data["page"]=$request->input('page');
+        if($data["page"]==null){
+            $data["page"]=1;
+        }
+        $data["transactions"]=$this->transCryptoService->findAllTransaction();
+        $data["nbPages"]=$data["transactions"]->lastPage();
+        $data["path"]=$data["transactions"]->path();
         return $this->getView('vente.listeVente',$request,$data);
     }
 

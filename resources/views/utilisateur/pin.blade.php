@@ -83,6 +83,10 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+    const urlGiven="<?php echo($url) ?>";
+    console.log(urlGiven);
+</script>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
 <script src="{{ asset('ajax/pin.js') }}"></script>
