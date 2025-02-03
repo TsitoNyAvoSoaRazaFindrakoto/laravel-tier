@@ -22,6 +22,10 @@ final class UtilisateurController extends Controller
         $this->cryptoService = $cryptoService;
     }
 
+    public function index(){
+        return view('utilisateur.accueil');
+    }
+
     public function login(){
         return view('utilisateur.login');
     }
