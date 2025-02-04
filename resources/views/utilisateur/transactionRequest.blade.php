@@ -25,7 +25,7 @@
                         </thead>
                         <tbody>
                         <tr ng-repeat="transaction in transactionsFond | filter:utilisateur">
-                            <td>[[ transaction.operation ]]</td>
+                            <td class="[[transaction.styleClass]] font-weight-bold">[[ transaction.operation ]] <i class="[[ transaction.icon ]]"></i></td>
                             <td>[[ transaction.montant ]]</td>
                             <td>[[ transaction.dateTransaction ]]</td>
                             <td>[[ transaction.utilisateur.pseudo ]]</td>

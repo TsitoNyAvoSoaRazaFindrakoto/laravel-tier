@@ -15,13 +15,13 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     });
     Route::prefix('/achat')->name('achat.')->group(function () {
         Route::get('',[\App\Http\Controllers\CryptoController::class,'formAchat'])->name('form');
-        Route::post('',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
-        Route::get('/validated',[\App\Http\Controllers\CryptoController::class,'insertAchatValidated'])->name('insert');
+        Route::get('/insertion_achat',[\App\Http\Controllers\CryptoController::class,'insertAchat'])->name('insert');
+        Route::post('/validated',[\App\Http\Controllers\CryptoController::class,'insertAchatValidated'])->name('insert');
         Route::get('/liste_achat',[\App\Http\Controllers\CryptoController::class,'findListeAchat'])->name('liste');
     });
     Route::prefix('/vente')->name('vente.')->group(function () {
         Route::get('',[\App\Http\Controllers\CryptoController::class,'formVente'])->name('form');
-        Route::post('',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
+        Route::get('/insertion_vente',[\App\Http\Controllers\CryptoController::class,'insertVente'])->name('insert');
         Route::get('/liste_vente',[\App\Http\Controllers\CryptoController::class,'findListVente'])->name('liste');
     });
     Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
@@ -47,9 +47,16 @@ Route::prefix('')->name('utilisateur.')->group(function () {
     Route::get('/login',[\App\Http\Controllers\UtilisateurController::class,'loginFafana'])->name('session');
 });
 
+Route::prefix('api')->name('api.')->group(function () {
+    Route::middleware(ClientMiddleware::class)->group(function () {
+        Route::get('/cours/crypto',[\App\Http\Controllers\DashboardController::class,'cours'])->name('cours');
+    });
+});
+
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
+        Route::get('/cours/crypto',[\App\Http\Controllers\DashboardController::class,'coursView'])->name('cours');
         Route::get('/crypto/{idCrypto}',[\App\Http\Controllers\DashboardController::class,'cryptoPrix'])->name('crypto');
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {

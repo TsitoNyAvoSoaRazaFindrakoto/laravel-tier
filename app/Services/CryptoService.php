@@ -11,6 +11,10 @@ use Illuminate\Support\Collection;
 
 final class CryptoService
 {
+    public function findPriceCrypto():Collection{
+        return CryptoPrix::with('crypto')->whereRaw("\"dateHeure\" in (select max(\"dateHeure\") from \"cryptoPrix\" group by \"idCrypto\")")->get();
+    }
+
     public function findFirstQuartile($idCryptos,$dateHeureMin,$dateHeureMax):Collection{
         return CryptoPrix::selectRaw('percentile_cont(0.25) WITHIN GROUP (ORDER BY "prixUnitaire") AS "stat", "idCrypto"')
             ->where(function (Builder $query) use ($idCryptos){

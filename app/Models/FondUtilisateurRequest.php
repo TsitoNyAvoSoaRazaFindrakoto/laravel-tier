@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Config\ParameterConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,8 +15,15 @@ class FondUtilisateurRequest extends Model
 
     public function accept():FondUtilisateur{
         $fondUtilisateur = new FondUtilisateur();
-        $fondUtilisateur->sortie=$this->sortie;
-        $fondUtilisateur->entree=$this->entree;
+        if($this->entree!=0){
+            $fondUtilisateur->entree=$this->entree;
+            $fondUtilisateur->sortie=0;
+        }
+
+        else if($this->sortie!=0){
+            $fondUtilisateur->entree=0;
+            $fondUtilisateur->sortie=$this->sortie;
+        }
         $fondUtilisateur->dateTransaction=$this->dateTransaction;
         $fondUtilisateur->dateValidation=new \DateTime();
         $fondUtilisateur->dateValidation=$fondUtilisateur->dateValidation->format('Y-m-d H:i:s');
@@ -38,11 +46,15 @@ class FondUtilisateurRequest extends Model
     }
 
     public function setCalculatedValue(){
-        if($this->sortie==0){
-            $this->operation = "Depot";
+        if($this->entree>0){
+            $this->operation="Depot";
+            $this->styleClass="text-success";
+            $this->icon="mdi mdi-arrow-top-right";
         }
         else{
             $this->operation="Retrait";
+            $this->styleClass="text-danger";
+            $this->icon="mdi mdi-arrow-bottom-right";
         }
         if($this->sortie==0){
             $this->montant=$this->entree;
