@@ -31,7 +31,7 @@ final class CryptoController extends Controller
 
     public function insertAchatValidated(Request $request){
         $this->transCryptoService->insertAchatValidated($request);
-        return redirect("/achat");
+        return redirect("/dashboard/cours/crypto");
     }
 
     public function insertVente(Request $request){

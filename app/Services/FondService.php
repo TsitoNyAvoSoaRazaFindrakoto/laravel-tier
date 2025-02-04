@@ -16,11 +16,12 @@ final class FondService
         $fondUtilisateur->save();
     }
 
-    public function createRetrait(Request $request):FondUtilisateur{
+    public function createRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $prix=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $montant=$prix*$request->input('quantite');
-        $montant+=($montant*ParameterConfig::findCommissionData()["commission_achat"]/100);
+        $commission=($montant*ParameterConfig::findCommissionData()["commission_achat"]/100);
+        $montant+=$commission;
         $solde=$this->findSolde($idUtilisateur);
         if($solde<$montant){
             throw new SoldeException($montant,$solde);
@@ -29,8 +30,9 @@ final class FondService
         $fondUtilisateur->sortie=$montant;
         $fondUtilisateur->entree=0;
         $fondUtilisateur->dateTransaction=new \DateTime();
+        $fondUtilisateur->dateTransaction=$fondUtilisateur->dateTransaction->format('Y-m-d H:i:s');
         $fondUtilisateur->idUtilisateur=$request->session()->get('idUtilisateur');
-        return $fondUtilisateur;
+        return [$fondUtilisateur,$commission];
     }
 
     public function insertDepot(Request $request){
@@ -38,12 +40,14 @@ final class FondService
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $prix=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $montant=$prix*$request->input('quantite');
-        $montant-=($montant*ParameterConfig::findCommissionData()["commission_vente"]/100);
+        $commission=($montant*ParameterConfig::findCommissionData()["commission_vente"]/100);
+        $montant-=$commission;
         $fondUtilisateur->sortie=0;
         $fondUtilisateur->entree=$montant;
         $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
+        return $commission;
     }
 
     public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur):Collection{
