@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use App\Config\ParameterConfig;
 use App\Exception\SoldeException;
 use App\Models\CryptoPrix;
 use App\Models\FondUtilisateur;
@@ -19,6 +20,7 @@ final class FondService
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $prix=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $montant=$prix*$request->input('quantite');
+        $montant+=($montant*ParameterConfig::findCommissionData()["commission_achat"]/100);
         $solde=$this->findSolde($idUtilisateur);
         if($solde<$montant){
             throw new SoldeException($montant,$solde);
@@ -36,6 +38,7 @@ final class FondService
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $prix=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
         $montant=$prix*$request->input('quantite');
+        $montant-=($montant*ParameterConfig::findCommissionData()["commission_vente"]/100);
         $fondUtilisateur->sortie=0;
         $fondUtilisateur->entree=$montant;
         $fondUtilisateur->dateTransaction=new \DateTime();

@@ -16,7 +16,6 @@ final class CryptoController extends Controller
     public function insertAchat(Request $request){
         $request->validate([
             "quantite"=>"required|numeric|min:1",
-            "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
         $data["cryptos"] = Crypto::all();
@@ -38,7 +37,6 @@ final class CryptoController extends Controller
     public function insertVente(Request $request){
         $request->validate([
             "quantite"=>"required|numeric|min:1",
-            "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
         ]);
         $data["cryptos"] = Crypto::all();
