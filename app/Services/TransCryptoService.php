@@ -17,9 +17,11 @@ final class TransCryptoService
 {
 
     protected FondService $fondService;
+    private CommissionService $commissionService;
 
-    public function __construct(FondService $fondService){
+    public function __construct(FondService $fondService, CommissionService $commissionService){
         $this->fondService = $fondService;
+        $this->commissionService = $commissionService;
     }
 
     public function insertEntree(Request $request){
@@ -32,10 +34,10 @@ final class TransCryptoService
         $transCrypto = new TransCrypto();
         $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
         $transCrypto->dateTransaction=$today->format('Y-m-d');
-        $transCrypto->entree=$request->input('quantite');
-        $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
+        $transCrypto->entree=floatval($request->input('quantite'));
+        $transCrypto->prixUnitaire=floatval(CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire);
         $transCrypto->sortie=0;
-        $transCrypto->idCrypto=$request->input('idCrypto');
+        $transCrypto->idCrypto=intval($request->input('idCrypto'));
         return $transCrypto;
     }
 
@@ -60,8 +62,11 @@ final class TransCryptoService
     {
         try{
             DB::beginTransaction();
-            $request->session()->get('retrait')->save();
-            $request->session()->get('entree')->save();
+            $transaction=$request->session()->get('entree');
+            $retrait=$request->session()->get('retrait');
+            $retrait->save();
+            $this->commissionService->insertCommission($request->session()->get('commission'),$transaction->idCrypto);
+            $transaction->save();
             DB::commit();
         }
         catch (SoldeCryptoException $e){
@@ -71,9 +76,16 @@ final class TransCryptoService
     }
 
     public function insertAchat(Request $request){
+        $request->validate([
+            "quantite"=>"required|numeric",
+            "idCrypto"=>"required|numeric"
+        ]);
         try{
-            $request->session()->put("retrait",$this->fondService->createRetrait($request));
-            $request->session()->put("entree",$this->createEntree($request));
+            $fond=$this->fondService->createRetrait($request);
+            $entree=$this->createEntree($request);
+            $request->session()->put("retrait",$fond[0]);
+            $request->session()->put("commission",$fond[1]);
+            $request->session()->put("entree",$entree);
         }
         catch(SoldeException $e){
             throw $e;
@@ -123,7 +135,8 @@ final class TransCryptoService
     public function insertVente(Request $request){
         try{
             DB::beginTransaction();
-            $this->fondService->insertDepot($request);
+            $commission=$this->fondService->insertDepot($request);
+            $this->commissionService->insertCommission($commission,$request->input('idCrypto'));
             $this->insertSortie($request);
             DB::commit();
         }
