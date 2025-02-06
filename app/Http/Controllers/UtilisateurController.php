@@ -79,7 +79,8 @@ final class UtilisateurController extends Controller
     public function setSession(Request $request){
         $idUtilisateur=$request->input('idUtilisateur');
         $pseudo=$request->input('pseudo');
-        if($request->session()->get('token')!=$request->input('token')){
+        $role=$request->input('role');
+        if($request->session()->get('token')!=$request->input('token') && $role!="Admin"){
             return redirect()->route('utilisateur.login');
         }
         $utilisateur=$this->utilisateurService->findById($idUtilisateur);
@@ -90,6 +91,7 @@ final class UtilisateurController extends Controller
         }
         $request->session()->put('idUtilisateur',$idUtilisateur);
         $request->session()->put('connected',true);
+        $request->session()->put('role',$pseudo);
         return redirect()->route('achat.liste');
     }
 
