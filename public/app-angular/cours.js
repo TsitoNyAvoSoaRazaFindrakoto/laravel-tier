@@ -66,13 +66,17 @@ coursApp.controller('coursController', function($scope, $http) {
             if(response.data.status==200){
                 addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
                 addToFirestore("transCrypto",response.data.data.transaction);
+                $scope.styleMessage="alert-success";
             }
             else{
-                console.log(response.data.message);
+                $scope.styleMessage="alert-danger";
             }
+            $scope.message=response.data.message;
+            var venteSuccess = document.getElementById('toast');
+            var toast = new bootstrap.Toast(venteSuccess);
+            toast.show();
         });
     }
-
     function getQuantityCoursById(idCrypto){
         console.log($scope.cours);
         for (i=0;i<$scope.cours.length;i++) {

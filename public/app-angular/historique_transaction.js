@@ -95,52 +95,48 @@ transactionApp.controller('transactionController', function ($scope, $http) {
     }
 
     $scope.accept=function(i){
-        //Ajouter fondUtilisateur
-        db.collection("fondUtilisateur") // Nom de la collection
-            .add(setDataFirestore($scope.transactionsFond[i])) // Les données à insérer
-            .then((docRef) => {
-                console.log("Document ajouté avec ID: ", docRef.id);
-            })
-            .catch((error) => {
-                console.error("Erreur lors de l'ajout du document: ", error);
-            });
-
-        //Supprimer la requête
-        if($scope.transactionsFond[i].mobile){
-            db.collection("fondUtilisateurRequest") // Nom de la collection
-                .doc($scope.transactionsFond[i].idFirestore) // ID du document à supprimer
-                .delete() // Supprime le document
-                .then(() => {
-                    console.log("Document supprimé avec succès!");
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la suppression du document: ", error);
-                });
-        }
-        else{
+        if(!$scope.transactionsFond[i].mobile){
             $http.post(`/transaction/accept/${$scope.transactionsFond[i].idTransFondRequest}`,{
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(function(response){
-                console.log("Inserted");
+                if(response.data.status==200){
+                    addToFirestore("fondUtilisateur",setDataFirestore($scope.transactionsFond[i]))
+                    $scope.styleMessage="alert-success";
+                }
+                else{
+                    $scope.styleMessage="alert-danger"
+                }
+                $scope.message=response.data.message;
+                $scope.transactionsFond.splice(i,1);
+                var toastDiv = document.getElementById('toast');
+                var toast = new bootstrap.Toast(toastDiv);
+                toast.show();
             });
         }
-        $scope.transactionsFond.splice(i,1);
+        else {
+            deleteFirestore("fondUtilisateurRequest",$scope.transactionsFond[i].idFirestore);
+            $scope.message="Insertion réussie";
+            $scope.styleMessage="alert-success";
+            $scope.transactionsFond.splice(i,1);
+            var toastDiv = document.getElementById('toast');
+            var toast = new bootstrap.Toast(toastDiv);
+            toast.show();
+        }
+
     }
 
     $scope.decline=function(i){
         if($scope.transactionsFond[i].mobile){
             console.log($scope.transactionsFond[i].idFirestore);
-            db.collection("fondUtilisateurRequest") // Nom de la collection
-                .doc($scope.transactionsFond[i].idFirestore) // ID du document à supprimer
-                .delete() // Supprime le document
-                .then(() => {
-                    console.log("Document supprimé avec succès!");
-                })
-                .catch((error) => {
-                    console.error("Erreur lors de la suppression du document: ", error);
-                });
+            deleteFirestore("fondUtilisateurRequest",$scope.transactionsFond[i].idFirestore);
+            $scope.message="Refus réussie";
+            $scope.styleMessage="alert-success";
+            $scope.transactionsFond.splice(i,1);
+            var toastDiv = document.getElementById('toast');
+            var toast = new bootstrap.Toast(toastDiv);
+            toast.show();
         }
         else{
             $http.post(`/transaction/decline/${$scope.transactionsFond[i].idTransFondRequest}`,{
@@ -148,7 +144,12 @@ transactionApp.controller('transactionController', function ($scope, $http) {
                     'Content-Type': 'application/json'
                 }
             }).then(function(response){
-                console.log("Inserted");
+                $scope.message="Refus réussie";
+                $scope.styleMessage="alert-success";
+                $scope.transactionsFond.splice(i,1);
+                var toastDiv = document.getElementById('toast');
+                var toast = new bootstrap.Toast(toastDiv);
+                toast.show();
             });
         }
         $scope.transactionsFond.splice(i,1);
@@ -163,6 +164,29 @@ transactionApp.controller('transactionController', function ($scope, $http) {
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function addToFirestore(collection,data){
+        db.collection(collection) // Nom de la collection
+            .add(data) // Les données à insérer
+            .then((docRef) => {
+                console.log("Document ajouté avec ID: ", docRef.id);
+            })
+            .catch((error) => {
+                console.error("Erreur lors de l'ajout du document: ", error);
+            });
+    }
+
+    function deleteFirestore(collection,idFirestore,callback){
+        db.collection(collection) // Nom de la collection
+            .doc(idFirestore) // ID du document à supprimer
+            .delete() // Supprime le document
+            .then(() => {
+                console.log("Document supprimé avec succès!");
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la suppression du document: ", error);
+            });
     }
     $scope.utilisateur = "";
 });

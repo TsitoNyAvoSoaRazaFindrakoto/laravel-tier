@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\ResponseJSON;
 use App\Models\FondUtilisateur;
 use App\Models\FondUtilisateurRequest;
 use App\Services\FirestoreService;
@@ -32,9 +33,10 @@ final class FondController extends Controller
         return $this->getView('utilisateur.transactionRequest',$request,$data);
     }
 
-    public function acceptTransaction(string $idTransaction,Request $request){
+    public function acceptTransaction(string $idTransaction,Request $request): ResponseJSON
+    {
         $this->fondService->acceptTransaction($idTransaction);
-        return redirect()->back();
+        return new ResponseJSON(200,"Transaction reussie");
     }
 
     public function declineTransaction(string $idTransaction,Request $request){
