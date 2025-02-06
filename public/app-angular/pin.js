@@ -25,12 +25,7 @@ pinApp.controller('pinController', function($scope, $http) {
             $scope.data=response.data;
             console.log($scope.data);
             if($scope.data.status==200){
-                if(urlGiven==""){
-                    window.location.href = `http://127.0.0.1:8000/session?idUtilisateur=${$scope.data.data.idUtilisateur}&pseudo=${$scope.data.data.pseudo}&role=${$scope.data.data.role.roleName}&token=${token}`;
-                }
-                else{
-                    window.location.href = urlGiven;
-                }
+                window.location.href = `http://127.0.0.1:8000/session?idUtilisateur=${$scope.data.data.idUtilisateur}&pseudo=${$scope.data.data.pseudo}&role=${$scope.data.data.role.roleName}&token=${token}`;
             }
             else{
                 message.innerHTML="<div class=\"alert alert-danger\" role=\"alert\">\n" +

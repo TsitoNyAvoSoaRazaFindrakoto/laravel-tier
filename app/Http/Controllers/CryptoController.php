@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\ResponseJSON;
+use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
 use App\Models\Crypto;
+use App\Models\Utilisateur;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
 
@@ -13,42 +16,41 @@ final class CryptoController extends Controller
     public function __construct(TransCryptoService $transCryptoService){
         $this->transCryptoService = $transCryptoService;
     }
-    public function insertAchat(Request $request){
+    public function insertAchat(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    {
         $request->validate([
             "quantite"=>"required|numeric|min:1",
             "idCrypto"=>"required|numeric",
         ]);
-        $data["cryptos"] = Crypto::all();
         try{
             $response=$this->transCryptoService->insertAchat($request);
-            return redirect("/pin?token=".$response["data"]."&url=/achat/validated");
+            return view('achat.validationAchat',$response);
         }
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
             return $this->getView('achat.formAchat',$request,$data);
         }
     }
-
-    public function insertAchatValidated(Request $request){
-        $this->transCryptoService->insertAchatValidated($request);
-        return redirect("/dashboard/cours/crypto");
+    public function insertAchatValidated(Request $request): ResponseJSON
+    {
+        $data=$this->transCryptoService->insertAchatValidated($request);
+        return new ResponseJSON(200,"Insertion effectue",$data);
     }
 
-    public function insertVente(Request $request){
+    public function insertVente(Request $request): ResponseJSON
+    {
         $request->validate([
             "quantite"=>"required|numeric|min:1",
             "idCrypto"=>"required|numeric",
         ]);
         $data["cryptos"] = Crypto::all();
         try{
-            $this->transCryptoService->insertVente($request);
+            $data=$this->transCryptoService->insertVente($request);
         }
-        catch(\Exception $e){
-            $data["message"]=$e->getMessage();
-            return $this->getView('vente.formVente',$request,$data);
+        catch(SoldeCryptoException $e){
+            return new ResponseJSON(422,$e->getMessage());
         }
-        $data["message"]="Vente reussie";
-        return $this->getView('vente.formVente',$request,$data);
+        return new ResponseJSON(200,"Vente réussie",$data);
     }
 
     public function findListeAchat(Request $request){

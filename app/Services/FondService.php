@@ -11,10 +11,6 @@ use Illuminate\Support\Collection;
 
 final class FondService
 {
-    public function insertRetrait(Request $request){
-        $fondUtilisateur=$this->createRetrait($request);
-        $fondUtilisateur->save();
-    }
 
     public function createRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
@@ -47,7 +43,7 @@ final class FondService
         $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
-        return $commission;
+        return [$fondUtilisateur,$commission];
     }
 
     public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur):Collection{

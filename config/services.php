@@ -1,7 +1,9 @@
 <?php
 
 return [
-
+    'firestore' => [
+        'key_file' => env('GOOGLE_CLOUD_KEY_FILE'), // Chemin vers le fichier de clé JSON
+    ],
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

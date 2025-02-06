@@ -2,17 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\ResponseJSON;
 use App\Models\FondUtilisateur;
 use App\Models\FondUtilisateurRequest;
+use App\Services\FirestoreService;
 use App\Services\FondService;
 use Illuminate\Http\Request;
 
 final class FondController extends Controller
 {
     protected FondService $fondService;
-    public function __construct(FondService $fondService)
+    private FirestoreService $firestoreService;
+
+    public function __construct(FondService $fondService, \App\Services\FirestoreService $firestoreService)
     {
         $this->fondService = $fondService;
+        $this->firestoreService = $firestoreService;
     }
 
     public function formDepot(Request $request){
@@ -28,9 +33,10 @@ final class FondController extends Controller
         return $this->getView('utilisateur.transactionRequest',$request,$data);
     }
 
-    public function acceptTransaction(string $idTransaction,Request $request){
+    public function acceptTransaction(string $idTransaction,Request $request): ResponseJSON
+    {
         $this->fondService->acceptTransaction($idTransaction);
-        return redirect()->back();
+        return new ResponseJSON(200,"Transaction reussie");
     }
 
     public function declineTransaction(string $idTransaction,Request $request){
@@ -56,5 +62,10 @@ final class FondController extends Controller
         ]);
         $this->fondService->insertRetraitWithoutCrypto($request);
         return redirect()->route('portefeuille.liste');
+    }
+
+    public function test(Request $request)
+    {
+        return $this->getView('test',$request);
     }
 }

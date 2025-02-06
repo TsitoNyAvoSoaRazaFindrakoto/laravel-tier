@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     git \
-    && docker-php-ext-install pdo_pgsql zip
+    postgresql-client-15 \
+    && docker-php-ext-install pdo_pgsql zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Définir le répertoire de travail
 WORKDIR /var/www/html
@@ -17,27 +19,24 @@ COPY --from=composer:2.8.3 /usr/bin/composer /usr/bin/composer
 # Copier le code de l'application
 COPY . .
 
+# Configurer Git pour éviter les erreurs de permissions
 RUN git config --global --add safe.directory /var/www/html
 
-# Installer les dépendances Laravel
+# Installer les dépendances Laravel et Debugbar
 RUN composer install --no-dev --optimize-autoloader --prefer-dist
-
-# # Installer Swagger
-# RUN composer require darkaonline/l5-swagger \
-#     && php artisan vendor:publish --provider="L5Swagger\L5SwaggerServiceProvider"
+RUN composer require barryvdh/laravel-debugbar --dev
+RUN composer require kreait/firebase-php -vvv
 
 # Configurer les permissions pour le stockage et le cache de Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Créer les répertoires requis avec les bonnes permissions
-# RUN mkdir -p storage/framework/sessions \
-#     && mkdir -p storage/logs \
-#     && chmod -R 775 storage \
-#     && chmod -R 775 bootstrap/cache
+# Copier le script d'entrée
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Définir le script comme point d'entrée
+ENTRYPOINT ["/entrypoint.sh"]
 
 # Exposer le port 8000
 EXPOSE 8000
-
-# Démarrer Laravel avec le script pour attendre PostgreSQL
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve:with-crypto --host=0.0.0.0 --port=8000"]

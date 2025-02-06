@@ -31,7 +31,6 @@ final class UtilisateurController extends Controller
     }
 
     public function loginPin(Request $request){
-        $data["url"]=$request->input('url');
         $data['token']=$request->input('token');
         $request->session()->put('token',$data['token']);
         return view('utilisateur.pin',$data);
@@ -89,7 +88,7 @@ final class UtilisateurController extends Controller
             $utilisateur->pseudo=$pseudo;
             $utilisateur->save();
         }
-        $request->session()->put('utilisateur',$utilisateur);
+        $request->session()->put('idUtilisateur',$idUtilisateur);
         $request->session()->put('connected',true);
         return redirect()->route('achat.liste');
     }

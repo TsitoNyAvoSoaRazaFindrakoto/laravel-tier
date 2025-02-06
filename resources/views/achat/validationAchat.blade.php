@@ -6,8 +6,8 @@
     <title>Crypta - Login</title>
     <link href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #4a4eb1, #667eea);
+body {
+    background: linear-gradient(135deg, #4a4eb1, #667eea);
             font-family: 'Arial', sans-serif;
             height: 100vh;
             display: flex;
@@ -17,7 +17,7 @@
         }
 
         .login-card {
-            background-color: #fff;
+    background-color: #fff;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             width: 400px;
@@ -26,24 +26,24 @@
         }
 
         .login-card h1 {
-            font-size: 2rem;
+    font-size: 2rem;
             font-weight: bold;
             color: #4a4eb1;
             margin-bottom: 10px;
         }
 
         .login-card p {
-            color: #666;
-            margin-bottom: 20px;
+    color: #666;
+    margin-bottom: 20px;
         }
 
         .form-control {
-            border-radius: 15px;
+    border-radius: 15px;
             margin-bottom: 15px;
         }
 
         .btn-login {
-            background-color: #4a4eb1;
+    background-color: #4a4eb1;
             color: #fff;
             border-radius: 20px;
             width: 100%;
@@ -54,18 +54,18 @@
         }
 
         .btn-login:hover {
-            background-color: #3b3e9e;
+    background-color: #3b3e9e;
         }
 
         .signup-link {
-            color: #4a4eb1;
-            text-decoration: underline;
+    color: #4a4eb1;
+    text-decoration: underline;
             font-size: 0.9rem;
         }
 
         .signup-link:hover {
-            color: #3b3e9e;
-        }
+    color: #3b3e9e;
+}
     </style>
 </head>
 <body>
@@ -81,9 +81,15 @@
         <button type="submit" id="buttonLogin" class="btn btn-login">Valider</button>
     </form>
 </div>
+<script>
+    const quantite=<?php echo(json_encode($quantite)) ?>;
+    const idCrypto=<?php echo(json_encode($idCrypto)) ?>;
+</script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
-<script src="{{ asset('app-angular/pin.js') }}"></script>
+<script src="{{ asset('app-angular/validation_achat.js') }}"></script>
 <script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>
