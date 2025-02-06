@@ -75,6 +75,8 @@
     <script>
         const cours =<?php echo(json_encode($cours)) ?>;
     </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script></body>
     <script src="{{ asset('angular/angular.min.js') }}"></script>
     <script src="{{ asset('angular/angular-route.js') }}"></script>

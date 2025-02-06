@@ -36,55 +36,6 @@ class FirestoreService
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * @throws GuzzleException
-     */
-    public function findDataInFirestore($url,$query){
-        $client = new \GuzzleHttp\Client();
-
-        $response = $client->post($url,[
-            'json'=>$query
-        ]);
-
-        $data = json_decode($response->getBody(), true);
-
-        foreach ($data as $item) {
-            if (isset($item['document']['fields'])) {
-                $fields = $item['document']['fields'];
-                $parsedData = $this->parseFirestoreData($fields);
-                print_r($parsedData);
-            }
-        }
-
-        return $data;
-    }
-
-    public function parseFirestoreData(array $fields): array {
-        $parsed = [];
-        foreach ($fields as $key => $value) {
-            if (isset($value['stringValue'])) {
-                $parsed[$key] = $value['stringValue'];
-            } elseif (isset($value['integerValue'])) {
-                $parsed[$key] = (int) $value['integerValue'];
-            } elseif (isset($value['doubleValue'])) {
-                $parsed[$key] = (float) $value['doubleValue'];
-            } elseif (isset($value['booleanValue'])) {
-                $parsed[$key] = (bool) $value['booleanValue'];
-            } elseif (isset($value['timestampValue'])) {
-                $parsed[$key] = new DateTime($value['timestampValue']);
-            } elseif (isset($value['arrayValue'])) {
-                $parsed[$key] = array_map(function ($item) {
-                    return parseFirestoreData($item['mapValue']['fields'] ?? []);
-                }, $value['arrayValue']['values'] ?? []);
-            } elseif (isset($value['mapValue'])) {
-                $parsed[$key] = parseFirestoreData($value['mapValue']['fields']);
-            } else {
-                $parsed[$key] = null;
-            }
-        }
-        return $parsed;
-    }
-
     private function formatData($data): array
     {
         $formatted = [];
@@ -105,10 +56,20 @@ class FirestoreService
                 $formatted[$key] = ['nullValue' => null];
             } elseif ($value instanceof DateTime) {
                 $formatted[$key] = ['timestampValue' => $value->format(DateTimeInterface::ATOM)]; // Format ISO 8601
+            } elseif (is_array($value) && $this->isAssoc($value)) {
+                // Si la valeur est une map (tableau associatif)
+                $formatted[$key] = ['mapValue' => $this->formatData($value)]; // Appel récursif pour formater la map
             } else {
                 throw new InvalidArgumentException("Type de valeur non pris en charge pour la clé : $key");
             }
         }
         return $formatted;
+    }
+
+    // Fonction pour vérifier si un tableau est associatif (une map)
+    private function isAssoc(array $array): bool
+    {
+        if ([] === $array) return false; // Un tableau vide n'est pas une map
+        return array_keys($array) !== range(0, count($array) - 1); // Vérifie si les clés sont numériques
     }
 }

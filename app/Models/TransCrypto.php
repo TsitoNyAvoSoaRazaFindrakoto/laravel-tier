@@ -59,18 +59,4 @@ class TransCrypto extends Model
             $this->quantite = $this->entree;
         }
     }
-
-    public function turnToData(){
-        return [
-            "utilisateur"=>[
-                "idUtilisateur"=>"projects/crypta-d5e13/databases/(default)/documents/utilisateur/{$this->idUtilisateur}",
-                "pseudo"=>$this->utilisateur->pseudo
-            ],
-            "entree"=>$this->entree,
-            "sortie"=>$this->sortie,
-            "dateTransaction"=>$this->dateTransaction,
-            "prixUnitaire"=>$this->prixUnitaire,
-            "idCrypto"=>"projects/crypta-d5e13/databases/(default)/documents/crypto/{$this->idCrypto}"
-        ];
-    }
 }

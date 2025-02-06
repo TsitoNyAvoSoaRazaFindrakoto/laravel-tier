@@ -11,10 +11,6 @@ use Illuminate\Support\Collection;
 
 final class FondService
 {
-    public function insertRetrait(Request $request){
-        $fondUtilisateur=$this->createRetrait($request);
-        $fondUtilisateur->save();
-    }
 
     public function createRetrait(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
@@ -75,7 +71,6 @@ final class FondService
         $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
         $fond = $fondUtilisateurRequest->accept();
         $fond->save();
-        $this->firestoreService->insertData("fondUtilisateur", $fond->idTransFond, $fond->turnToData());
         $fondUtilisateurRequest->delete();
     }
 

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Mockery\Exception;
 
 final class TransCryptoService
 {
@@ -61,52 +62,58 @@ final class TransCryptoService
         $transCrypto->prixUnitaire = CryptoPrix::where('idCrypto', $request->input('idCrypto'))->orderBy('dateHeure', 'desc')->first()->prixUnitaire;
         $transCrypto->sortie = $request->input('quantite');
         $transCrypto->idCrypto = $request->input('idCrypto');
-        return $transCrypto->save();
+        $transCrypto->save();
+        return $transCrypto;
     }
 
-    public function insertAchatValidated(Request $request): void
-    {
-        try {
-            DB::beginTransaction();
-            $transaction = $request->session()->get('entree');
-            $retrait = $request->session()->get('retrait');
-            $retrait->dateValidation = new DateTime();
-            $retrait->dateValidation = $retrait->dateValidation->format('Y-m-d H:i:s');
-            $retrait->save();
-            $this->commissionService->insertCommission($request->session()->get('commission'), $transaction->idCrypto);
-            $transaction->save();
-            $this->firestoreService->insertData("fondUtilisateur", $retrait->idTransFond, $retrait->turnToData());
-            $this->firestoreService->insertData("transCrypto", $transaction->idTransCrypto, $transaction->turnToData());
-            DB::commit();
-        } catch (SoldeCryptoException $e) {
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    public function insertAchat(Request $request)
+    public function insertAchatValidated(Request $request): array
     {
         $request->validate([
             "quantite" => "required|numeric",
             "idCrypto" => "required|numeric"
         ]);
+
         try {
-            $fond = $this->fondService->createRetrait($request);
-            $entree = $this->createEntree($request);
-            $request->session()->put("retrait", $fond[0]);
-            $request->session()->put("commission", $fond[1]);
-            $request->session()->put("entree", $entree);
-        } catch (SoldeException $e) {
+            DB::beginTransaction();
+            [$fondUtilisateur,$commission] = $this->fondService->createRetrait($request);
+            $transaction = $this->createEntree($request);
+
+            $fondUtilisateur->dateValidation = new \DateTime();
+            $fondUtilisateur->dateValidation = $fondUtilisateur->dateValidation->format('Y-m-d H:i:s');
+
+            $fondUtilisateur->save();
+            $this->commissionService->insertCommission($commission, $transaction->idCrypto);
+            $transaction->save();
+            DB::commit();
+        } catch (SoldeCryptoException $e) {
+            DB::rollBack();
             throw $e;
         }
+        $fondUtilisateur->utilisateur;
+        $transaction->utilisateur;
+        $data["fondUtilisateur"] = $fondUtilisateur;
+        $data["transaction"] = $transaction;
+        return $data;
+    }
+
+    public function insertAchat(Request $request): array
+    {
+        $request->validate([
+            "quantite" => "required|numeric",
+            "idCrypto" => "required|numeric"
+        ]);
+
         $response = Http::get('localhost:8082/utilisateur/utilisateur/pin/request/' . $request->session()->get("idUtilisateur"));
 
         // Vérifier la réponse
-        if ($response->successful()) {
-            return $response->json(); // Convertit la réponse JSON en tableau PHP
-        } else {
-            return $response->status(); // Renvoie le code HTTP d'erreur
+        if (!$response->successful()) {
+            throw new Exception("Erreur du fournisseur d'identite"); // Convertit la réponse JSON en tableau PHP
         }
+
+        $data["token"]=$response->json()["data"];
+        $data["quantite"]=$request->input('quantite');
+        $data["idCrypto"]=$request->input('idCrypto');
+        return $data;
     }
 
     public function findListeAchat($idUtilisateur)
@@ -135,32 +142,6 @@ final class TransCryptoService
         foreach ($responses as $response) {
             $response->setCalculatedValue();
         }
-        $url = "https://firestore.googleapis.com/v1/projects/crypta-d5e13/databases/(default)/documents/transCrypto?filter=fieldFilter(field=mobile, op=EQUAL, value={booleanValue=true}";
-        // Corps de la requête
-        $query = [
-            "structuredQuery" => [
-                "where" => [
-                    "fieldFilter" => [
-                        "field" => [
-                            "fieldPath" => "mobile"
-                        ],
-                        "op" => "EQUAL",
-                        "value" => [
-                            "booleanValue" => true
-                        ]
-                    ]
-                ],
-                "from" => [
-                    [
-                        "collectionId" => "transCrypto"
-                    ]
-                ]
-            ]
-        ];
-        $data=$this->firestoreService->findDataInFirestore($url, $query);
-
-        dd($data);
-
         return $responses;
     }
 
@@ -176,13 +157,16 @@ final class TransCryptoService
             [$depot, $commission] = $this->fondService->insertDepot($request);
             $this->commissionService->insertCommission($commission, $request->input('idCrypto'));
             $transaction = $this->insertSortie($request);
-            $this->firestoreService->insertData("fondUtilisateur", $depot->idTransFond, $depot->turnToData());
-            $this->firestoreService->insertData("transCrypto", $transaction->idTransCrypto, $transaction->turnToData());
+            $transaction->utilisateur;
+            $depot->utilisateur;
             DB::commit();
         } catch (SoldeCryptoException $e) {
             DB::rollBack();
             throw $e;
         }
+        $data["transaction"]=$transaction;
+        $data["fondUtilisateur"]=$depot;
+        return $data;
     }
 
     public function findStatistiqueTransaction(\DateTimeInterface $dateMax)

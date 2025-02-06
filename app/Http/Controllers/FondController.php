@@ -62,14 +62,8 @@ final class FondController extends Controller
         return redirect()->route('portefeuille.liste');
     }
 
-    public function test(): void
+    public function test(Request $request)
     {
-        $data = [
-            'name' => 'John Doe',         // Champ de type string
-            'email' => 'john.doe@example.com', // Champ de type string
-            'age' => 30                   // Champ de type integer
-        ];
-
-        $response = $this->firestoreService->insertData('test', 'user123', $data);
+        return $this->getView('test',$request);
     }
 }

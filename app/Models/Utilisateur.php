@@ -8,11 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Utilisateur extends Model
 {
     protected $table = 'utilisateur';
-    protected $guarded = ["idTransFond"];
-    protected $primaryKey = "idTransFond";
+    protected $guarded = ["idUtilisateur"];
+    protected $primaryKey = "idUtilisateur";
     public $timestamps = false;
 
-    public function crypto():BelongsTo{
-        return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");
-    }
 }

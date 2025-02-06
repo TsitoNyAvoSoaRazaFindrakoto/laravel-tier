@@ -97,6 +97,7 @@
 @section('script')
     <script>
         const dataCrypto =<?php echo($transactionsCrypto) ?>;
+        const dataFonds = {};
     </script>
     <script src="{{ asset('angular/angular.min.js') }}"></script>
     <script src="{{ asset('angular/angular-route.js') }}"></script>

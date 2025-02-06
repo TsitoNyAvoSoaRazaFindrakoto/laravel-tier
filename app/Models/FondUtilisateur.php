@@ -44,18 +44,4 @@ class FondUtilisateur extends Model
     public function utilisateur():BelongsTo{
         return $this->belongsTo(Utilisateur::class,"idUtilisateur","idUtilisateur");
     }
-
-    public function turnToData(){
-        return [
-            "entree"=>$this->entree,
-            "sortie"=>$this->sortie,
-            "utilisateur"=>[
-                "idUtilisateur"=>"projects/crypta-d5e13/databases/(default)/documents/utilisateur/{$this->idUtilisateur}",
-                "pseudo"=>$this->utilisateur->pseudo
-            ],
-            "dateTransaction"=>$this->dateTransaction,
-            "dateValidation"=>$this->dateValidation,
-            "idFondUtilisateur"=>$this->idFondUtilisateur
-        ];
-    }
 }

@@ -11,6 +11,18 @@ coursApp.controller('coursController', function($scope, $http) {
         }, 10000);
     }
 
+    const firebaseConfig = {
+        apiKey: "AIzaSyD_dhXrU5-3m_QsUAka7FVavlGTgNTlppI",
+        authDomain: "crypta-d5e13.firebaseapp.com",
+        projectId: "crypta-d5e13",
+        storageBucket: "crypta-d5e13.firebasestorage.app",
+        messagingSenderId: "539604836728",
+        appId: "1:539604836728:web:5876a760ea6bf2189ee88d",
+        measurementId: "G-X7J7VJSX4N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
     function getCours(){
         $http.get(`http://127.0.0.1:8000/api/cours/crypto`)
             .then(function(response) {
@@ -45,7 +57,20 @@ coursApp.controller('coursController', function($scope, $http) {
         $scope.transaction={};
         $scope.transaction.idCrypto=idCrypto;
         $scope.transaction.quantite=getQuantityCoursById(idCrypto);
-        window.location.href = `http://127.0.0.1:8000/vente/insertion_vente?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}`;
+        $http.post(`/vente/insertion_vente`,$scope.transaction,{
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response){
+            console.log(response.data);
+            if(response.data.status==200){
+                addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
+                addToFirestore("transCrypto",response.data.data.transaction);
+            }
+            else{
+                console.log(response.data.message);
+            }
+        });
     }
 
     function getQuantityCoursById(idCrypto){
@@ -56,6 +81,17 @@ coursApp.controller('coursController', function($scope, $http) {
                 return $scope.cours[i].quantite;
             }
         }
+    }
+
+    function addToFirestore(collection,data){
+        db.collection(collection) // Nom de la collection
+            .add(data) // Les données à insérer
+            .then((docRef) => {
+                console.log("Document ajouté avec ID: ", docRef.id);
+            })
+            .catch((error) => {
+                console.error("Erreur lors de l'ajout du document: ", error);
+            });
     }
 
     thread();
