@@ -47,7 +47,7 @@ final class FondService
         $fondUtilisateur->dateTransaction=new \DateTime();
         $fondUtilisateur->idUtilisateur=$idUtilisateur;
         $fondUtilisateur->save();
-        return $commission;
+        return [$fondUtilisateur,$commission];
     }
 
     public function findTransactionHistorique($dateMin,$dateMax,$idUtilisateur):Collection{
@@ -75,6 +75,7 @@ final class FondService
         $fondUtilisateurRequest = FondUtilisateurRequest::findOrFail($idDepot);
         $fond = $fondUtilisateurRequest->accept();
         $fond->save();
+        $this->firestoreService->insertData("fondUtilisateur", $fond->idTransFond, $fond->turnToData());
         $fondUtilisateurRequest->delete();
     }
 

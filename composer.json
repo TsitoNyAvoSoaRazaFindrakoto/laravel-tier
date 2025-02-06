@@ -12,6 +12,8 @@
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.0",
         "darkaonline/l5-swagger": "^8.6",
+        "google/cloud-firestore": "^1.48",
+        "kreait/firebase-php": "^7.16",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^1.1",

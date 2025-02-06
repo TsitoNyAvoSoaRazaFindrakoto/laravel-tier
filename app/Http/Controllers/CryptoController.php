@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
 use App\Models\Crypto;
 use App\Services\TransCryptoService;
@@ -13,7 +14,8 @@ final class CryptoController extends Controller
     public function __construct(TransCryptoService $transCryptoService){
         $this->transCryptoService = $transCryptoService;
     }
-    public function insertAchat(Request $request){
+    public function insertAchat(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    {
         $request->validate([
             "quantite"=>"required|numeric|min:1",
             "idCrypto"=>"required|numeric",
@@ -29,7 +31,11 @@ final class CryptoController extends Controller
         }
     }
 
-    public function insertAchatValidated(Request $request){
+    /**
+     * @throws SoldeCryptoException
+     */
+    public function insertAchatValidated(Request $request): \Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    {
         $this->transCryptoService->insertAchatValidated($request);
         return redirect("/dashboard/cours/crypto");
     }

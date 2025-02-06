@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\FondUtilisateur;
 use App\Models\FondUtilisateurRequest;
+use App\Services\FirestoreService;
 use App\Services\FondService;
 use Illuminate\Http\Request;
 
 final class FondController extends Controller
 {
     protected FondService $fondService;
-    public function __construct(FondService $fondService)
+    private FirestoreService $firestoreService;
+
+    public function __construct(FondService $fondService, \App\Services\FirestoreService $firestoreService)
     {
         $this->fondService = $fondService;
+        $this->firestoreService = $firestoreService;
     }
 
     public function formDepot(Request $request){
@@ -56,5 +60,16 @@ final class FondController extends Controller
         ]);
         $this->fondService->insertRetraitWithoutCrypto($request);
         return redirect()->route('portefeuille.liste');
+    }
+
+    public function test(): void
+    {
+        $data = [
+            'name' => 'John Doe',         // Champ de type string
+            'email' => 'john.doe@example.com', // Champ de type string
+            'age' => 30                   // Champ de type integer
+        ];
+
+        $response = $this->firestoreService->insertData('test', 'user123', $data);
     }
 }
