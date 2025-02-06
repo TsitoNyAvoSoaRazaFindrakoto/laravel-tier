@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc3b2801b3d452ab056dab2ce0860400",
+    "content-hash": "728f748be56bf35327b66069fa6efb31",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1574,6 +1574,60 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "imagekit/imagekit",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/imagekit-developer/imagekit-php.git",
+                "reference": "000e702d3b0cfd471700f2bb037c3f87af2078df"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/imagekit-developer/imagekit-php/zipball/000e702d3b0cfd471700f2bb037c3f87af2078df",
+                "reference": "000e702d3b0cfd471700f2bb037c3f87af2078df",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/assert": "^3.3",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "~6.0 || ~7.0",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ImageKit\\": "src/ImageKit/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Imagekit",
+                    "homepage": "https://github.com/imagekit-developer/imagekit-php/graphs/contributors"
+                }
+            ],
+            "description": "PHP library for Imagekit",
+            "homepage": "https://github.com/imagekit-developer/imagekit-php",
+            "keywords": [
+                "image management",
+                "imagekit",
+                "library"
+            ],
+            "support": {
+                "email": "support@imagekit.io",
+                "issues": "https://github.com/imagekit-developer/imagekit-php/issues",
+                "source": "https://github.com/imagekit-developer/imagekit-php/tree/4.0.0"
+            },
+            "time": "2024-02-09T07:50:53+00:00"
         },
         {
             "name": "laravel/framework",
