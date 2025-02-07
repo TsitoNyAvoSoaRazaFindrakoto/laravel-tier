@@ -27,14 +27,19 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
         Route::get('/liste_portefeuille',[\App\Http\Controllers\CryptoController::class,'fintPorfeuilleUtilisateur'])->name('liste');
     });
+    Route::prefix('/transaction')->name('admin.')->group(function () {
+        Route::get('',[\App\Http\Controllers\UtilisateurController::class,'findListTransaction'])->name('form');
+    });
 });
 
 Route::middleware(AdminMiddleware::class)->group(function () {
-    Route::get("/transaction/request",[\App\Http\Controllers\FondController::class,'findTransactionRequest'])->name('transaction.request');
-    Route::get('/transaction/historique',[\App\Http\Controllers\UtilisateurController::class,'findTransactionHistorique'])->name('liste.transaction.historique');
-    Route::get('/transaction/details/{idUtilisateur}-utilisateur',[\App\Http\Controllers\UtilisateurController::class,'findTransactionsUser'])->name('liste.transaction.historique');
-    Route::post('/transaction/accept/{idTransaction}',[\App\Http\Controllers\FondController::class,'acceptTransaction'])->name('insert');
-    Route::post('/transaction/decline/{idTransaction}',[\App\Http\Controllers\FondController::class,'declineTransaction'])->name('decline');
+    Route::prefix('/transaction')->name('admin.')->group(function () {
+        Route::get("/request",[\App\Http\Controllers\FondController::class,'findTransactionRequest'])->name('transaction.request');
+        Route::get('/historique',[\App\Http\Controllers\UtilisateurController::class,'findTransactionHistorique'])->name('liste.transaction.historique');
+        Route::get('/details/{idUtilisateur}-utilisateur',[\App\Http\Controllers\UtilisateurController::class,'findTransactionsUser'])->name('liste.transaction.historique');
+        Route::post('/accept/{idTransaction}',[\App\Http\Controllers\FondController::class,'acceptTransaction'])->name('insert');
+        Route::post('/decline/{idTransaction}',[\App\Http\Controllers\FondController::class,'declineTransaction'])->name('decline');
+    });
 });
 
 Route::prefix('')->name('utilisateur.')->group(function () {
@@ -72,3 +77,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/transaction',[\App\Http\Controllers\CryptoController::class,'findAllTransaction'])->name('vente');
     });
 });
+
+// Routes de test pour ImageKit
+Route::get('/test-upload', [App\Http\Controllers\ImageTestController::class, 'showUploadForm']);
+Route::post('/test-upload', [App\Http\Controllers\ImageTestController::class, 'testUpload']);
+Route::get('/test-images', [App\Http\Controllers\ImageTestController::class, 'showImages']);
