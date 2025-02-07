@@ -77,7 +77,7 @@ class CryptoUpdaterCommand extends Command
 			$maxChange = $isHighVolatility ? 0.5 : 0.1;  // Max % change
 
 			// Generate random percentage change
-			$percentageChange = rand($minChange * 1000, $maxChange * 1000) / 1000;
+			$percentageChange = rand($minChange * 100, $maxChange * 100);
 
 			// Calculate the new value
 			$newValue = max($oldValue * (1 + $percentageChange / 100), 0.01);

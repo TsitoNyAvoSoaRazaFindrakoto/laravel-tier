@@ -28,7 +28,7 @@ transactionApp.controller('transactionController', function ($scope, $http) {
     if ($scope.transactionsFond !== {}) {
 
         db.collection("fondUtilisateurRequest")
-            .where("mobile", "==", true) // Condition : âge supérieur à 18
+            .where("mobile", "==", true)
             .get()
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {

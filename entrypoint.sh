@@ -23,4 +23,4 @@ if [ -f "/var/www/html/app/init-scripts/init.sql" ]; then
 fi
 
 # Lancer le serveur Laravel
-php artisan serve --host=0.0.0.0 --port=8000
+php artisan serve:with-crypto --host=0.0.0.0 --port=8000
