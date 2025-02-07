@@ -56,7 +56,7 @@ dashboardApp.controller('dashboardController', function ($scope, $http) {
         lineChart.update(); // Applique les changements
     }
 
-    function thread(){
+    function threadChart(){
         setTimeout(() => {
             getDataChart();
         }, 10000);
@@ -72,8 +72,8 @@ dashboardApp.controller('dashboardController', function ($scope, $http) {
             .catch(function(error) {
                 console.error('Erreur lors de la requête :', error);
             });
-        thread();
+        threadChart();
     }
 
-    thread();
+    threadChart();
 });

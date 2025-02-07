@@ -60,7 +60,7 @@ Route::prefix('api')->name('api.')->group(function () {
 
 Route::get('/test',[\App\Http\Controllers\FondController::class,'test'])->name('test');
 
-Route::prefix('dashboard')->name('dashboard.')->group(function () {
+Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
         Route::get('/cours/crypto',[\App\Http\Controllers\DashboardController::class,'coursView'])->name('cours');

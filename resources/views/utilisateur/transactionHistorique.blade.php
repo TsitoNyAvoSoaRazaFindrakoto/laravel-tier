@@ -124,8 +124,8 @@
             <div class="card"
                  ng-repeat="transaction in transactionsCrypto | searchByNameAndDate:name:startDate:endDate:crypto">
                 <div class="user-info">
-                    <div class="avatar"><img src="[[ transaction.utilisateur.img ]]&tr=w-50,h-50"
-                                             style="border-radius: 30px"/></div>
+                    <div class="avatar"><a href="/transaction/details/[[transaction.idUtilisateur]]-utilisateur"><img src="[[ transaction.utilisateur.img ]]&tr=w-50,h-50"
+                                             style="border-radius: 30px"/></a></div>
                     <div class="user-details">
                         <div class="username">[[transaction.utilisateur.pseudo]]</div>
                         <div class="date">[[transaction.dateTransaction]]</div>

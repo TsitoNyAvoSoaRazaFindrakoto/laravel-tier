@@ -24,6 +24,10 @@ final class DashboardController extends Controller
     }
 
     public function coursView(Request $request){
+        $idCrypto=1;
+        $data["evolutionCryptos"]=Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
+        $data["idCrypto"]=$idCrypto;
+        $data["crypto"]=Crypto::findOrFail($idCrypto);
         $data["cours"]=$this->cryptoService->findPriceCrypto();
         return $this->getView('dashboard.cours',$request,$data);
     }
