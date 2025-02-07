@@ -55,6 +55,15 @@ final class UtilisateurController extends Controller
         $data["cryptos"]=Crypto::all();
         $data["idCrypto"]=$request->input("idCrypto");
         $data["formSubmit"]="/transaction/historique";
+        $data["isAdmin"]=true;
+        return $this->getView("utilisateur.transactionHistorique",$request,$data);
+    }
+
+    public function findListTransaction(Request $request){
+        $idCrypto=0;
+        $data["cryptos"]=Crypto::all();
+        $data["isAdmin"]=false;
+        $data["transactionsCrypto"]=$this->cryptoService->findTransactionHistorique($request->input("dateMin"),$request->input("dateMax"),$request->session()->get("idUtilisateur"),$idCrypto);
         return $this->getView("utilisateur.transactionHistorique",$request,$data);
     }
 

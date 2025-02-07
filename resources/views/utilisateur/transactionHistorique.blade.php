@@ -1,69 +1,55 @@
 @extends('template')
 @section('title','Historique - Crypto')
 @section('content')
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Filtre historique</h4>
-                    <form action="{{ $formSubmit }}" method="get">
-                        <div id="achat">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <input type="date" value="{{$dateMin}}" name="dateMin" class="form-control"
-                                               id="floatingInput" placeholder="Quantite">
-                                        <label for="floatingInput">Date minimum</label>
-                                    </div>
+    <div ng-app="transactionApp" ng-controller="transactionController">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Filtre historique</h4>
+                        <div class="row mb-1">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date" ng-model="startDate" name="dateMin" class="form-control"
+                                           id="floatingInput" placeholder="Quantite">
+                                    <label for="floatingInput">Date minimum</label>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-floating mb-3">
-                                        <input type="date" name="dateMax" value="{{$dateMax}}" class="form-control"
-                                               id="floatingInput" placeholder="Quantite">
-                                        <label for="floatingInput">Date maximum</label>
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date" ng-model="endDate" name="dateMax"
+                                           class="form-control"
+                                           id="floatingInput" placeholder="Quantite">
+                                    <label for="floatingInput">Date maximum</label>
                                 </div>
                             </div>
                         </div>
-                        <div id="achat">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <select name="idCrypto" class="form-select" aria-label="Default select example">
-                                        <option selected value="0">Tous</option>
-                                        @foreach($cryptos as $crypto)
-                                            <option value="{{ $crypto->idCrypto }}"
-                                                    @if($crypto->idCrypto==$idCrypto) selected @endif>{{ $crypto->crypto  }}</option>
-                                        @endforeach
-                                    </select>
+                        @if($isAdmin)
+                        <div class="row mb-1">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" ng-model="name" class="form-control" id="floatingInput"
+                                           placeholder="Utilisateur">
+                                    <label for="floatingInput">Utilisateur</label>
                                 </div>
                             </div>
                         </div>
+                        @endif
                         <div class="row">
-                            <div class="col-md-9">
-
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-outline-primary" type="submit">Valider</button>
+                            <div class="col-md-6">
+                                <select ng-model="crypto" class="form-select" aria-label="Default select example" ng-options="option.idCrypto as option.crypto for option in cryptos">
+                                </select>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div ng-app="transactionApp" ng-controller="transactionController">
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title">Historique des achats/ventes</h4>
-                        <div class="col-md-6">
-                            <div class="form-floating mb-3">
-                                <input type="text" ng-model="utilisateurAchat" class="form-control" id="floatingInput"
-                                       placeholder="Utilisateur">
-                                <label for="floatingInput">Utilisateur</label>
-                            </div>
-                        </div>
                         <table class="table table-hover">
                             <thead>
                             <tr>
@@ -72,22 +58,44 @@
                                 <th>Quantité</th>
                                 <th>Date de transaction</th>
                                 <th>Cryptomonnaie</th>
+                                @if($isAdmin)
                                 <th>Utilisateur</th>
+                                @endif
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="transaction in transactionsCrypto | filter:utilisateurAchat">
-                                <td class="[[transaction.styleClass]] font-weight-bold">[[ transaction.operation ]] <i class="[[ transaction.icon ]]"></i></td>
+                            <tr ng-repeat="transaction in transactionsCrypto | searchByNameAndDate:name:startDate:endDate:crypto">
+                                <td class="[[transaction.styleClass]] font-weight-bold">[[ transaction.operation ]] <i
+                                        class="[[ transaction.icon ]]"></i></td>
                                 <td>[[ transaction.prixUnitaire*transaction.quantite ]]</td>
                                 <td>[[ transaction.quantite ]]</td>
                                 <td>[[ transaction.dateTransaction ]]</td>
                                 <td>[[ transaction.crypto.crypto ]]</td>
+                                @if($isAdmin)
                                 <td>
                                     <a href="/transaction/details/[[transaction.utilisateur.idUtilisateur]]-utilisateur">[[transaction.utilisateur.pseudo]]</a>
                                 </td>
+                                @endif
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+
+                        </div>
+                        <div class="col-md-6">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" ng-if="index != 0">
+                                        <button ng-click="previous()" class="page-link">Previous</button>
+                                    </li>
+                                    <li class="page-item" ng-if="index+1 != dataPaginated.length">
+                                        <button ng-click="next()" class="page-link">Next</button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,6 +106,7 @@
     <script>
         const dataCrypto =<?php echo($transactionsCrypto) ?>;
         const dataFonds = {};
+        const cryptos = <?php echo($cryptos)?>;
     </script>
     <script src="{{ asset('angular/angular.min.js') }}"></script>
     <script src="{{ asset('angular/angular-route.js') }}"></script>

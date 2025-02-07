@@ -1,192 +1,83 @@
 let transactionApp = angular.module("transactionApp", ["ngRoute"]).config(function ($interpolateProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
+}).filter('searchByNameAndDate', function() {
+    return function(items, name, startDate, endDate,crypto) {
+        if (!items) return [];
+
+        return items.filter(function(item) {
+            // Vérifier le critère de nom (ignorer la casse)
+            if (name && !item.utilisateur.pseudo.toLowerCase().includes(name.toLowerCase())) {
+                return false;
+            }
+
+            const itemDate = new Date(item.dateTransaction); // Convertir la date de l'élément
+            // Vérifier la plage de dates
+            if (startDate) {
+                if(itemDate < new Date(startDate)){
+                    return false;
+                }
+            }
+            if(endDate){
+                if (itemDate > new Date(endDate)) {
+                    return false;
+                }
+            }
+
+            if(crypto){
+                if(crypto!=item.crypto.idCrypto && crypto!=0){
+                    return false;
+                }
+            }
+
+            // Si l'élément correspond à tous les critères, l'inclure
+            return true;
+        });
+    };
 });
 
 transactionApp.controller('transactionController', function ($scope, $http) {
-    $scope.transactionsCrypto = dataCrypto;
+    $scope.transactionsCrypto = [];
     $scope.transactionsFond = [];
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyD_dhXrU5-3m_QsUAka7FVavlGTgNTlppI",
-        authDomain: "crypta-d5e13.firebaseapp.com",
-        projectId: "crypta-d5e13",
-        storageBucket: "crypta-d5e13.firebasestorage.app",
-        messagingSenderId: "539604836728",
-        appId: "1:539604836728:web:5876a760ea6bf2189ee88d",
-        measurementId: "G-X7J7VJSX4N"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    for (i=0;i<dataFonds.length;i++) {
-        dataFonds[i].mobile=false;
-        $scope.transactionsFond.push(dataFonds[i]);
-        console.log($scope.transactionsFond);
-    }
-
-    if ($scope.transactionsFond !== {}) {
-
-        db.collection("fondUtilisateurRequest")
-            .where("mobile", "==", true)
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    data=doc.data();
-                    // Ajouter à transactionsFond
-                    $scope.$apply(function() {
-                        $scope.transactionsFond.push($scope.setValueData(data,doc.id));
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la récupération des documents :", error);
-            });
-    }
-
-    $scope.setValueData=function(dataFirestore,id){
-        const timestamps = {
-            seconds: dataFirestore.dateTransaction.seconds,
-            nanoseconds: data.dateTransaction.nanoseconds
-        };
-        dataFirestore.date=dataFirestore.dateTransaction;
-        // Convertir les secondes en millisecondes
-        dataFirestore.dateTransaction = new Date(timestamps.seconds * 1000);
-        dataFirestore.dateTransaction = new Date(dataFirestore.dateTransaction.getTime() + (timestamps.nanoseconds / 1000000));
-        dataFirestore.dateTransaction = formatDateTime(dataFirestore.dateTransaction);
-
-        dataFirestore.idFirestore = id;
-
-        if(dataFirestore.entree==0){
-            dataFirestore.montant=dataFirestore.sortie;
-            dataFirestore.styleClass="text-danger";
-            dataFirestore.operation="Retrait";
-            dataFirestore.icon="mdi mdi-arrow-bottom-right";
-        }
-        else{
-            dataFirestore.montant=dataFirestore.entree;
-            dataFirestore.styleClass="text-success";
-            dataFirestore.operation="Depot";
-            dataFirestore.icon="mdi mdi-arrow-top-right";
-        }
-        return dataFirestore;
-    }
-
-    function setDataFirestore(transaction){
-        console.log(transaction);
-        data={};
-        data.entree=transaction.entree;
-        data.sortie=transaction.sortie;
-        if(transaction.date===undefined){
-            data.dateTransaction=convertDateTime(transaction.dateTransaction);
-        }
-        else{
-            data.dateTransaction=transaction.date;
-        }
-        data.mobile=false;
-        data.dateValidation=new Date();
-        data.utilisateur=transaction.utilisateur;
-        return data;
-    }
-
-    function convertDateTime(dateString) {
-        let dateISO = dateString.replace(" ", "T");
-        return new Date(dateISO);
-    }
-
-    $scope.accept=function(i){
-        if(!$scope.transactionsFond[i].mobile){
-            $http.post(`/transaction/accept/${$scope.transactionsFond[i].idTransFondRequest}`,{
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(function(response){
-                if(response.data.status==200){
-                    addToFirestore("fondUtilisateur",setDataFirestore($scope.transactionsFond[i]))
-                    $scope.styleMessage="alert-success";
-                }
-                else{
-                    $scope.styleMessage="alert-danger"
-                }
-                $scope.message=response.data.message;
-                $scope.transactionsFond.splice(i,1);
-                var toastDiv = document.getElementById('toast');
-                var toast = new bootstrap.Toast(toastDiv);
-                toast.show();
-            });
-        }
-        else {
-            deleteFirestore("fondUtilisateurRequest",$scope.transactionsFond[i].idFirestore);
-            $scope.message="Insertion réussie";
-            $scope.styleMessage="alert-success";
-            $scope.transactionsFond.splice(i,1);
-            var toastDiv = document.getElementById('toast');
-            var toast = new bootstrap.Toast(toastDiv);
-            toast.show();
-        }
-
-    }
-
-    $scope.decline=function(i){
-        if($scope.transactionsFond[i].mobile){
-            console.log($scope.transactionsFond[i].idFirestore);
-            deleteFirestore("fondUtilisateurRequest",$scope.transactionsFond[i].idFirestore);
-            $scope.message="Refus réussie";
-            $scope.styleMessage="alert-success";
-            $scope.transactionsFond.splice(i,1);
-            var toastDiv = document.getElementById('toast');
-            var toast = new bootstrap.Toast(toastDiv);
-            toast.show();
-        }
-        else{
-            $http.post(`/transaction/decline/${$scope.transactionsFond[i].idTransFondRequest}`,{
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }).then(function(response){
-                $scope.message="Refus réussie";
-                $scope.styleMessage="alert-success";
-                $scope.transactionsFond.splice(i,1);
-                var toastDiv = document.getElementById('toast');
-                var toast = new bootstrap.Toast(toastDiv);
-                toast.show();
-            });
-        }
-        $scope.transactionsFond.splice(i,1);
-    }
-
-    function formatDateTime(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois commence à 0
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-
-        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    }
-
-    function addToFirestore(collection,data){
-        db.collection(collection) // Nom de la collection
-            .add(data) // Les données à insérer
-            .then((docRef) => {
-                console.log("Document ajouté avec ID: ", docRef.id);
-            })
-            .catch((error) => {
-                console.error("Erreur lors de l'ajout du document: ", error);
-            });
-    }
-
-    function deleteFirestore(collection,idFirestore,callback){
-        db.collection(collection) // Nom de la collection
-            .doc(idFirestore) // ID du document à supprimer
-            .delete() // Supprime le document
-            .then(() => {
-                console.log("Document supprimé avec succès!");
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la suppression du document: ", error);
-            });
-    }
     $scope.utilisateur = "";
+    $scope.dataCrypto=dataCrypto;
+    $scope.dataPaginated=[];
+    $scope.cryptos=[];
+    $scope.cryptos.push({idCrypto:0,crypto:"Tous"});
+    $scope.crypto=0;
+    console.log($scope.cryptos);
+
+    for(let i=0;i<cryptos.length;i++){
+        $scope.cryptos.push(cryptos[i]);
+    }
+
+    console.log($scope.dataCrypto);
+    $scope.index=0;
+
+    $scope.next=function(){
+        $scope.index++;
+        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+    }
+    $scope.previous=function(){
+        $scope.index--;
+        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+    }
+
+    $scope.paginate=function(dataCrypto,number){
+        var data=[]
+        for (let i=0;i<dataCrypto.length;i++){
+            data.push(dataCrypto[i]);
+            if(number==data.length){
+                $scope.dataPaginated.push(data);
+                data=[];
+            }
+        }
+        if(data.length!=0){
+            $scope.dataPaginated.push(data);
+        }
+        $scope.index=0;
+        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+    }
+
+    $scope.paginate(dataCrypto,10);
 });
