@@ -72,3 +72,8 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/transaction',[\App\Http\Controllers\CryptoController::class,'findAllTransaction'])->name('vente');
     });
 });
+
+// Routes de test pour ImageKit
+Route::get('/test-upload', [App\Http\Controllers\ImageTestController::class, 'showUploadForm']);
+Route::post('/test-upload', [App\Http\Controllers\ImageTestController::class, 'testUpload']);
+Route::get('/test-images', [App\Http\Controllers\ImageTestController::class, 'showImages']);

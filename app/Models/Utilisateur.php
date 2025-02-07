@@ -12,4 +12,17 @@ class Utilisateur extends Model
     protected $primaryKey = "idUtilisateur";
     public $timestamps = false;
 
+    public function crypto():BelongsTo{
+        return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");
+    }
+
+    // public function getProfileImageUrl()
+    // {
+    //     if (!$this->image_id) {
+    //         return null;
+    //     }
+        
+    //     $imageKitService = app(ImageKitService::class);
+    //     return $imageKitService->getImageUrl($this->image_id);
+    // }
 }
