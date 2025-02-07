@@ -37,7 +37,6 @@ class ImageTestController extends Controller
 
             $file = $request->file('image');
             
-            // Log des informations du fichier
             \Log::info('Processing upload request', [
                 'originalName' => $file->getClientOriginalName(),
                 'mimeType' => $file->getMimeType(),
@@ -54,12 +53,23 @@ class ImageTestController extends Controller
                 return response()->json(['error' => 'Échec de l\'upload sur ImageKit - aucun ID retourné'], 500);
             }
 
+            //Ty le sary ty
             $imageUrl = $this->imageKitService->getImageUrl($imageId);
+
+            $user = \App\Models\Utilisateur::find($userId);
             
-            if (!$imageUrl) {
-                \Log::error('Failed to generate image URL', ['imageId' => $imageId]);
-                return response()->json(['error' => 'Échec de la génération de l\'URL de l\'image'], 500);
+            // Si l'utilisateur n'existe pas, on le crée
+            if (!$user) {
+                $user = new \App\Models\Utilisateur();
+                $user->idUtilisateur = $userId;
+                $user->pseudo = "User_" . $userId; // Pseudo par défaut
+            } else if ($user->image_id) {
+                // Si l'utilisateur existe et a déjà une image, on la supprime
+                $this->imageKitService->deleteImage($user->image_id);
             }
+
+            $user->image_id = $imageId;
+            $user->save();
 
             return response()->json([
                 'success' => true,
@@ -81,48 +91,49 @@ class ImageTestController extends Controller
     public function showImages()
     {
         try {
-            // Utiliser le service ImageKit existant
-            $imageKit = new \ImageKit\ImageKit(
-                config('services.imagekit.public_key'),
-                config('services.imagekit.private_key'),
-                config('services.imagekit.endpoint_url')
-            );
-            
-            \Log::info('Fetching images from ImageKit');
-            
-            // Récupérer la liste des fichiers du dossier profile-pictures
-            $files = $imageKit->listFiles([
-                'path' => '/profile-pictures',
-                'limit' => 100,
-                'sort' => 'DESC_CREATED'
-            ]);
+            $userId = auth()->id();
+            $userId = 1;
+            $user = \App\Models\Utilisateur::find($userId);
 
-            \Log::info('Files response:', ['response' => json_encode($files)]);
-
-            if (!isset($files->result)) {
-                \Log::warning('No files found in response');
-                return view('test.images', ['images' => []]);
+            if (!$user || !$user->image_id) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Aucune photo de profil',
+                    'image' => null
+                ]);
             }
 
-            $images = collect($files->result)->map(function($file) {
-                return (object)[
-                    'fileId' => $file->fileId ?? 'N/A',
-                    'name' => $file->name ?? 'Sans nom',
-                    'url' => $file->url ?? '',
-                    'createdAt' => isset($file->createdAt) ? date('Y-m-d H:i', strtotime($file->createdAt)) : 'Date inconnue'
-                ];
-            });
+            $imageUrl = $this->imageKitService->getImageUrl($user->image_id);
 
-            \Log::info('Processed images:', ['count' => $images->count()]);
+            if (!$imageUrl) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur lors de la récupération de l\'URL de l\'image',
+                    'image' => null
+                ]);
+            }
 
-            return view('test.images', ['images' => $images]);
-        } catch (\Exception $e) {
-            \Log::error('Error fetching images: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+            return response()->json([
+                'success' => true,
+                'message' => 'Photo de profil récupérée avec succès',
+                'image' => [
+                    'id' => $user->image_id,
+                    'url' => $imageUrl
+                ]
             ]);
-            return view('test.images', ['images' => []])->with('error', 'Erreur lors de la récupération des images : ' . $e->getMessage());
+
+        } catch (\Exception $e) {
+            \Log::error('Error fetching user profile image: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de la récupération de la photo',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

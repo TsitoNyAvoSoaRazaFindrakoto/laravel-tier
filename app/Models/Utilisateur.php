@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Utilisateur extends Model
 {
     protected $table = 'utilisateur';
-    protected $guarded = ["idTransFond"];
-    protected $primaryKey = "idTransFond";
+    protected $guarded = ["idUtilisateur"];
+    protected $primaryKey = "idUtilisateur";
     protected $fillable = ['pseudo', 'image_id'];
     public $timestamps = false;
 
@@ -17,13 +17,13 @@ class Utilisateur extends Model
         return $this->belongsTo(Crypto::class, "idCrypto","idCrypto");
     }
 
-    public function getProfileImageUrl()
-    {
-        if (!$this->image_id) {
-            return null;
-        }
+    // public function getProfileImageUrl()
+    // {
+    //     if (!$this->image_id) {
+    //         return null;
+    //     }
         
-        $imageKitService = app(ImageKitService::class);
-        return $imageKitService->getImageUrl($this->image_id);
-    }
+    //     $imageKitService = app(ImageKitService::class);
+    //     return $imageKitService->getImageUrl($this->image_id);
+    // }
 }
