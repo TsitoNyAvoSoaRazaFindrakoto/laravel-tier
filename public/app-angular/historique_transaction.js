@@ -45,6 +45,7 @@ transactionApp.controller('transactionController', function ($scope, $http) {
     $scope.cryptos=[];
     $scope.cryptos.push({idCrypto:0,crypto:"Tous"});
     $scope.crypto=0;
+    $scope.images=images;
     console.log($scope.cryptos);
 
     for(let i=0;i<cryptos.length;i++){
@@ -63,6 +64,20 @@ transactionApp.controller('transactionController', function ($scope, $http) {
         $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
     }
 
+    $scope.setImage=function(dataCrypto){
+        for(let i=0;i<dataCrypto.length;i++){
+            imgKit=$scope.images[dataCrypto[i].utilisateur.idUtilisateur];
+            if(imgKit!=null){
+                dataCrypto[i].utilisateur.img=imgKit;
+            }
+            else{
+                dataCrypto[i].utilisateur.img="https://ik.imagekit.io/qmegcemhav/profile-pictures/default.jpg?updatedAt=1738953528745";
+            }
+        }
+        console.log(dataCrypto);
+        return dataCrypto;
+    }
+
     $scope.paginate=function(dataCrypto,number){
         var data=[]
         for (let i=0;i<dataCrypto.length;i++){
@@ -79,5 +94,5 @@ transactionApp.controller('transactionController', function ($scope, $http) {
         $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
     }
 
-    $scope.paginate(dataCrypto,10);
+    $scope.paginate($scope.setImage(dataCrypto),12);
 });

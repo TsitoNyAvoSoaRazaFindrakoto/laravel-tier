@@ -56,6 +56,7 @@ final class UtilisateurController extends Controller
         $data["idCrypto"]=$request->input("idCrypto");
         $data["formSubmit"]="/transaction/historique";
         $data["isAdmin"]=true;
+        $data["images"]=$this->utilisateurService->findAllImages();
         return $this->getView("utilisateur.transactionHistorique",$request,$data);
     }
 
