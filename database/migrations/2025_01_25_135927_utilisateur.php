@@ -13,7 +13,6 @@ return new class extends Migration
         DB::statement("CREATE TABLE utilisateur(
                            \"idUtilisateur\" INTEGER,
                            pseudo VARCHAR(50)  NOT NULL,
-                           image_id VARCHAR(100),
                            PRIMARY KEY(\"idUtilisateur\"),
                            UNIQUE(pseudo)
                         )

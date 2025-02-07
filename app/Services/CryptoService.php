@@ -37,7 +37,7 @@ final class CryptoService
         $cryptoEvolution=CryptoPrix::with('crypto')->selectRaw('"dateHeure" as label, "prixUnitaire" as data')
             ->where('idCrypto',$idCrypto)
             ->orderBy('dateHeure','desc')
-            ->limit(10)
+            ->limit(25)
             ->get();
         $cryptoEvolution = $cryptoEvolution->sortBy('label');
         return $cryptoEvolution;

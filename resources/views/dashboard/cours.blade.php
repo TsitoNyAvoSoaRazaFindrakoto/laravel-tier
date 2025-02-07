@@ -47,7 +47,7 @@
                             <p class="[[cour.styleClass]]">[[cour.variation]]<i class="[[ cour.icon ]]"></i></p>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-md-3">
 
                         </div>
@@ -58,13 +58,26 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mb-1">
                         <div class="col-md-6">
-                            <button class="btn btn-primary" ng-click="buy(cour.crypto.idCrypto)">Acheter</button>
+                            <button class="btn btn-success" ng-click="buy(cour.crypto.idCrypto)">Acheter</button>
                         </div>
                         <div class="col-md-6">
                             <button class="btn btn-danger" ng-click="sell(cour.crypto.idCrypto)">Vendre</button>
                         </div>
+                    </div>
+                    <div class="row">
+                        <button ng-click="turnGraphe(cour.crypto)" class="btn btn-primary">Voir graphe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="graphe">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Evolution cours [[crypto]]</h4>
+                        <canvas id="lineChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -88,7 +101,12 @@
 @section('script')
     <script>
         const cours =<?php echo(json_encode($cours)) ?>;
+        const chartEvolution =<?php echo(json_encode($evolutionCryptos)) ?>;
+        const crypto=<?php echo($crypto) ?>;
+        const idCrypto=<?php echo($idCrypto) ?>;
     </script>
+    <script src="{{ asset('skydash/vendors/js/vendor.bundle.base.js') }}"></script>
+    <script src="{{ asset('skydash/vendors/chart.js/Chart.min.js') }}"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script></body>

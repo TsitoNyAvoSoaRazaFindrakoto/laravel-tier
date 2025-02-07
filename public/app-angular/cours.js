@@ -5,6 +5,8 @@ let coursApp = angular.module("coursApp",["ngRoute"]).config(function($interpola
 
 coursApp.controller('coursController', function($scope, $http) {
     $scope.cours=cours;
+    $scope.idCrypto=idCrypto;
+    $scope.crypto=crypto.crypto;
     function thread(){
         setTimeout(() => {
             getCours();
@@ -97,6 +99,101 @@ coursApp.controller('coursController', function($scope, $http) {
                 console.error("Erreur lors de l'ajout du document: ", error);
             });
     }
+
+    $scope.chartEvolution = chartEvolution;
+    /* ChartJS
+     * -------
+     * Data and config for chartjs
+     */
+    'use strict';
+    var data = {
+        labels: $scope.chartEvolution.labels,
+        datasets: [{
+            label: 'Cours cryptomonnaie' ,
+            data: $scope.chartEvolution.data,
+            borderWidth: 2,
+            borderColor: '#4b49ac', // Couleur de la ligne
+            backgroundColor: '#4b49ac',
+            fill: false
+        }]
+    };
+    var options = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        legend: {
+            display: false
+        },
+        elements: {
+            point: {
+                radius: 5, // Taille des points (en pixels)
+                backgroundColor: '#ff4757', // Couleur des points
+                borderColor: '#4b49ac', // Bordure des points
+                borderWidth: 2 // Largeur de la bordure des points
+            }
+        }
+
+    };
+    var lineChart = null;
+    // Get context with jQuery - using jQuery's .get() method.
+    if ($("#lineChart").length) {
+        var lineChartCanvas = $("#lineChart").get(0).getContext("2d");
+        lineChart = new Chart(lineChartCanvas, {
+            type: 'line',
+            data: data,
+            options: options
+        });
+    }
+
+    function updateChart(newLabels, newData) {
+        lineChart.data.labels = newLabels; // Met à jour les labels
+        lineChart.data.datasets[0].data = newData; // Met à jour les données du dataset
+        lineChart.update(); // Applique les changements
+    }
+
+    function threadChart(){
+        setTimeout(() => {
+            getDataChart();
+        }, 10000);
+    }
+
+    function getDataChart(){
+        $http.get(`http://127.0.0.1:8000/dashboard/crypto/${$scope.idCrypto}`)
+            .then(function(response) {
+                $scope.chartEvolution = response.data; // Assigner les données récupérées
+                updateChart($scope.chartEvolution.labels,$scope.chartEvolution.data);
+                console.log("Fetched");
+            })
+            .catch(function(error) {
+                console.error('Erreur lors de la requête :', error);
+            });
+        threadChart();
+    }
+
+    $scope.turnGraphe=function(crypto){
+        $http.get(`http://127.0.0.1:8000/dashboard/crypto/${$scope.idCrypto}`)
+            .then(function(response) {
+                $scope.chartEvolution = response.data; // Assigner les données récupérées
+                updateChart($scope.chartEvolution.labels,$scope.chartEvolution.data);
+                const cible = document.getElementById('graphe'); // Remplace 'monDiv' par l'ID de ton div
+                cible.scrollIntoView({
+                    behavior: 'smooth', // Défilement fluide
+                    block: 'start',     // Aligner le div au début de la vue
+                    inline: 'nearest'   // Alignement horizontal (si besoin)
+                });
+                $scope.idCrypto=crypto.idCrypto;
+                $scope.crypto=crypto.crypto;
+            })
+            .catch(function(error) {
+                console.error('Erreur lors de la requête :', error);
+            });
+    }
+
+    threadChart();
 
     thread();
 });

@@ -19,7 +19,8 @@ class Chart implements \JsonSerializable
         $labels = [];
         $data = [];
         foreach ($listData as $item){
-            $labels[] = $item->label;
+            $date=new \DateTime($item->label);
+            $labels[] = $date->format('H:i:s');
             $data[] = $item->data;
         }
         return new self($labels, $data);
