@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Crypto;
 use App\Models\Utilisateur;
 use App\Services\FondService;
+use App\Services\ImageKitService;
 use App\Services\TransCryptoService;
 use App\Services\UtilisateurService;
 use Illuminate\Http\Request;
@@ -15,11 +16,27 @@ final class UtilisateurController extends Controller
     private UtilisateurService $utilisateurService;
     private FondService $fondService;
     private TransCryptoService $cryptoService;
+    private ImageKitService $imageKitService;
 
-    public function __construct(UtilisateurService $utilisateurService,FondService $fondService,TransCryptoService $cryptoService){
+    public function __construct(UtilisateurService $utilisateurService,FondService $fondService,TransCryptoService $cryptoService,ImageKitService $imageKitService){
         $this->utilisateurService = $utilisateurService;
         $this->fondService = $fondService;
         $this->cryptoService = $cryptoService;
+        $this->imageKitService = $imageKitService;
+    }
+
+    public function profile(Request $request){
+        $idUtilisateur=$request->session()->get('idUtilisateur');
+        $data["porteFeuilles"]=$this->cryptoService->findSoldeAllCrypto($idUtilisateur);
+        $utilisateur=$this->utilisateurService->findById($idUtilisateur);
+        $img=$this->imageKitService->getImageUrl($utilisateur->image_id);
+        if($img==null){
+            $img="https://ik.imagekit.io/qmegcemhav/profile-pictures/default.jpg?updatedAt=1738953528745";
+        }
+        $utilisateur->email="LizkaRyan626@gmail.com";
+        $utilisateur->img=$img;
+        $data["utilisateur"]=$utilisateur;
+        return $this->getView("utilisateur.profile",$request,$data);
     }
 
     public function index(){

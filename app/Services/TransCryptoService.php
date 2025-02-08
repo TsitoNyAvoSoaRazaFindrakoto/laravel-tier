@@ -191,6 +191,14 @@ final class TransCryptoService
             ->first()['solde'];
     }
 
+    public function findSoldeAllCrypto($idUtilisateur){
+        return TransCrypto::with('crypto')
+            ->where('idUtilisateur',$idUtilisateur)
+            ->selectRaw('sum(entree-sortie) as solde, "idCrypto"')
+            ->groupBy('idCrypto')
+            ->get();
+    }
+
     public function findPorfeuilleUtilisateur($idUtilisateur)
     {
         return TransCrypto::where('idUtilisateur', $idUtilisateur)

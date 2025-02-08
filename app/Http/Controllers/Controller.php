@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FondUtilisateur;
 use Illuminate\Http\Request;
 
 class Controller
@@ -17,6 +18,9 @@ class Controller
     }
 
     protected function getView($url,Request $request,$data=[]){
+        $data["solde"]=FondUtilisateur::where('idUtilisateur',$request->session()->get('idUtilisateur'))
+            ->selectRaw('sum(entree-sortie) as solde')
+            ->first()['solde'];
         if($request->session()->get('role')=="Admin"){
             return $this->viewAdmin($url,$data);
         }
