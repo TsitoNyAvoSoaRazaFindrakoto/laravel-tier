@@ -15,8 +15,9 @@ class CryptoUpdaterCommand extends Command
 
     public function __construct(){
         parent::__construct();
+        $firebaseCredentialsPath = storage_path(env('FIREBASE_CREDENTIALS', 'firebase/firebase_credentials.json'));
         $factory = (new Factory)
-            ->withServiceAccount(storage_path('firebase/keyFirebase.json'))
+            ->withServiceAccount($firebaseCredentialsPath)
             ->withDatabaseUri('https://crypta-d5e13-default-rtdb.firebaseio.com/'); // URL correcte de la base de données
 
         $this->database = $factory->createDatabase();
