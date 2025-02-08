@@ -5,21 +5,60 @@ namespace App\Console\Commands;
 use App\Models\Crypto;
 use App\Models\CryptoPrix;
 use Illuminate\Console\Command;
+use Kreait\Firebase\Factory;
 
 class CryptoUpdaterCommand extends Command
 {
 	protected $signature = 'crypto:run';
 	protected $description = 'Continuously update cryptocurrency values every 10 seconds';
+    protected $database;
+
+    public function __construct(){
+        parent::__construct();
+        $factory = (new Factory)
+            ->withServiceAccount(storage_path('firebase/keyFirebase.json'))
+            ->withDatabaseUri('https://crypta-d5e13-default-rtdb.firebaseio.com/'); // URL correcte de la base de données
+
+        $this->database = $factory->createDatabase();
+    }
 
 	public function handle()
 	{
 		$this->info('Crypto value updater started. Press Ctrl+C to stop.');
 
 		while (true) {
+            $this->sendBaseToFirebase();
 			$this->updateCryptoValues(); // Update values
 			sleep(10);
 		}
 	}
+
+    private function sendBaseToFirebase(){
+        $cryptos=Crypto::all();
+        foreach ($cryptos as $crypto) {
+            $this->sendCryptoToFirebase($crypto->idCrypto);
+        }
+    }
+
+    private function sendCryptoToFirebase($idCrypto){
+        $prix=CryptoPrix::where("idCrypto",$idCrypto)
+            ->orderBy("dateHeure","desc")
+            ->selectRaw('"prixUnitaire" as valeur, "dateHeure" as time, "idCryptoPrix"')
+            ->limit(30)
+            ->get();
+
+        $reference = $this->database->getReference($idCrypto);
+
+        $priceSend=[];
+
+        foreach ($prix as $value) {
+            $priceSend["".$value->idCryptoPrix]=[
+                "valeur"=> $value->valeur,
+                "dateHeure"=> $value->time
+            ];
+        }
+        $reference->set($priceSend);
+    }
 
 	private function updateCryptoValues()
 	{

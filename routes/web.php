@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FirebaseController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\ClientMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,7 @@ Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('/modification',[\App\Http\Controllers\UtilisateurController::class,'modification'])->name('modifProfile');
         Route::get('/modification_validated',[\App\Http\Controllers\UtilisateurController::class,'modificationValidated'])->name('modifProfile');
     });
+    Route::get('/firebase/store', [FirebaseController::class, 'storeData']);
 });
 
 Route::middleware(AdminMiddleware::class)->group(function () {
