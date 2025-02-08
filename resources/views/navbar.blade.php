@@ -13,7 +13,10 @@
         </ul>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item nav-settings d-none d-lg-flex">
-                <a class="nav-link" href="{{ url('/') }}" style="color: white">
+                <p style="color: white" class="font-weight-bold">Solde : <p id="solde">{{$solde}}</p></p>
+            </li>
+            <li class="nav-item nav-settings d-none d-lg-flex">
+                <a class="nav-link" href="{{ url('/') }}" style="margin-left: 10%;color: white">
                     Deconnection
                 </a>
             </li>

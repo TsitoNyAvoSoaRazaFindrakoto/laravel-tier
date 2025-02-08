@@ -7,16 +7,20 @@ use App\Dto\Chart;
 use App\Models\Crypto;
 use App\Services\CommissionService;
 use App\Services\CryptoService;
+use App\Services\FondService;
+use App\Services\UtilisateurService;
 use Illuminate\Http\Request;
 
 final class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
     public CommissionService $commissionService;
+    public FondService $fondService;
 
-    public function __construct(CryptoService $cryptoService,CommissionService $commissionService){
+    public function __construct(CryptoService $cryptoService,CommissionService $commissionService,FondService $fondService){
         $this->cryptoService = $cryptoService;
         $this->commissionService = $commissionService;
+        $this->fondService = $fondService;
     }
 
     public function cours(){
@@ -25,6 +29,7 @@ final class DashboardController extends Controller
 
     public function coursView(Request $request){
         $idCrypto=1;
+        $data["solde"]=$this->fondService->findSolde($request->session()->get("idUtilisateur"));
         $data["evolutionCryptos"]=Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
         $data["idCrypto"]=$idCrypto;
         $data["crypto"]=Crypto::findOrFail($idCrypto);

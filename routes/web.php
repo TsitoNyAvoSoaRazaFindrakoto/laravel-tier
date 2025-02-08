@@ -58,13 +58,12 @@ Route::prefix('api')->name('api.')->group(function () {
     });
 });
 
-Route::get('/test',[\App\Http\Controllers\FondController::class,'test'])->name('test');
-
 Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
         Route::get('/cours/crypto',[\App\Http\Controllers\DashboardController::class,'coursView'])->name('cours');
         Route::get('/crypto/{idCrypto}',[\App\Http\Controllers\DashboardController::class,'cryptoPrix'])->name('crypto');
+        Route::get('/profile',[\App\Http\Controllers\UtilisateurController::class,'profile'])->name('profile');
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');
