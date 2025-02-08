@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypta - Login</title>
-    <link href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}">
     <style>
         body {
             background: linear-gradient(135deg, #4a4eb1, #667eea);
@@ -69,28 +69,26 @@
     </style>
 </head>
 <body>
-<div class="login-card" ng-app="loginApp" ng-controller="loginController">
+<div class="login-card" ng-app="inscriptionApp" ng-controller="inscriptionController">
     <h1>Crypta</h1>
-    <h2>Login</h2>
+    <h2>Modification profile</h2>
     <p>Continuer sur Crypta</p>
     <div id="message">
 
     </div>
     <form ng-submit="submitForm()">
-        <input ng-model="utilisateur.email" type="email" class="form-control" placeholder="Email" required>
-        <input ng-model="utilisateur.password" type="password" class="form-control" placeholder="Mot de passe" required>
-        <button type="submit" class="btn btn-login" id="buttonLogin">Login</button>
+        <input ng-model="utilisateur.pseudo" type="pseudo" class="form-control" placeholder="Pseudo" required>
+        <input ng-model="utilisateur.password" type="password" class="form-control" placeholder="Mot de passe">
+        <input ng-model="passwordTest" type="password" class="form-control" placeholder="Confirmer mot de passe">
+        <button type="submit" id="buttonLogin" class="btn btn-login">Modifier</button>
     </form>
-    <p class="mt-3">
-        Vous n'avez pas de compte? <a href="/inscription" class="signup-link">S'inscrire</a>
-    </p>
 </div>
 <script>
-    const error="{{$message}}";
+    const pseudo="{{$pseudo}}";
+    const token="{{$token}}";
 </script>
-<script src="{{asset('bootstrap-5/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{ asset('angular/angular.min.js') }}"></script>
 <script src="{{ asset('angular/angular-route.js') }}"></script>
-<script src="{{ asset('app-angular/login.js') }}"></script>
-</body>
+<script src="{{ asset('app-angular/modification_utilisateur.js') }}"></script>
+<script src="{{ asset('bootstrap-5/js/bootstrap.bundle.min.js') }}"></script></body>
 </html>

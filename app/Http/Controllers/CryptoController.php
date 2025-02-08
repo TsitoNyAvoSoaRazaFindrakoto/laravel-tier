@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Dto\ResponseJSON;
 use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
+use App\Exception\TokenException;
 use App\Models\Crypto;
 use App\Models\Utilisateur;
 use App\Services\TransCryptoService;
@@ -29,6 +30,9 @@ final class CryptoController extends Controller
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
             return $this->getView('achat.formAchat',$request,$data);
+        }
+        catch (TokenException $e){
+            return redirect('/connection?message='.$e->getMessage());
         }
     }
     public function insertAchatValidated(Request $request): ResponseJSON

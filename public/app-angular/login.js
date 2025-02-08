@@ -11,6 +11,11 @@ loginApp.controller('loginController', function($scope, $http) {
     const buttonLogin=document.getElementById("buttonLogin");
     const message=document.getElementById("message");
 
+    if(error!=""){
+        message.innerHTML="<div class=\"alert alert-danger\" role=\"alert\">\n" +
+            error+"    </div>";
+    }
+
     $scope.submitForm=function(){
         console.log(JSON.stringify($scope.utilisateur));
         buttonLogin.innerHTML=buttonHtml;

@@ -11,7 +11,7 @@
             <div class="card">
                 <div class="card-body" style="border: solid 1px;border-radius: 15px;">
                     <h4 class="card-title">Analyse des cryptos</h4>
-                    <form action="/dashboard/analyse/crypto" method="post">
+                    <form action="/dashboard/analyse-crypto" method="post">
                         @csrf
                         <div id="achat">
                             <div class="row">

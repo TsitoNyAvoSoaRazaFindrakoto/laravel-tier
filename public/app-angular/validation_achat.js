@@ -39,6 +39,7 @@ pinApp.controller('pinController', function($scope, $http) {
             buttonLogin.disabled=false;
             $scope.data=response.data;
             if($scope.data.status==200){
+                $scope.transaction.token=$scope.data.data;
                 $http.post(`/achat/validated`,$scope.transaction,{
                     headers: {
                         'Content-Type': 'application/json'

@@ -25,6 +25,26 @@ final class UtilisateurController extends Controller
         $this->imageKitService = $imageKitService;
     }
 
+    public function modificationValidated(Request $request){
+        $request->validate([
+            "token"=>"required",
+            "pseudo"=>"required",
+        ]);
+        if($this->utilisateurService->testToken($request->input("token"),$request->session()->get("idUtilisateur"),$request)){
+            $utilisateur=$this->utilisateurService->findById($request->session()->get("idUtilisateur"));
+            $utilisateur->pseudo=$request->input("pseudo");
+            $utilisateur->save();
+            return redirect('/profile');
+        }
+        return redirect('/connection?message=Token+expire');
+    }
+
+    public function modification(Request $request){
+        $data["pseudo"]=$this->utilisateurService->findById($request->session()->get("idUtilisateur"))->pseudo;
+        $data["token"]=$request->session()->get('token');
+        return view('utilisateur.parametre', $data);
+    }
+
     public function profile(Request $request){
         $idUtilisateur=$request->session()->get('idUtilisateur');
         $data["porteFeuilles"]=$this->cryptoService->findSoldeAllCrypto($idUtilisateur);
@@ -43,8 +63,13 @@ final class UtilisateurController extends Controller
         return view('utilisateur.accueil');
     }
 
-    public function login(){
-        return view('utilisateur.login');
+    public function login(Request $request){
+        $message=$request->input("message");
+        $data["message"]="";
+        if($message!=null){
+            $data["message"]=$message;
+        }
+        return view('utilisateur.login',$data);
     }
 
     public function loginPin(Request $request){
@@ -110,7 +135,8 @@ final class UtilisateurController extends Controller
         $idUtilisateur=$request->input('idUtilisateur');
         $pseudo=$request->input('pseudo');
         $role=$request->input('role');
-        if($request->session()->get('token')!=$request->input('token') && $role!="Admin"){
+        $token=$request->input('token');
+        if($this->utilisateurService->testToken($token,$idUtilisateur,$request) && $role!="Admin"){
             return redirect()->route('utilisateur.login');
         }
         $utilisateur=$this->utilisateurService->findById($idUtilisateur);
@@ -121,7 +147,7 @@ final class UtilisateurController extends Controller
         }
         $request->session()->put('idUtilisateur',$idUtilisateur);
         $request->session()->put('connected',true);
-        $request->session()->put('role',$pseudo);
+        $request->session()->put('role',$role);
         return redirect()->route('achat.liste');
     }
 
@@ -133,6 +159,7 @@ final class UtilisateurController extends Controller
     public function loginFafana(Request $request){
         $request->session()->put('idUtilisateur',1);
         $request->session()->put('role',"Admin");
+        $request->session()->put('pseudo',"Lizka");
         $request->session()->put('connected',true);
         return redirect()->route('achat.liste');
     }

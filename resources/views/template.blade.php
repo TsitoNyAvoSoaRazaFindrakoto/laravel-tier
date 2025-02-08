@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('skydash/js/select.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('skydash/css/vertical-layout-light/style.css') }}">
     <link rel="stylesheet" href="{{ asset('skydash/vendors/mdi/css/materialdesignicons.min.css') }}">
+    <link rel="shortcut icon" href="{{asset('images/mini-Crypta.png')}}">
     @yield('style')
 </head>
 <body>
