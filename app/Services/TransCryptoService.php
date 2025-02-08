@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
+use App\Exception\TokenException;
 use App\Models\CryptoPrix;
 use App\Models\FondUtilisateur;
 use App\Models\TransCrypto;
@@ -70,9 +71,10 @@ final class TransCryptoService
     {
         $request->validate([
             "quantite" => "required|numeric",
-            "idCrypto" => "required|numeric"
+            "idCrypto" => "required|numeric",
+            "token"=>"required"
         ]);
-
+        $request->session()->put('token',$request->input('token'));
         try {
             DB::beginTransaction();
             [$fondUtilisateur,$commission] = $this->fondService->createRetrait($request);
@@ -103,17 +105,23 @@ final class TransCryptoService
             "idCrypto" => "required|numeric"
         ]);
 
-        $response = Http::get('localhost:8082/utilisateur/utilisateur/pin/request/' . $request->session()->get("idUtilisateur"));
+        $response = Http::get('localhost:8082/utilisateur/utilisateur/pin/request/' . $request->session()->get("token"));
 
         // Vérifier la réponse
         if (!$response->successful()) {
             throw new Exception("Erreur du fournisseur d'identite"); // Convertit la réponse JSON en tableau PHP
         }
 
-        $data["token"]=$response->json()["data"];
-        $data["quantite"]=$request->input('quantite');
-        $data["idCrypto"]=$request->input('idCrypto');
-        return $data;
+        if($response->json()["status"]==200){
+            $data["token"]=$response->json()["data"];
+            $data["quantite"]=$request->input('quantite');
+            $data["idCrypto"]=$request->input('idCrypto');
+            $request->session()->put('token',$data["token"]);
+            return $data;
+        }
+        else{
+            throw new TokenException();
+        }
     }
 
     public function findListeAchat($idUtilisateur)

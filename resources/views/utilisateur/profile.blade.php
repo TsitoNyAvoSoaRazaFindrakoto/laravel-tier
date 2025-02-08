@@ -87,6 +87,7 @@
                     <h1>{{$utilisateur->pseudo}}</h1>
                     <p>{{$utilisateur->email}}</p>
                     <p>Solde : {{$solde}} Ar</p>
+                    <p><a href="/profile/modification">Modifier information</a></p>
                 </div>
             </div>
 

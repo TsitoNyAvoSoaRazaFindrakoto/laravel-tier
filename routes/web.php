@@ -27,8 +27,13 @@ Route::middleware(ClientMiddleware::class)->group(function () {
     Route::prefix('/portefeuille')->name('portefeuille.')->group(function () {
         Route::get('/liste_portefeuille',[\App\Http\Controllers\CryptoController::class,'fintPorfeuilleUtilisateur'])->name('liste');
     });
-    Route::prefix('/transaction')->name('admin.')->group(function () {
-        Route::get('',[\App\Http\Controllers\UtilisateurController::class,'findListTransaction'])->name('form');
+    Route::prefix('/transaction')->name('transaction.')->group(function () {
+        Route::get('/utilisateur',[\App\Http\Controllers\UtilisateurController::class,'findListTransaction'])->name('utilisateur');
+    });
+    Route::prefix('/profile')->name('profile.')->group(function () {
+        Route::get('',[\App\Http\Controllers\UtilisateurController::class,'profile'])->name('utilisateur');
+        Route::get('/modification',[\App\Http\Controllers\UtilisateurController::class,'modification'])->name('modifProfile');
+        Route::get('/modification_validated',[\App\Http\Controllers\UtilisateurController::class,'modificationValidated'])->name('modifProfile');
     });
 });
 
@@ -61,15 +66,14 @@ Route::prefix('api')->name('api.')->group(function () {
 Route::prefix('/dashboard')->name('dashboard.')->group(function () {
     Route::middleware(ClientMiddleware::class)->group(function () {
         Route::get('',[\App\Http\Controllers\DashboardController::class,'index'])->name('index');
-        Route::get('/cours/crypto',[\App\Http\Controllers\DashboardController::class,'coursView'])->name('cours');
+        Route::get('/cours-crypto',[\App\Http\Controllers\DashboardController::class,'coursView'])->name('cours');
         Route::get('/crypto/{idCrypto}',[\App\Http\Controllers\DashboardController::class,'cryptoPrix'])->name('crypto');
-        Route::get('/profile',[\App\Http\Controllers\UtilisateurController::class,'profile'])->name('profile');
     });
     Route::middleware(\App\Http\Middleware\AdminMiddleware::class)->group(function () {
         Route::get('/parametre',[\App\Http\Controllers\DashboardController::class,'parametre'])->name('parametre');
         Route::post('/parametre',[\App\Http\Controllers\DashboardController::class,'parametreUpdate'])->name('parametre.update');
-        Route::get('/analyse/crypto',[\App\Http\Controllers\DashboardController::class,'analyseCrypto'])->name('analyse.crypto');
-        Route::post('/analyse/crypto',[\App\Http\Controllers\DashboardController::class,'analyseCryptoListe'])->name('analyse.crypto');
+        Route::get('/analyse-crypto',[\App\Http\Controllers\DashboardController::class,'analyseCrypto'])->name('analyse.crypto');
+        Route::post('/analyse-crypto',[\App\Http\Controllers\DashboardController::class,'analyseCryptoListe'])->name('analyse.crypto');
         Route::get('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommission'])->name('analyse.comission');
         Route::post('/analyse/commission',[\App\Http\Controllers\DashboardController::class,'analyseCommissionListe'])->name('analyse.comission.liste');
         Route::get('/porte-feuille',[\App\Http\Controllers\CryptoController::class,'statistique'])->name('portefeuille');
