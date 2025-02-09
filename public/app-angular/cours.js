@@ -7,6 +7,7 @@ coursApp.controller('coursController', function($scope, $http) {
     $scope.cours=cours;
     $scope.idCrypto=idCrypto;
     $scope.crypto=crypto.crypto;
+    $scope.idUtilisateur=idUtilisateur;
     function thread(){
         setTimeout(() => {
             getCours();
@@ -52,37 +53,86 @@ coursApp.controller('coursController', function($scope, $http) {
         $scope.transaction={};
         $scope.transaction.idCrypto=idCrypto;
         $scope.transaction.quantite=getQuantityCoursById(idCrypto);
-        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}`;
+        $scope.setIfFavoriteBuy($scope.idUtilisateur);
+    }
+
+    $scope.setIfFavoriteBuy=function(idUtilisateur){
+        db.collection("utilisateur")
+            .where("idUtilisateur", "==", idUtilisateur)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    data=doc.data();
+                    for(let i=0;i<data.favoris.length;i++){
+                        if($scope.transaction.idCrypto+""===data.favoris[i]){
+                            $scope.transaction.favori=true;
+                            $scope.transaction.mtoken=data.mToken;
+                            break;
+                        }
+                        $scope.transaction.favori=false;
+                    }
+                    if($scope.transaction.favori){
+                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}&mtoken=${$scope.transaction.mtoken}&favori=true`;
+                    }
+                    else{
+                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}&favori=false`;
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la récupération des documents :", error);
+            });
+    }
+
+    $scope.setIfFavoriteSell=function(idUtilisateur){
+        db.collection("utilisateur")
+            .where("idUtilisateur", "==", idUtilisateur)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    data=doc.data();
+                    for(let i=0;i<data.favoris.length;i++){
+                        if($scope.transaction.idCrypto+""===data.favoris[i]){
+                            $scope.transaction.favori=true;
+                            $scope.transaction.mtoken=data.mToken;
+                            break;
+                        }
+                        $scope.transaction.favori=false;
+                    }
+                    console.log(JSON.stringify($scope.transaction));
+                    $http.post(`/vente/insertion_vente`,$scope.transaction,{
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(function(response){
+                        if(response.data.status==200){
+                            addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
+                            addToFirestore("transCrypto",response.data.data.transaction);
+                            $scope.styleMessage="alert-success";
+                        }
+                        else{
+                            $scope.styleMessage="alert-danger";
+                        }
+                        $scope.message=response.data.message;
+                        var venteSuccess = document.getElementById('toast');
+                        var toast = new bootstrap.Toast(venteSuccess);
+                        toast.show();
+                    });
+                });
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la récupération des documents :", error);
+            });
     }
 
     $scope.sell = function (idCrypto){
         $scope.transaction={};
         $scope.transaction.idCrypto=idCrypto;
         $scope.transaction.quantite=getQuantityCoursById(idCrypto);
-        $http.post(`/vente/insertion_vente`,$scope.transaction,{
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(function(response){
-            console.log(response.data);
-            if(response.data.status==200){
-                addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
-                addToFirestore("transCrypto",response.data.data.transaction);
-                $scope.styleMessage="alert-success";
-            }
-            else{
-                $scope.styleMessage="alert-danger";
-            }
-            $scope.message=response.data.message;
-            var venteSuccess = document.getElementById('toast');
-            var toast = new bootstrap.Toast(venteSuccess);
-            toast.show();
-        });
+        $scope.setIfFavorite($scope.idUtilisateur);
     }
     function getQuantityCoursById(idCrypto){
-        console.log($scope.cours);
         for (i=0;i<$scope.cours.length;i++) {
-            console.log($scope.cours[i]);
             if($scope.cours[i].idCrypto==idCrypto){
                 return $scope.cours[i].quantite;
             }
@@ -166,7 +216,6 @@ coursApp.controller('coursController', function($scope, $http) {
             .then(function(response) {
                 $scope.chartEvolution = response.data; // Assigner les données récupérées
                 updateChart($scope.chartEvolution.labels,$scope.chartEvolution.data);
-                console.log("Fetched");
             })
             .catch(function(error) {
                 console.error('Erreur lors de la requête :', error);

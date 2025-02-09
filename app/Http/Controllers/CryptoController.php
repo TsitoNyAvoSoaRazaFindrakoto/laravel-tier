@@ -22,9 +22,18 @@ final class CryptoController extends Controller
         $request->validate([
             "quantite"=>"required|numeric|min:1",
             "idCrypto"=>"required|numeric",
+            "favori"=>"required",
+            "mtoken"=>"string",
         ]);
         try{
             $response=$this->transCryptoService->insertAchat($request);
+            if($request->input('favori')=="true"){
+                $request->session()->put('favori',true);
+                $request->session()->put('mtoken',$request->input('mtoken'));
+            }
+            else{
+                $request->session()->put('favori',false);
+            }
             return view('achat.validationAchat',$response);
         }
         catch(SoldeException $e){
@@ -46,6 +55,8 @@ final class CryptoController extends Controller
         $request->validate([
             "quantite"=>"required|numeric|min:1",
             "idCrypto"=>"required|numeric",
+            "favori"=>"required|boolean",
+            "mtoken"=>"string",
         ]);
         $data["cryptos"] = Crypto::all();
         try{

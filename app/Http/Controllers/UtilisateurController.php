@@ -36,7 +36,7 @@ final class UtilisateurController extends Controller
             $utilisateur->save();
             return redirect('/profile');
         }
-        return redirect('/connection?message=Token+expire');
+        return redirect('/connection?message=Token+expire&alert=danger');
     }
 
     public function modification(Request $request){
@@ -65,9 +65,12 @@ final class UtilisateurController extends Controller
 
     public function login(Request $request){
         $message=$request->input("message");
+        $alert=$request->input("alert");
         $data["message"]="";
+        $data["alert"]="";
         if($message!=null){
             $data["message"]=$message;
+            $data["alert"]=$alert;
         }
         return view('utilisateur.login',$data);
     }
@@ -136,7 +139,7 @@ final class UtilisateurController extends Controller
         $pseudo=$request->input('pseudo');
         $role=$request->input('role');
         $token=$request->input('token');
-        if($this->utilisateurService->testToken($token,$idUtilisateur,$request) && $role!="Admin"){
+        if(!$this->utilisateurService->testToken($token,$idUtilisateur,$request) && $role!="Admin"){
             return redirect()->route('utilisateur.login');
         }
         $utilisateur=$this->utilisateurService->findById($idUtilisateur);
@@ -148,7 +151,7 @@ final class UtilisateurController extends Controller
         $request->session()->put('idUtilisateur',$idUtilisateur);
         $request->session()->put('connected',true);
         $request->session()->put('role',$role);
-        return redirect()->route('achat.liste');
+        return redirect("/dashboard/cours-crypto");
     }
 
     public function logout(Request $request){
