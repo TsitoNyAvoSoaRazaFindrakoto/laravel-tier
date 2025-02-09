@@ -104,6 +104,7 @@
         const chartEvolution =<?php echo(json_encode($evolutionCryptos)) ?>;
         const crypto=<?php echo($crypto) ?>;
         const idCrypto=<?php echo($idCrypto) ?>;
+        const idUtilisateur=<?php echo($idUtilisateur) ?>;
     </script>
     <script src="{{ asset('skydash/vendors/js/vendor.bundle.base.js') }}"></script>
     <script src="{{ asset('skydash/vendors/chart.js/Chart.min.js') }}"></script>

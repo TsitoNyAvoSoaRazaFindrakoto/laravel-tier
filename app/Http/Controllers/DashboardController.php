@@ -34,6 +34,7 @@ final class DashboardController extends Controller
         $data["idCrypto"]=$idCrypto;
         $data["crypto"]=Crypto::findOrFail($idCrypto);
         $data["cours"]=$this->cryptoService->findPriceCrypto();
+        $data["idUtilisateur"]=$request->session()->get("idUtilisateur");
         return $this->getView('dashboard.cours',$request,$data);
     }
 

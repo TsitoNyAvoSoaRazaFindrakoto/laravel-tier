@@ -9,6 +9,7 @@ use App\Models\CryptoPrix;
 use App\Models\FondUtilisateur;
 use App\Models\TransCrypto;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -95,7 +96,34 @@ final class TransCryptoService
         $transaction->utilisateur;
         $data["fondUtilisateur"] = $fondUtilisateur;
         $data["transaction"] = $transaction;
+        if($request->session()->get('favori')){
+            $this->notify($request->session()->get('mtoken'),"Achat",$transaction);
+        }
         return $data;
+    }
+
+    public function notify($token,$operation,$transaction){
+        // Créer le client Guzzle
+        $client = new Client();
+        $transaction->setCalculatedValue();
+        try {
+            // Envoyer la requête à l'API d'Expo
+            $response = $client->post('https://exp.host/--/api/v2/push/send', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'to' => $token,
+                    'sound' => 'default',
+                    'title' => $operation." de ".$transaction->crypto->crypto,
+                    'body' => "L'opération a bien été effectué le ".$transaction->dateTransaction." avec une prix de ".($transaction->priUnitaire*$transaction->quantite),
+                    'data' => ['extraData' => 'value'], // Données optionnelles
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function insertAchat(Request $request): array
@@ -174,6 +202,7 @@ final class TransCryptoService
         }
         $data["transaction"]=$transaction;
         $data["fondUtilisateur"]=$depot;
+        $this->notify($request->input('mtoken'),"Vente",$transaction);
         return $data;
     }
 

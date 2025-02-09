@@ -4,7 +4,7 @@ loginApp.controller('loginController', function($scope, $http) {
     $scope.utilisateur={};
     $scope.utilisateur.email="admin@gmail.com";
     $scope.utilisateur.password="itu16";
-
+    $scope.alert=alert;
     const buttonHtml="\n" +
         "            <span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>\n" +
         "            <span class=\"visually-hidden\">Loading...</span>";
@@ -12,7 +12,7 @@ loginApp.controller('loginController', function($scope, $http) {
     const message=document.getElementById("message");
 
     if(error!=""){
-        message.innerHTML="<div class=\"alert alert-danger\" role=\"alert\">\n" +
+        message.innerHTML="<div class=\"alert alert-"+$scope.alert+"\" role=\"alert\">\n" +
             error+"    </div>";
     }
 

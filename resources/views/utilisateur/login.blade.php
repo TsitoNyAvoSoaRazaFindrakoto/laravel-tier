@@ -88,6 +88,7 @@
 </div>
 <script>
     const error="{{$message}}";
+    const alert="{{$alert}}";
 </script>
 <script src="{{asset('bootstrap-5/js/bootstrap.bundle.min.js')}}"></script>
 <script src="{{ asset('angular/angular.min.js') }}"></script>

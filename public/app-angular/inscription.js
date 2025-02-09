@@ -28,7 +28,7 @@ inscriptionApp.controller('inscriptionController', function($scope, $http) {
             buttonLogin.innerHTML="S'inscrire";
             buttonLogin.disabled=false;
             if($scope.data.status==200){
-                window.location.href = `http://127.0.0.1:8000/connection`;
+                window.location.href = `http://127.0.0.1:8000/connection?message=Veuillez+valider+votre+inscription+dans+votre+email&alert=primary`;
             }
             else{
                 console.log($scope.data.message);

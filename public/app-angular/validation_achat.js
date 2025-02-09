@@ -48,7 +48,7 @@ pinApp.controller('pinController', function($scope, $http) {
                     if(response.data.status==200){
                         addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
                         addToFirestore("transCrypto",response.data.data.transaction);
-                        window.location.href="/dashboard/cours/crypto";
+                        window.location.href="/dashboard/cours-crypto";
                     }
                     else{
                         console.log(response.data.message);
