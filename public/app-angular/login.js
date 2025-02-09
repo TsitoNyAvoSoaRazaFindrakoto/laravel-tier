@@ -2,7 +2,7 @@ let loginApp = angular.module("loginApp",["ngRoute"]);
 
 loginApp.controller('loginController', function($scope, $http) {
     $scope.utilisateur={};
-    $scope.utilisateur.email="LizkaRyan626@gmail.com";
+    $scope.utilisateur.email="admin@gmail.com";
     $scope.utilisateur.password="itu16";
 
     const buttonHtml="\n" +
