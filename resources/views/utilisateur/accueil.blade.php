@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{asset('images/mini-Crypta.png')}}">
     <title>Crypta - Investissez intelligemment</title>
     <link rel="stylesheet" href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}">
     <style>
@@ -14,7 +15,7 @@
 
         /* Navigation bar */
         .navbar {
-            background-color: #4a4eb1;
+            background-color: #657be9;
             color: #fff;
         }
 
@@ -152,7 +153,7 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="#">Crypta</a>
+        <a class="navbar-brand" href="#"><img src="{{asset('images/Crypta.png')}}" style="width: 10%"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

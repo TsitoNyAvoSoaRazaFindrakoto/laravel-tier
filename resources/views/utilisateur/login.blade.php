@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypta - Login</title>
     <link href="{{ asset('bootstrap-5/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="{{asset('images/mini-Crypta.png')}}">
     <style>
         body {
             background: linear-gradient(135deg, #4a4eb1, #667eea);
