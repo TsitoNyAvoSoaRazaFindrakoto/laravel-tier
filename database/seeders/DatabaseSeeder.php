@@ -13,8 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('utilisateur')->insertOrIgnore([
+            ['idUtilisateur' => 1, 'pseudo' => 'Admin'],
+        ]);
         // Insertion des données dans la table crypto
-        DB::table('crypto')->insert([
+        DB::table('crypto')->insertOrIgnore([
             ['crypto' => 'BitCoin'],
             ['crypto' => 'Ethereum'],
             ['crypto' => 'ValCoin'],
