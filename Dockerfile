@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.2-apache
 
 # Installer les dépendances nécessaires
 RUN apt-get update && apt-get install -y \
@@ -6,37 +6,38 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     unzip \
     git \
-    postgresql-client-15 \
+    postgresql-client \
     && docker-php-ext-install pdo_pgsql zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Définir le répertoire de travail
 WORKDIR /var/www/html
 
+# Copier le code du projet Laravel
+COPY . .
+
+# Copier le fichier de credentials Firebase
+COPY ./storage/firebase/keyFirebase.json /var/www/html/storage/firebase/firebase_credentials.json
+
 # Installer Composer
 COPY --from=composer:2.8.3 /usr/bin/composer /usr/bin/composer
 
-# Copier le code de l'application
-COPY . .
+# Installer les dépendances Laravel avec Composer
+RUN composer install --no-dev --optimize-autoloader
 
-# Configurer Git pour éviter les erreurs de permissions
-RUN git config --global --add safe.directory /var/www/html
-
-# Installer les dépendances Laravel et Debugbar
-RUN composer install --no-dev --optimize-autoloader --prefer-dist
-RUN composer require barryvdh/laravel-debugbar --dev
-RUN composer require kreait/firebase-php -vvv
+# Installer Firebase SDK pour PHP
+RUN composer require kreait/firebase-php
 
 # Configurer les permissions pour le stockage et le cache de Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Copier le script d'entrée
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Activer les modules Apache requis
+RUN a2enmod rewrite
 
-# Définir le script comme point d'entrée
-ENTRYPOINT ["/entrypoint.sh"]
 
 # Exposer le port 8000
 EXPOSE 8000
+
+# Démarrer Apache et Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

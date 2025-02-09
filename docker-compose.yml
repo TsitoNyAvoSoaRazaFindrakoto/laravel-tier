@@ -1,70 +1,70 @@
-version: '3.8'
-
 services:
-  laravel_app:
-    container_name: laravel_tier
-    build:
-      context: .
-      dockerfile: Dockerfile
+  # Service Laravel (PHP 8.2 + Apache)
+  app:
+    build: .
+    container_name: laravel_app
     ports:
-      - "8000:8000"  # Accès externe si nécessaire
+      - "8000:8000"
     env_file:
       - .env
     volumes:
       - .:/var/www/html:delegated
-      - /var/www/html/vendor  # Évite d'écraser les dépendances Laravel
+      - /var/www/html/vendor
       - /var/www/html/node_modules
-      - /var/www/html/storage  # Garde les fichiers de stockage persistants
+      - /var/www/html/storage
     depends_on:
-      postgres_tier:
-        condition: service_healthy  # Attendre PostgreSQL
-      redis_tier:
-        condition: service_healthy  # Attendre Redis
+      db:
+        condition: service_healthy  # Attendre que PostgreSQL soit prêt
+      redis:
+        condition: service_healthy  # Attendre que Redis soit prêt
     restart: unless-stopped
-    # command: ["/usr/local/bin/startup.sh"]
     networks:
-      - crypto_network
+      - laravel_network    
+    command: bash -c "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
 
-  postgres_tier:
-    container_name: postgres_tier
-    image: postgres:15-alpine
-    ports:
-      - "5433:5432"  # Exposé pour accès externe (facultatif)
+  # Service PostgreSQL
+  db:
+    image: postgres:13
+    container_name: laravel_db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: fifaliana
-      POSTGRES_DB: crypto
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5433:5432"  # Modification ici : utilisez un autre port externe (5433)
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-d", "crypto", "-U", "postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
     networks:
-      - crypto_network
+      - laravel_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USERNAME}", "-d", "${DB_DATABASE}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
 
-  redis_tier:
-    container_name: redis_tier
+  # Service Redis
+  redis:
     image: redis:alpine
+    container_name: redis_tier
+    command: ["redis-server", "--appendonly", "yes"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
-    command: redis-server --requirepass fifaliana  # Définit un mot de passe pour Redis
-    environment:
-      REDIS_PASSWORD: fifaliana
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
     networks:
-      - crypto_network
+      - laravel_network
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
 
 networks:
-  crypto_network:
+  laravel_network:
     driver: bridge
 
 volumes:
-  postgres-data: {}
+  postgres-data:
+  redis-data:
