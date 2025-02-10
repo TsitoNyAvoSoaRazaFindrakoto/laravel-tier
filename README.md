@@ -11,16 +11,13 @@ Avant d'exécuter le projet, mettez à jour les paramètres suivants :
    - Mettez à jour le nom d'utilisateur et le mot de passe PostgreSQL dans le fichier `.env` :
      ```env
      DB_CONNECTION=pgsql
-     DB_HOST=db
+     DB_HOST=laravel_db
      DB_PORT=5432
-     DB_DATABASE=your_database_name
-     DB_USERNAME=your_new_username
+     DB_DATABASE=crypto
+     DB_USERNAME=postgres
      DB_PASSWORD=your_new_password
      ```
-   - Mettez à jour `PGPASSWORD` dans le script `entrypoint.sh` :
-     ```sh
-     export PGPASSWORD='your_new_password'
-     ```
+
    
 2. **Modifier les paramètres de messagerie**
    - Mettez à jour les informations de messagerie dans le fichier `.env` :
@@ -28,12 +25,14 @@ Avant d'exécuter le projet, mettez à jour les paramètres suivants :
      MAIL_MAILER=smtp
      MAIL_HOST=smtp.example.com
      MAIL_PORT=587
-     MAIL_USERNAME=your_email@example.com
-     MAIL_PASSWORD=your_email_password
+     MAIL_USERNAME=lizkaryan626@gmail.com
+     MAIL_PASSWORD=nmecuwzyienkqseg
      MAIL_ENCRYPTION=tls
-     MAIL_FROM_ADDRESS=your_email@example.com
-     MAIL_FROM_NAME="Nom de votre application"
+     MAIL_FROM_ADDRESS="lizkaryan626@gmail.com"
+     MAIL_FROM_NAME="${APP_NAME}"
      ```
+NB : **Copier le fichier .env en tenant compte des modifications mentionnées ci-dessus**.
+
 
 ## Déploiement et Exécution du Projet
 
@@ -53,12 +52,7 @@ Cette commande :
   ```
   http://localhost:8000
   ```
-- Pour accéder à la base de données, utilisez un client PostgreSQL avec les identifiants suivants :
-  - Hôte : `localhost`
-  - Port : `5432`
-  - Base de données : `your_database_name`
-  - Nom d'utilisateur : `your_new_username`
-  - Mot de passe : `your_new_password`
+- GitHub : [https://github.com/TsitoNyAvoSoaRazaFindrakoto/laravel-tier]
 
 ## Arrêter le Projet
 Pour arrêter les conteneurs en cours d'exécution, utilisez :
