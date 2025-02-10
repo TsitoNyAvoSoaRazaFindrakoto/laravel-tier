@@ -35,11 +35,11 @@ pinApp.controller('pinController', function($scope, $http) {
                 'Content-Type': 'application/json'
             }
         }).then(function(response){
-            buttonLogin.innerHTML="Login";
+            buttonLogin.innerHTML="Valider";
             buttonLogin.disabled=false;
             $scope.data=response.data;
             if($scope.data.status==200){
-                $scope.transaction.token=$scope.data.data;
+                $scope.transaction.token=$scope.data.data.token;
                 $http.post(`/achat/validated`,$scope.transaction,{
                     headers: {
                         'Content-Type': 'application/json'
@@ -53,6 +53,10 @@ pinApp.controller('pinController', function($scope, $http) {
                     else{
                         console.log(response.data.message);
                     }
+                }).catch(function(error){
+                    console.log(error);
+                    message.innerHTML="<div class=\"alert alert-danger\" role=\"alert\">\n" +
+                        error.data.message+"    </div>";
                 });
             }
             else{

@@ -60,10 +60,10 @@
                     </div>
                     <div class="row mb-1">
                         <div class="col-md-6">
-                            <button class="btn btn-success" ng-click="buy(cour.crypto.idCrypto)">Acheter</button>
+                            <button id="buy[[cour.crypto.idCrypto]]" class="btn btn-success" ng-click="buy(cour.crypto.idCrypto)">Acheter</button>
                         </div>
                         <div class="col-md-6">
-                            <button class="btn btn-danger" ng-click="sell(cour.crypto.idCrypto)">Vendre</button>
+                            <button id="sell[[cour.crypto.idCrypto]]" class="btn btn-danger" ng-click="sell(cour.crypto.idCrypto)">Vendre</button>
                         </div>
                     </div>
                     <div class="row">

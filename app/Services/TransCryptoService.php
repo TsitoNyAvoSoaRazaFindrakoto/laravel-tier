@@ -41,7 +41,7 @@ final class TransCryptoService
         $today = new DateTime();
         $transCrypto = new TransCrypto();
         $transCrypto->idUtilisateur = $request->session()->get('idUtilisateur');
-        $transCrypto->dateTransaction = $today->format('Y-m-d');
+        $transCrypto->dateTransaction = $today->format('Y-m-d H:i:s');
         $transCrypto->entree = floatval($request->input('quantite'));
         $transCrypto->prixUnitaire = floatval(CryptoPrix::where('idCrypto', $request->input('idCrypto'))->orderBy('dateHeure', 'desc')->first()->prixUnitaire);
         $transCrypto->sortie = 0;
@@ -68,7 +68,7 @@ final class TransCryptoService
         return $transCrypto;
     }
 
-    public function insertAchatValidated(Request $request): array
+    public function insertAchatValidated(Request $request)
     {
         $request->validate([
             "quantite" => "required|numeric",
@@ -90,7 +90,10 @@ final class TransCryptoService
             DB::commit();
         } catch (SoldeCryptoException $e) {
             DB::rollBack();
-            throw $e;
+            return response()->json([
+                "status" => 402,
+                "message" => $e->getMessage()
+            ]);
         }
         $fondUtilisateur->utilisateur;
         $transaction->utilisateur;
@@ -99,7 +102,11 @@ final class TransCryptoService
         if($request->session()->get('favori')){
             $this->notify($request->session()->get('mtoken'),"Achat",$transaction);
         }
-        return $data;
+        return response()->json([
+            "status" => 200,
+            "message" => "Achat effectué",
+            "data" => $data
+        ]);
     }
 
     public function notify($token,$operation,$transaction){

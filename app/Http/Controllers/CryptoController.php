@@ -44,10 +44,9 @@ final class CryptoController extends Controller
             return redirect('/connection?message='.$e->getMessage());
         }
     }
-    public function insertAchatValidated(Request $request): ResponseJSON
+    public function insertAchatValidated(Request $request)
     {
-        $data=$this->transCryptoService->insertAchatValidated($request);
-        return new ResponseJSON(200,"Insertion effectue",$data);
+        return $this->transCryptoService->insertAchatValidated($request);
     }
 
     public function insertVente(Request $request): ResponseJSON

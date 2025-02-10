@@ -8,6 +8,7 @@ coursApp.controller('coursController', function($scope, $http) {
     $scope.idCrypto=idCrypto;
     $scope.crypto=crypto.crypto;
     $scope.idUtilisateur=idUtilisateur;
+    $scope.solde=document.getElementById("solde");
     function thread(){
         setTimeout(() => {
             getCours();
@@ -50,6 +51,10 @@ coursApp.controller('coursController', function($scope, $http) {
     }
 
     $scope.buy = function (idCrypto){
+        $scope.buttonBuy=document.getElementById("buy"+idCrypto);
+        $scope.buttonBuy.innerHTML="<div class=\"spinner-border text-light\" role=\"status\">\n" +
+            "  <span class=\"visually-hidden\">Loading...</span>\n" +
+            "</div>";
         $scope.transaction={};
         $scope.transaction.idCrypto=idCrypto;
         $scope.transaction.quantite=getQuantityCoursById(idCrypto);
@@ -63,24 +68,27 @@ coursApp.controller('coursController', function($scope, $http) {
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     data=doc.data();
-                    for(let i=0;i<data.favoris.length;i++){
-                        if($scope.transaction.idCrypto+""===data.favoris[i]){
-                            $scope.transaction.favori=true;
-                            $scope.transaction.mtoken=data.mToken;
-                            break;
+                    $scope.transaction.favori=false;
+                    if(data.favoris!==undefined){
+                        for(let i=0;i<data.favoris.length;i++){
+                            if($scope.transaction.idCrypto+""===data.favoris[i]){
+                                $scope.transaction.favori=true;
+                                $scope.transaction.mtoken=data.mToken;
+                                break;
+                            }
                         }
-                        $scope.transaction.favori=false;
                     }
                     if($scope.transaction.favori){
-                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}&mtoken=${$scope.transaction.mtoken}&favori=true`;
+                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${$scope.transaction.idCrypto}&quantite=${$scope.transaction.quantite}&mtoken=${$scope.transaction.mtoken}&favori=true`;
                     }
                     else{
-                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${idCrypto}&quantite=${$scope.transaction.quantite}&favori=false`;
+                        window.location.href = `http://127.0.0.1:8000/achat/insertion_achat?idCrypto=${$scope.transaction.idCrypto}&quantite=${$scope.transaction.quantite}&favori=false`;
                     }
                 });
             })
             .catch((error) => {
                 console.error("Erreur lors de la récupération des documents :", error);
+                $scope.buttonBuy.innerHTML="Acheter";
             });
     }
 
@@ -91,13 +99,15 @@ coursApp.controller('coursController', function($scope, $http) {
             .then((querySnapshot) => {
                 querySnapshot.forEach((doc) => {
                     data=doc.data();
-                    for(let i=0;i<data.favoris.length;i++){
-                        if($scope.transaction.idCrypto+""===data.favoris[i]){
-                            $scope.transaction.favori=true;
-                            $scope.transaction.mtoken=data.mToken;
-                            break;
+                    $scope.transaction.favori=false;
+                    if(data.favoris!=undefined){
+                        for(let i=0;i<data.favoris.length;i++){
+                            if($scope.transaction.idCrypto+""===data.favoris[i]){
+                                $scope.transaction.favori=true;
+                                $scope.transaction.mtoken=data.mToken;
+                                break;
+                            }
                         }
-                        $scope.transaction.favori=false;
                     }
                     console.log(JSON.stringify($scope.transaction));
                     $http.post(`/vente/insertion_vente`,$scope.transaction,{
@@ -109,6 +119,7 @@ coursApp.controller('coursController', function($scope, $http) {
                             addToFirestore("fondUtilisateur",response.data.data.fondUtilisateur);
                             addToFirestore("transCrypto",response.data.data.transaction);
                             $scope.styleMessage="alert-success";
+                            $scope.solde.innerHTML=parseFloat($scope.solde.innerHTML)+($scope.transaction.quantite*getUnitPriceCoursById($scope.transaction.idCrypto)).toPrecision(2);
                         }
                         else{
                             $scope.styleMessage="alert-danger";
@@ -116,6 +127,7 @@ coursApp.controller('coursController', function($scope, $http) {
                         $scope.message=response.data.message;
                         var venteSuccess = document.getElementById('toast');
                         var toast = new bootstrap.Toast(venteSuccess);
+                        $scope.buttonSell.innerHTML="Vendre";
                         toast.show();
                     });
                 });
@@ -126,15 +138,27 @@ coursApp.controller('coursController', function($scope, $http) {
     }
 
     $scope.sell = function (idCrypto){
-        $scope.transaction={};
-        $scope.transaction.idCrypto=idCrypto;
-        $scope.transaction.quantite=getQuantityCoursById(idCrypto);
-        $scope.setIfFavorite($scope.idUtilisateur);
+        $scope.buttonSell=document.getElementById("sell"+idCrypto);
+        $scope.buttonSell.innerHTML ="<div class=\"spinner-border text-light\" role=\"status\">\n" +
+            "  <span class=\"visually-hidden\">Loading...</span>\n" +
+            "</div>";
+            $scope.transaction = {};
+        $scope.transaction.idCrypto = idCrypto;
+        $scope.transaction.quantite = getQuantityCoursById(idCrypto);
+        $scope.setIfFavoriteSell($scope.idUtilisateur);
     }
     function getQuantityCoursById(idCrypto){
         for (i=0;i<$scope.cours.length;i++) {
             if($scope.cours[i].idCrypto==idCrypto){
                 return $scope.cours[i].quantite;
+            }
+        }
+    }
+
+    function getUnitPriceCoursById(idCrypto){
+        for (i=0;i<$scope.cours.length;i++) {
+            if($scope.cours[i].idCrypto==idCrypto){
+                return $scope.cours[i].prixUnitaire;
             }
         }
     }
