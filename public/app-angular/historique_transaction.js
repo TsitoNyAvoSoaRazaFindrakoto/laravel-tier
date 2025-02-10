@@ -45,36 +45,70 @@ transactionApp.controller('transactionController', function ($scope, $http) {
     $scope.cryptos=[];
     $scope.cryptos.push({idCrypto:0,crypto:"Tous"});
     $scope.crypto=0;
-    $scope.images=images;
-    console.log($scope.cryptos);
+    $scope.images=[];
 
     for(let i=0;i<cryptos.length;i++){
         $scope.cryptos.push(cryptos[i]);
     }
 
-    console.log($scope.dataCrypto);
+    const firebaseConfig = {
+        apiKey: "AIzaSyD_dhXrU5-3m_QsUAka7FVavlGTgNTlppI",
+        authDomain: "crypta-d5e13.firebaseapp.com",
+        projectId: "crypta-d5e13",
+        storageBucket: "crypta-d5e13.firebasestorage.app",
+        messagingSenderId: "539604836728",
+        appId: "1:539604836728:web:5876a760ea6bf2189ee88d",
+        measurementId: "G-X7J7VJSX4N"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+    db.collection("utilisateur")
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data(); // Données du document
+                const idUtilisateur = data.idUtilisateur; // ID du document (peut être différent de l'ID utilisateur stocké dans le document)
+                $scope.$apply(function() {
+                    if(doc.img!=undefined){
+                        $scope.images.push({img:doc.img,idUtilisateur:idUtilisateur});
+                    }
+                    else{
+                        $scope.images.push({img:"https://ik.imagekit.io/qmegcemhav/profile-pictures/default.jpg?updatedAt=1738953528745",idUtilisateur:idUtilisateur})
+                    }
+                });
+            });
+            $scope.paginate(dataCrypto,12);
+        })
+        .catch((error) => {
+            console.error('Erreur lors de la récupération des données:', error);
+        });
+
     $scope.index=0;
 
     $scope.next=function(){
         $scope.index++;
-        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+        $scope.transactionsCrypto=$scope.setImage($scope.dataPaginated[$scope.index]);
     }
     $scope.previous=function(){
         $scope.index--;
-        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+        $scope.transactionsCrypto=$scope.setImage($scope.dataPaginated[$scope.index]);
+    }
+
+    $scope.setImageById=function(dataCrypto){
+        dataCrypto.utilisateur.img="https://ik.imagekit.io/qmegcemhav/profile-pictures/default.jpg?updatedAt=1738953528745";
+        for(let i=0;i<$scope.images.length;i++){
+            if($scope.images[i].idUtilisateur==dataCrypto.utilisateur.idUtilisateur){
+                dataCrypto.utilisateur.img=$scope.images[i].img;
+            }
+        }
+        return dataCrypto;
     }
 
     $scope.setImage=function(dataCrypto){
         for(let i=0;i<dataCrypto.length;i++){
-            imgKit=$scope.images[dataCrypto[i].utilisateur.idUtilisateur];
-            if(imgKit!=null){
-                dataCrypto[i].utilisateur.img=imgKit;
-            }
-            else{
-                dataCrypto[i].utilisateur.img="https://ik.imagekit.io/qmegcemhav/profile-pictures/default.jpg?updatedAt=1738953528745";
-            }
+            dataCrypto[i]=$scope.setImageById(dataCrypto[i]);
         }
-        console.log(dataCrypto);
         return dataCrypto;
     }
 
@@ -91,8 +125,8 @@ transactionApp.controller('transactionController', function ($scope, $http) {
             $scope.dataPaginated.push(data);
         }
         $scope.index=0;
-        $scope.transactionsCrypto=$scope.dataPaginated[$scope.index];
+        $scope.$apply(function (){
+            $scope.transactionsCrypto=$scope.setImage($scope.dataPaginated[$scope.index]);
+        });
     }
-
-    $scope.paginate($scope.setImage(dataCrypto),12);
 });

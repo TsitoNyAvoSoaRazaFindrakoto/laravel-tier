@@ -149,6 +149,8 @@
         const cryptos = <?php echo($cryptos) ?>;
         const images = <?php echo(json_encode($images)) ?>;
     </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="{{ asset('angular/angular.min.js') }}"></script>
     <script src="{{ asset('angular/angular-route.js') }}"></script>
     <script src="{{ asset('app-angular/historique_transaction.js') }}"></script>

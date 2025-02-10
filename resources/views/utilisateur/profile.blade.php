@@ -81,7 +81,7 @@
         <div class="card-body">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <img src="{{$utilisateur->img}}&tr=w-130,h-130" style="border-radius: 100px"/>
+                    <img id="photo" src="" style="border-radius: 100px"/>
                 </div>
                 <div class="profile-info">
                     <h1>{{$utilisateur->pseudo}}</h1>
@@ -104,4 +104,12 @@
             </div>
         </div>
     </div>
+@endsection
+@section('script')
+    <script>
+        const idUtilisateur={{$utilisateur->idUtilisateur}};
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="{{ asset('app-angular/profile.js') }}"></script>
 @endsection
