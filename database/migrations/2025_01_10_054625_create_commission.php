@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         \Illuminate\Support\Facades\DB::statement("CREATE TABLE commission(
-   \"idCommission\" SERIAL,
-   \"dateCommission\" TIMESTAMP NOT NULL,
-   montant Decimal(15,2)  NOT NULL,
-   \"idCrypto\" INTEGER NOT NULL,
-   PRIMARY KEY(\"idCommission\"),
-   FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
-)
-");
+        \"idCommission\" SERIAL,
+        \"dateCommission\" TIMESTAMP NOT NULL,
+        montant Decimal(15,2)  NOT NULL,
+        \"idCrypto\" INTEGER NOT NULL,
+        PRIMARY KEY(\"idCommission\"),
+        FOREIGN KEY(\"idCrypto\") REFERENCES crypto(\"idCrypto\")
+        )
+        ");
     }
 
     /**

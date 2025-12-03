@@ -22,4 +22,41 @@ class TransCrypto extends Model
     {
         return $this->belongsTo(Crypto::class, 'idCrypto');
     }
+
+    public function utilisateur():BelongsTo{
+        return $this->belongsTo(Utilisateur::class,"idUtilisateur","idUtilisateur");
+    }
+
+    public function getOperationName(): string{
+        if($this->entree==0){
+            return "Vente";
+        }
+        return "Achat";
+    }
+
+    public function getMontant():float{
+        if($this->entree==0){
+            return $this->sortie;
+        }
+        return $this->entree;
+    }
+
+    public function setCalculatedValue(){
+        if($this->entree==0){
+            $this->operation="Vente";
+            $this->styleClass="text-danger";
+            $this->icon="mdi mdi-arrow-bottom-right";
+        }
+        else{
+            $this->operation="Achat";
+            $this->styleClass="text-success";
+            $this->icon="mdi mdi-arrow-top-right";
+        }
+        if($this->entree==0){
+            $this->quantite = $this->sortie;
+        }
+        else{
+            $this->quantite = $this->entree;
+        }
+    }
 }

@@ -1,7 +1,9 @@
 <?php
 
 return [
-
+    'firestore' => [
+        'key_file' => env('GOOGLE_CLOUD_KEY_FILE'), // Chemin vers le fichier de clé JSON
+    ],
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -33,6 +35,12 @@ return [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
+    ],
+
+    'imagekit' => [
+        'public_key' => env('IMAGEKIT_PUBLIC_KEY'),
+        'private_key' => env('IMAGEKIT_PRIVATE_KEY'),
+        'endpoint_url' => env('IMAGEKIT_ENDPOINT_URL'),
     ],
 
 ];

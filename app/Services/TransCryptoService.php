@@ -4,119 +4,262 @@ namespace App\Services;
 
 use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
+use App\Exception\TokenException;
 use App\Models\CryptoPrix;
+use App\Models\FondUtilisateur;
 use App\Models\TransCrypto;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Mockery\Exception;
 
 final class TransCryptoService
 {
 
     protected FondService $fondService;
+    private CommissionService $commissionService;
+    private FirestoreService $firestoreService;
 
-    public function __construct(FondService $fondService){
+    public function __construct(FondService $fondService, CommissionService $commissionService, FirestoreService $firestoreService)
+    {
         $this->fondService = $fondService;
+        $this->commissionService = $commissionService;
+        $this->firestoreService = $firestoreService;
     }
 
-    public function insertEntree(Request $request){
-        $today=new DateTime();
-        $transCrypto = new TransCrypto();
-        $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
-        $transCrypto->dateTransaction=$today->format('Y-m-d');
-        $transCrypto->entree=$request->input('quantite');
-        $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
-        $transCrypto->sortie=0;
-        $transCrypto->idCrypto=$request->input('idCrypto');
+    public function insertEntree(Request $request)
+    {
+        $transCrypto = $this->createEntree($request);
         $transCrypto->save();
     }
 
-    public function insertSortie(Request $request){
-        $quantite=$request->input('quantite');
-        $solde=$this->findSoldeCrypto($request->session()->get('idUtilisateur'),$request->input('idCrypto'));
-        if($quantite>$solde){
-            throw new SoldeCryptoException($quantite,$solde);
-        }
-        $today=new DateTime();
+    public function createEntree(Request $request)
+    {
+        $today = new DateTime();
         $transCrypto = new TransCrypto();
-        $transCrypto->idUtilisateur=$request->session()->get('idUtilisateur');
-        $transCrypto->dateTransaction=$today->format('Y-m-d');
-        $transCrypto->entree=0;
-        $transCrypto->prixUnitaire=CryptoPrix::where('idCrypto',$request->input('idCrypto'))->orderBy('dateHeure','desc')->first()->prixUnitaire;
-        $transCrypto->sortie=$request->input('quantite');
-        $transCrypto->idCrypto=$request->input('idCrypto');
+        $transCrypto->idUtilisateur = $request->session()->get('idUtilisateur');
+        $transCrypto->dateTransaction = $today->format('Y-m-d H:i:s');
+        $transCrypto->entree = floatval($request->input('quantite'));
+        $transCrypto->prixUnitaire = floatval(CryptoPrix::where('idCrypto', $request->input('idCrypto'))->orderBy('dateHeure', 'desc')->first()->prixUnitaire);
+        $transCrypto->sortie = 0;
+        $transCrypto->idCrypto = intval($request->input('idCrypto'));
+        return $transCrypto;
+    }
+
+    public function insertSortie(Request $request)
+    {
+        $quantite = $request->input('quantite');
+        $solde = $this->findSoldeCrypto($request->session()->get('idUtilisateur'), $request->input('idCrypto'));
+        if ($quantite > $solde) {
+            throw new SoldeCryptoException($quantite, $solde);
+        }
+        $today = new DateTime();
+        $transCrypto = new TransCrypto();
+        $transCrypto->idUtilisateur = $request->session()->get('idUtilisateur');
+        $transCrypto->dateTransaction = $today->format('Y-m-d');
+        $transCrypto->entree = 0;
+        $transCrypto->prixUnitaire = CryptoPrix::where('idCrypto', $request->input('idCrypto'))->orderBy('dateHeure', 'desc')->first()->prixUnitaire;
+        $transCrypto->sortie = $request->input('quantite');
+        $transCrypto->idCrypto = $request->input('idCrypto');
         $transCrypto->save();
+        return $transCrypto;
     }
 
-    public function insertAchat(Request $request){
-        try{
+    public function insertAchatValidated(Request $request)
+    {
+        $request->validate([
+            "quantite" => "required|numeric",
+            "idCrypto" => "required|numeric",
+            "token"=>"required"
+        ]);
+        $request->session()->put('token',$request->input('token'));
+        try {
             DB::beginTransaction();
-            $this->fondService->insertRetrait($request);
-            $this->insertEntree($request);
+            [$fondUtilisateur,$commission] = $this->fondService->createRetrait($request);
+            $transaction = $this->createEntree($request);
+
+            $fondUtilisateur->dateValidation = new \DateTime();
+            $fondUtilisateur->dateValidation = $fondUtilisateur->dateValidation->format('Y-m-d H:i:s');
+
+            $fondUtilisateur->save();
+            $this->commissionService->insertCommission($commission, $transaction->idCrypto);
+            $transaction->save();
             DB::commit();
+        } catch (SoldeCryptoException $e) {
+            DB::rollBack();
+            return response()->json([
+                "status" => 402,
+                "message" => $e->getMessage()
+            ]);
         }
-        catch(SoldeException $e){
+        $fondUtilisateur->utilisateur;
+        $transaction->utilisateur;
+        $data["fondUtilisateur"] = $fondUtilisateur;
+        $data["transaction"] = $transaction;
+        if($request->session()->get('favori')){
+            $this->notify($request->session()->get('mtoken'),"Achat",$transaction);
+        }
+        return response()->json([
+            "status" => 200,
+            "message" => "Achat effectué",
+            "data" => $data
+        ]);
+    }
+
+    public function notify($token,$operation,$transaction){
+        // Créer le client Guzzle
+        $client = new Client();
+        $transaction->setCalculatedValue();
+        try {
+            // Envoyer la requête à l'API d'Expo
+            $response = $client->post('https://exp.host/--/api/v2/push/send', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'to' => $token,
+                    'sound' => 'default',
+                    'title' => $operation." de ".$transaction->crypto->crypto,
+                    'body' => "L'opération a bien été effectué le ".$transaction->dateTransaction." avec une prix de ".($transaction->priUnitaire*$transaction->quantite),
+                    'data' => ['extraData' => 'value'], // Données optionnelles
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+
+        }
+    }
+
+    public function insertAchat(Request $request): array
+    {
+        $request->validate([
+            "quantite" => "required|numeric",
+            "idCrypto" => "required|numeric"
+        ]);
+
+        $response = Http::get('localhost:8082/utilisateur/utilisateur/pin/request/' . $request->session()->get("token"));
+
+        // Vérifier la réponse
+        if (!$response->successful()) {
+            throw new Exception("Erreur du fournisseur d'identite"); // Convertit la réponse JSON en tableau PHP
+        }
+
+        if($response->json()["status"]==200){
+            $data["token"]=$response->json()["data"];
+            $data["quantite"]=$request->input('quantite');
+            $data["idCrypto"]=$request->input('idCrypto');
+            $request->session()->put('token',$data["token"]);
+            return $data;
+        }
+        else{
+            throw new TokenException();
+        }
+    }
+
+    public function findListeAchat($idUtilisateur)
+    {
+        return TransCrypto::with('crypto')->where('idUtilisateur', $idUtilisateur)->where('entree', '>', 0)->get();
+    }
+
+    public function findTransactionHistorique($dateMin, $dateMax, $idUtilisateur, $idCrypto): \Illuminate\Support\Collection
+    {
+        if ($dateMin == null) {
+            $dateMin = new \DateTime("0001-01-01");
+            $dateMin = $dateMin->format('Y-m-d');
+        }
+        if ($dateMax == null) {
+            $dateMax = new \DateTime("9999-12-31");
+            $dateMax = $dateMax->format('Y-m-d');
+        }
+        $query = TransCrypto::with('utilisateur', 'crypto')->where('dateTransaction', '>=', $dateMin)->where('dateTransaction', '<=', $dateMax);
+        if ($idCrypto != 0) {
+            $query = $query->where('idCrypto', $idCrypto);
+        }
+        if ($idUtilisateur != 0) {
+            $query = $query->where('idUtilisateur', $idUtilisateur);
+        }
+        $responses = $query->get();
+        foreach ($responses as $response) {
+            $response->setCalculatedValue();
+        }
+        return $responses;
+    }
+
+    public function findListeAchatAll()
+    {
+        return TransCrypto::where('entree', '>', 0)->get();
+    }
+
+    public function insertVente(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            [$depot, $commission] = $this->fondService->insertDepot($request);
+            $this->commissionService->insertCommission($commission, $request->input('idCrypto'));
+            $transaction = $this->insertSortie($request);
+            $transaction->utilisateur;
+            $depot->utilisateur;
+            DB::commit();
+        } catch (SoldeCryptoException $e) {
             DB::rollBack();
             throw $e;
         }
+        $data["transaction"]=$transaction;
+        $data["fondUtilisateur"]=$depot;
+        $this->notify($request->input('mtoken'),"Vente",$transaction);
+        return $data;
     }
 
-    public function findListeAchat($idUtilisateur){
-        return TransCrypto::where('idUtilisateur',$idUtilisateur)->where('entree','>',0)->get();
-    }
-
-    public function findListeAchatAll(){
-        return TransCrypto::where('entree','>',0)->get();
-    }
-
-    public function insertVente(Request $request){
-        try{
-            DB::beginTransaction();
-            $this->fondService->insertDepot($request);
-            $this->insertSortie($request);
-            DB::commit();
-        }
-        catch (SoldeCryptoException $e){
-            DB::rollBack();
-            throw $e;
-        }
-    }
-
-    public function findStatistiqueTransaction(\DateTimeInterface $dateMax){
-        $transCryptos=TransCrypto::selectRaw('sum(entree*"prixUnitaire") as achat,sum(sortie*"prixUnitaire") as vente, "idUtilisateur"')
+    public function findStatistiqueTransaction(\DateTimeInterface $dateMax)
+    {
+        $transCryptos = TransCrypto::with('utilisateur')->selectRaw('sum(entree*"prixUnitaire") as achat,sum(sortie*"prixUnitaire") as vente, "idUtilisateur"')
             ->groupBy('idUtilisateur')
-            ->where('dateTransaction','<=',$dateMax->format('Y-m-d H:i:s'))
-            ->orderBy('idUtilisateur','asc')
+            ->where('dateTransaction', '<=', $dateMax->format('Y-m-d H:i:s'))
+            ->orderBy('idUtilisateur', 'asc')
             ->get();
 
-        foreach ($transCryptos as $transCrypto){
-            $transCrypto->solde=$this->fondService->findSoldeFilter($transCrypto->idUtilisateur,$dateMax);
+        foreach ($transCryptos as $transCrypto) {
+            $transCrypto->solde = $this->fondService->findSoldeFilter($transCrypto->idUtilisateur, $dateMax);
         }
         return $transCryptos;
     }
 
-    public function findSoldeCrypto($idUtilisateur,$idCrypto){
-        return TransCrypto::where('idUtilisateur',$idUtilisateur)
-            ->where('idCrypto',$idCrypto)
+    public function findSoldeCrypto($idUtilisateur, $idCrypto)
+    {
+        return TransCrypto::where('idUtilisateur', $idUtilisateur)
+            ->where('idCrypto', $idCrypto)
             ->selectRaw('sum(entree-sortie) as solde')
             ->first()['solde'];
     }
 
-    public function findPorfeuilleUtilisateur($idUtilisateur){
-        return TransCrypto::where('idUtilisateur',$idUtilisateur)
+    public function findSoldeAllCrypto($idUtilisateur){
+        return TransCrypto::with('crypto')
+            ->where('idUtilisateur',$idUtilisateur)
+            ->selectRaw('sum(entree-sortie) as solde, "idCrypto"')
+            ->groupBy('idCrypto')
+            ->get();
+    }
+
+    public function findPorfeuilleUtilisateur($idUtilisateur)
+    {
+        return TransCrypto::where('idUtilisateur', $idUtilisateur)
             ->with('crypto')
             ->selectRaw('sum(entree-sortie) as solde,"idCrypto"')
             ->groupBy('idCrypto')
             ->get();
     }
 
-    public function findListVente($idUtilisateur):Collection{
-        return TransCrypto::where("sortie",">",0)->Where("idUtilisateur",$idUtilisateur)->get();
+    public function findListVente($idUtilisateur): Collection
+    {
+        return TransCrypto::with('crypto')->where("sortie", ">", 0)->Where("idUtilisateur", $idUtilisateur)->get();
     }
 
-    public function findListVenteAll():Collection
+    public function findAllTransaction()
     {
-        return TransCrypto::where("sortie",">",0)->get();
+        $transactions = TransCrypto::with('utilisateur')->orderBy('dateTransaction', 'desc')->paginate(10);
+        return $transactions;
     }
 }

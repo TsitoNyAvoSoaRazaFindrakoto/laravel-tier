@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Dto\ResponseJSON;
+use App\Exception\SoldeCryptoException;
 use App\Exception\SoldeException;
+use App\Exception\TokenException;
 use App\Models\Crypto;
+use App\Models\Utilisateur;
 use App\Services\TransCryptoService;
 use Illuminate\Http\Request;
 
@@ -13,41 +17,54 @@ final class CryptoController extends Controller
     public function __construct(TransCryptoService $transCryptoService){
         $this->transCryptoService = $transCryptoService;
     }
-    public function insertAchat(Request $request){
+    public function insertAchat(Request $request): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|\Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
+    {
         $request->validate([
             "quantite"=>"required|numeric|min:1",
-            "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
+            "favori"=>"required",
+            "mtoken"=>"string",
         ]);
-        $data["cryptos"] = Crypto::all();
         try{
-            $this->transCryptoService->insertAchat($request);
+            $response=$this->transCryptoService->insertAchat($request);
+            if($request->input('favori')=="true"){
+                $request->session()->put('favori',true);
+                $request->session()->put('mtoken',$request->input('mtoken'));
+            }
+            else{
+                $request->session()->put('favori',false);
+            }
+            return view('achat.validationAchat',$response);
         }
         catch(SoldeException $e){
             $data["message"]=$e->getMessage();
             return $this->getView('achat.formAchat',$request,$data);
         }
-        $data["message"]="Achat effectue avec succes";
-        return $this->getView('achat.formAchat',$request,$data);
+        catch (TokenException $e){
+            return redirect('/connection?message='.$e->getMessage());
+        }
+    }
+    public function insertAchatValidated(Request $request)
+    {
+        return $this->transCryptoService->insertAchatValidated($request);
     }
 
-
-    public function insertVente(Request $request){
+    public function insertVente(Request $request): ResponseJSON
+    {
         $request->validate([
             "quantite"=>"required|numeric|min:1",
-            "montant"=>"required|numeric|min:0",
             "idCrypto"=>"required|numeric",
+            "favori"=>"required|boolean",
+            "mtoken"=>"string",
         ]);
         $data["cryptos"] = Crypto::all();
         try{
-            $this->transCryptoService->insertVente($request);
+            $data=$this->transCryptoService->insertVente($request);
         }
-        catch(\Exception $e){
-            $data["message"]=$e->getMessage();
-            return $this->getView('vente.formVente',$request,$data);
+        catch(SoldeCryptoException $e){
+            return new ResponseJSON(422,$e->getMessage());
         }
-        $data["message"]="Vente reussie";
-        return $this->getView('vente.formVente',$request,$data);
+        return new ResponseJSON(200,"Vente réussie",$data);
     }
 
     public function findListeAchat(Request $request){
@@ -61,12 +78,22 @@ final class CryptoController extends Controller
     }
 
     public function findListVente(Request $request){
+        $data["achats"]=$this->transCryptoService->findListeAchatAll();
         $data["ventes"]=$this->transCryptoService->findListVente($request->session()->get('idUtilisateur'));
         return $this->getView('vente.listeVente',$request,$data);
     }
 
-    public function findListeVenteAll(Request $request){
-        $data["ventes"]=$this->transCryptoService->findListVenteAll();
+    public function findAllTransaction(Request $request){
+        $request->validate([
+            "page"=>"numeric",
+        ]);
+        $data["page"]=$request->input('page');
+        if($data["page"]==null){
+            $data["page"]=1;
+        }
+        $data["transactions"]=$this->transCryptoService->findAllTransaction();
+        $data["nbPages"]=$data["transactions"]->lastPage();
+        $data["path"]=$data["transactions"]->path();
         return $this->getView('vente.listeVente',$request,$data);
     }
 

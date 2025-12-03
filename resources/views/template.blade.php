@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@yield('Title')</title>
@@ -12,7 +11,9 @@
     <link rel="stylesheet" href="{{ asset('skydash/vendors/ti-icons/css/themify-icons.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('skydash/js/select.dataTables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('skydash/css/vertical-layout-light/style.css') }}">
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="{{ asset('skydash/vendors/mdi/css/materialdesignicons.min.css') }}">
+    <link rel="shortcut icon" href="{{asset('images/mini-Crypta.png')}}">
+    @yield('style')
 </head>
 <body>
 <div class="container-scroller">
@@ -20,7 +21,11 @@
     @include('navbar')
     <!-- partial -->
     <div class="container-fluid page-body-wrapper">
-        @include($sideBar)
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+            <ul class="nav">
+                @include($sideBar)
+            </ul>
+        </nav>
         <!-- partial -->
         <div class="main-panel">
             <div class="content-wrapper">
@@ -63,6 +68,8 @@
 <!-- endinject -->
 <!-- Custom js for this page-->
 <script src="{{ asset('skydash/js/dashboard.js') }}"></script>
+
+@yield('script')
 <!-- End custom js for this page-->
 </body>
 

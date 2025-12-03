@@ -3,24 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Config\ParameterConfig;
+use App\Dto\Chart;
 use App\Models\Crypto;
 use App\Services\CommissionService;
 use App\Services\CryptoService;
+use App\Services\FondService;
+use App\Services\UtilisateurService;
 use Illuminate\Http\Request;
 
-class DashboardController extends Controller
+final class DashboardController extends Controller
 {
     public CryptoService $cryptoService;
     public CommissionService $commissionService;
+    public FondService $fondService;
 
-    public function __construct(CryptoService $cryptoService,CommissionService $commissionService){
+    public function __construct(CryptoService $cryptoService,CommissionService $commissionService,FondService $fondService){
         $this->cryptoService = $cryptoService;
         $this->commissionService = $commissionService;
+        $this->fondService = $fondService;
+    }
+
+    public function cours(){
+        return $this->cryptoService->findPriceCrypto();
+    }
+
+    public function coursView(Request $request){
+        $idCrypto=1;
+        $data["solde"]=$this->fondService->findSolde($request->session()->get("idUtilisateur"));
+        $data["evolutionCryptos"]=Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
+        $data["idCrypto"]=$idCrypto;
+        $data["crypto"]=Crypto::findOrFail($idCrypto);
+        $data["cours"]=$this->cryptoService->findPriceCrypto();
+        $data["idUtilisateur"]=$request->session()->get("idUtilisateur");
+        return $this->getView('dashboard.cours',$request,$data);
+    }
+
+    public function cryptoPrix(int $idCrypto){
+        return Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
     }
 
     public function index(Request $request)
     {
-        return $this->getView('dashboard.index',$request);
+        $request->validate([
+            "idCrypto"=>'integer'
+        ]);
+        $data["cryptos"]=Crypto::all();
+        $idCrypto=$request->input('idCrypto');
+        if($idCrypto==null){
+            $idCrypto=$data["cryptos"][0]->idCrypto;
+        }
+        $data["evolutionCryptos"]=Chart::createChart($this->cryptoService->findEvolutionChart($idCrypto));
+        $data["idCrypto"]=$idCrypto;
+        $data["crypto"]=Crypto::findOrFail($idCrypto);
+        return $this->getView('dashboard.index',$request,$data);
     }
 
     public function parametre(Request $request){
@@ -39,7 +74,6 @@ class DashboardController extends Controller
 
     public function analyseCryptoListe(Request $request){
         $request->validate([
-            "crypto"=>"required|integer",
             "typeAnalyse"=>"required",
             "dateHeureMin"=>"required|date",
             "dateHeureMax"=>"required|date",

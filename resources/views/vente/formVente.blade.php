@@ -26,7 +26,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating mb-3">
-                                        <input type="number" name="quantite" class="form-control" id="floatingInput" placeholder="Quantite">
+                                        <input type="number" step="0.01" name="quantite" class="form-control" id="floatingInput" placeholder="Quantite">
                                         <label for="floatingInput">Quantite</label>
                                     </div>
                                 </div>

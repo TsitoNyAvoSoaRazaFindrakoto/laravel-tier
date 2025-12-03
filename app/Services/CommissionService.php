@@ -37,4 +37,14 @@ final class CommissionService
         }
         return $this->findAverageCommission($request->input('crypto'),$request->input('dateHeureMin'),$request->input('dateHeureMax'));
     }
+
+    public function insertCommission($commissionMontant,$idCrypto)
+    {
+        $commission = new Commission();
+        $commission->dateCommission=new \DateTime();
+        $commission->dateCommission=$commission->dateCommission->format('Y-m-d H:i:s');
+        $commission->montant=$commissionMontant;
+        $commission->idCrypto=$idCrypto;
+        $commission->save();
+    }
 }

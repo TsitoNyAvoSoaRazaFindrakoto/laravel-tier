@@ -11,7 +11,7 @@
             <div class="card">
                 <div class="card-body" style="border: solid 1px;border-radius: 15px;">
                     <h4 class="card-title">Analyse des cryptos</h4>
-                    <form action="/dashboard/analyse/crypto" method="post">
+                    <form action="/dashboard/analyse-crypto" method="post">
                         @csrf
                         <div id="achat">
                             <div class="row">
@@ -45,14 +45,14 @@
                         <div class="row">
                             <div class="col-md-6" style="margin-left: 5%">
                                 <div class="form-check">
-                                    <input value="0" class="form-check-input" type="radio" name="crypto" id="flexRadioDefault2" checked>
+                                    <input value="1" class="form-check-input" type="checkbox" name="Tous" id="flexRadioDefault2" checked>
                                     <label class="form-check-label" for="flexRadioDefault2">
                                         Tous
                                     </label>
                                 </div>
                                 @foreach($cryptos as $crypto)
                                     <div class="form-check">
-                                        <input value="{{$crypto->crypto}}" class="form-check-input" type="radio" name="crypto" id="flexRadioDefault1">
+                                        <input value="{{$crypto->idCrypto}}" class="form-check-input" type="checkbox" name="{{$crypto->crypto}}" id="flexRadioDefault1">
                                         <label class="form-check-label" for="flexRadioDefault1">
                                             {{ $crypto->crypto  }}
                                         </label>
@@ -65,7 +65,7 @@
 
                             </div>
                             <div class="col-md-3">
-                                <button class="btn btn-outline-primary" type="submit">Ajouter</button>
+                                <button class="btn btn-outline-primary" type="submit">Analyser</button>
                             </div>
                         </div>
                     </form>
