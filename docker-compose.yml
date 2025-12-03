@@ -1,72 +1,51 @@
-services:
-  # Service Laravel (PHP 8.2 + Apache)
-  app:
-    build: .
-    container_name: laravel_app
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      APP_URL: http://laravel_app:8000
-    volumes:
-      - .:/var/www/html:delegated
-      - /var/www/html/vendor
-      - /var/www/html/node_modules
-      - /var/www/html/storage
-    depends_on:
-      db:
-        condition: service_healthy  # Attendre que PostgreSQL soit prêt
-      redis:
-        condition: service_healthy  # Attendre que Redis soit prêt
-    restart: unless-stopped
-    networks:
-      - laravel_network    
-    command: bash -c "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
-
-  # Service PostgreSQL
-  db:
-    image: postgres:13
-    container_name: laravel_db
-    environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "5433:5432"  # Modification ici : utilisez un autre port externe (5433)
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - laravel_network
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USERNAME}", "-d", "${DB_DATABASE}"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-
-  # Service Redis
-  redis:
-    image: redis:alpine
-    container_name: redis_tier
-    command: ["redis-server", "--appendonly", "yes"]
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-    ports:
-      - "6379:6379"
-    networks:
-      - laravel_network
-    volumes:
-      - redis-data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
+version: '3.8'
 
 networks:
-  laravel_network:
-    driver: bridge
+    cloud-network:
+        external: true
 
+services:
+    # Service Laravel (PHP 8.2 + Apache)
+    laravel_app:
+        build: .
+        container_name: laravel_app
+        ports:
+            - "8000:8000"
+        env_file:
+            - .env
+        environment:
+            APP_URL: http://laravel_app:8000
+        volumes:
+            - .:/var/www/html:delegated
+            - /var/www/html/vendor
+            - /var/www/html/node_modules
+            - /var/www/html/storage
+        depends_on:
+            db:
+                condition: service_healthy  # Attendre que PostgreSQL soit prêt
+        restart: unless-stopped
+        networks:
+            - cloud-network
+        command: bash -c "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"
+
+    # Service PostgreSQL
+    db:
+        networks:
+            - cloud-network
+        image: postgres:13
+        container_name: laravel_db
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "5433:5432"  # Modification ici : utilisez un autre port externe (5433)
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD", "pg_isready", "-U", "${DB_USERNAME}", "-d", "${DB_DATABASE}" ]
+            interval: 10s
+            retries: 5
+            start_period: 30s
 volumes:
-  postgres-data:
-  redis-data:
+    postgres-data:

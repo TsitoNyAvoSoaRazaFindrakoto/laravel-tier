@@ -36,6 +36,12 @@ NB : **Copier le fichier .env en tenant compte des modifications mentionnées ci
 
 ## Déploiement et Exécution du Projet
 
+Lancer cette commande
+``` sh
+composer install
+```
+
+
 Pour construire et démarrer l'application, exécutez la commande suivante :
 ```sh
 docker-compose up --build

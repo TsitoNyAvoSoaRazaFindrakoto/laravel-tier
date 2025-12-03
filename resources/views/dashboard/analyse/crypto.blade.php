@@ -65,7 +65,7 @@
 
                             </div>
                             <div class="col-md-3">
-                                <button class="btn btn-outline-primary" type="submit">Ajouter</button>
+                                <button class="btn btn-outline-primary" type="submit">Analyser</button>
                             </div>
                         </div>
                     </form>
